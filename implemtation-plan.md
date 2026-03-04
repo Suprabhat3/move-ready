@@ -1,6 +1,6 @@
 # 🏠 Rental Housing Platform — Implementation Plan
 
-> **Stack:** React + Vite · Node.js + Express · PostgreSQL (Supabase) · Prisma · Better Auth · REST API
+> **Stack:** React + Vite · Node.js + Express · PostgreSQL (Neon) · Prisma · Better Auth · REST API
 
 ---
 
@@ -20,10 +20,10 @@
 
 ## 1. Project Overview
 
-A full-stack rental housing platform split into two separate applications — a React frontend and an Express backend — connected over a REST API. Supabase is used as the hosted PostgreSQL provider; Prisma handles all database access. Better Auth runs in the Express layer for session management.
+A full-stack rental housing platform split into two separate applications — a React frontend and an Express backend — connected over a REST API. Neon is used as the hosted PostgreSQL provider; Prisma handles all database access. Better Auth runs in the Express layer for session management.
 
 ```
-Client (React + Vite)  →  REST API  →  Express Server  →  Prisma  →  Supabase (Postgres)
+Client (React + Vite)  →  REST API  →  Express Server  →  Prisma  →  Neon (Postgres)
 ```
 
 ### Monorepo Structure
@@ -65,7 +65,7 @@ packages/shared/src/
 
 ## 2. Database Schema
 
-> Supabase acts as the hosted PostgreSQL provider. `DATABASE_URL` points to the Supabase Session Pooler connection string. Prisma manages all migrations — no Supabase JS SDK needed.
+> Neon acts as the hosted serverless PostgreSQL provider. `DATABASE_URL` points to the Neon connection string. Prisma manages all migrations.
 
 ### Enums
 
@@ -293,24 +293,24 @@ model TicketMessage {
 
 ## 3. Authentication
 
-> Better Auth runs entirely in the Express server. It exposes auth routes at `/api/auth/*` and uses Prisma to persist sessions in Supabase. The React client uses the Better Auth client SDK.
+> Better Auth runs entirely in the Express server. It exposes auth routes at `/api/auth/*` and uses Prisma to persist sessions in the database. The React client uses the Better Auth client SDK.
 
 ### Server Setup
 
 ```typescript
 // packages/server/src/lib/auth.ts
-import { betterAuth } from 'better-auth';
-import { prismaAdapter } from 'better-auth/adapters/prisma';
-import { db } from './db';
+import { betterAuth } from "better-auth";
+import { prismaAdapter } from "better-auth/adapters/prisma";
+import { db } from "./db";
 
 export const auth = betterAuth({
-  database: prismaAdapter(db, { provider: 'postgresql' }),
+  database: prismaAdapter(db, { provider: "postgresql" }),
   emailAndPassword: { enabled: true },
   socialProviders: {
     google: {
       clientId: process.env.GOOGLE_CLIENT_ID!,
       clientSecret: process.env.GOOGLE_CLIENT_SECRET!,
-    }
+    },
   },
   session: { expiresIn: 60 * 60 * 24 * 7 }, // 7 days
 });
@@ -323,19 +323,19 @@ export const auth = betterAuth({
 
 ```typescript
 // packages/server/src/middleware/requireAuth.ts
-import { auth } from '../lib/auth';
+import { auth } from "../lib/auth";
 
 export async function requireAuth(req, res, next) {
   const session = await auth.api.getSession({ headers: req.headers });
-  if (!session) return res.status(401).json({ error: 'Unauthorized' });
+  if (!session) return res.status(401).json({ error: "Unauthorized" });
   req.user = session.user;
   next();
 }
 
 export async function requireAdmin(req, res, next) {
   const session = await auth.api.getSession({ headers: req.headers });
-  if (!session || session.user.role !== 'ADMIN')
-    return res.status(403).json({ error: 'Forbidden' });
+  if (!session || session.user.role !== "ADMIN")
+    return res.status(403).json({ error: "Forbidden" });
   req.user = session.user;
   next();
 }
@@ -345,7 +345,7 @@ export async function requireAdmin(req, res, next) {
 
 ```typescript
 // packages/client/src/lib/auth-client.ts
-import { createAuthClient } from 'better-auth/react';
+import { createAuthClient } from "better-auth/react";
 
 export const authClient = createAuthClient({
   baseURL: import.meta.env.VITE_API_URL,
@@ -359,14 +359,14 @@ export const authClient = createAuthClient({
 
 ### Auth Flow
 
-| Step | Endpoint | Details |
-|---|---|---|
-| Register | `POST /api/auth/sign-up` | Better Auth handles hashing + session creation |
-| Login | `POST /api/auth/sign-in` | Returns session token |
-| Session check | `GET /api/auth/session` | Returns current user + role |
-| Protected route | Any `/api/*` | `requireAuth` middleware validates session |
-| Admin route | Any `/api/admin/*` | `requireAdmin` checks `role === ADMIN` |
-| Sign out | `POST /api/auth/sign-out` | Deletes session from DB |
+| Step            | Endpoint                  | Details                                        |
+| --------------- | ------------------------- | ---------------------------------------------- |
+| Register        | `POST /api/auth/sign-up`  | Better Auth handles hashing + session creation |
+| Login           | `POST /api/auth/sign-in`  | Returns session token                          |
+| Session check   | `GET /api/auth/session`   | Returns current user + role                    |
+| Protected route | Any `/api/*`              | `requireAuth` middleware validates session     |
+| Admin route     | Any `/api/admin/*`        | `requireAdmin` checks `role === ADMIN`         |
+| Sign out        | `POST /api/auth/sign-out` | Deletes session from DB                        |
 
 ---
 
@@ -374,57 +374,57 @@ export const authClient = createAuthClient({
 
 ### Listings
 
-| Method | Endpoint | Auth | Description |
-|---|---|---|---|
-| `GET` | `/api/listings` | Public | Browse with filters: `city`, `minRent`, `maxRent`, `availableFrom`, `furnished` |
-| `GET` | `/api/listings/:id` | Public | Full detail with images, amenities, rules |
-| `GET` | `/api/listings/compare?ids=` | Tenant | Side-by-side comparison of 2–3 listings |
-| `POST` | `/api/listings` | Admin | Create listing (starts as DRAFT) |
-| `PATCH` | `/api/listings/:id` | Admin | Update listing fields |
-| `PATCH` | `/api/listings/:id/status` | Admin | Change status: DRAFT → REVIEW → PUBLISHED → ARCHIVED |
+| Method  | Endpoint                     | Auth   | Description                                                                     |
+| ------- | ---------------------------- | ------ | ------------------------------------------------------------------------------- |
+| `GET`   | `/api/listings`              | Public | Browse with filters: `city`, `minRent`, `maxRent`, `availableFrom`, `furnished` |
+| `GET`   | `/api/listings/:id`          | Public | Full detail with images, amenities, rules                                       |
+| `GET`   | `/api/listings/compare?ids=` | Tenant | Side-by-side comparison of 2–3 listings                                         |
+| `POST`  | `/api/listings`              | Admin  | Create listing (starts as DRAFT)                                                |
+| `PATCH` | `/api/listings/:id`          | Admin  | Update listing fields                                                           |
+| `PATCH` | `/api/listings/:id/status`   | Admin  | Change status: DRAFT → REVIEW → PUBLISHED → ARCHIVED                            |
 
 ### Visits
 
-| Method | Endpoint | Auth | Description |
-|---|---|---|---|
-| `POST` | `/api/visits` | Tenant | Request visit with `listingId` + `proposedAt` + `notes` |
-| `GET` | `/api/visits/me` | Tenant | All visits for current tenant |
-| `PATCH` | `/api/visits/:id/decision` | Tenant | Set INTERESTED / NOT_INTERESTED / APPLIED |
-| `PATCH` | `/api/visits/:id/cancel` | Tenant | Cancel a visit |
-| `GET` | `/api/admin/visits` | Admin | All visits, filterable by status |
-| `PATCH` | `/api/admin/visits/:id/schedule` | Admin | Set `scheduledAt`, move to SCHEDULED |
-| `PATCH` | `/api/admin/visits/:id/confirm` | Admin | Mark as VISITED |
+| Method  | Endpoint                         | Auth   | Description                                             |
+| ------- | -------------------------------- | ------ | ------------------------------------------------------- |
+| `POST`  | `/api/visits`                    | Tenant | Request visit with `listingId` + `proposedAt` + `notes` |
+| `GET`   | `/api/visits/me`                 | Tenant | All visits for current tenant                           |
+| `PATCH` | `/api/visits/:id/decision`       | Tenant | Set INTERESTED / NOT_INTERESTED / APPLIED               |
+| `PATCH` | `/api/visits/:id/cancel`         | Tenant | Cancel a visit                                          |
+| `GET`   | `/api/admin/visits`              | Admin  | All visits, filterable by status                        |
+| `PATCH` | `/api/admin/visits/:id/schedule` | Admin  | Set `scheduledAt`, move to SCHEDULED                    |
+| `PATCH` | `/api/admin/visits/:id/confirm`  | Admin  | Mark as VISITED                                         |
 
 ### Shortlist
 
-| Method | Endpoint | Auth | Description |
-|---|---|---|---|
+| Method | Endpoint                    | Auth   | Description                   |
+| ------ | --------------------------- | ------ | ----------------------------- |
 | `POST` | `/api/shortlist/:listingId` | Tenant | Toggle shortlist (add/remove) |
-| `GET` | `/api/shortlist/me` | Tenant | All shortlisted listings |
+| `GET`  | `/api/shortlist/me`         | Tenant | All shortlisted listings      |
 
 ### Move-In & Operations
 
-| Method | Endpoint | Auth | Description |
-|---|---|---|---|
-| `POST` | `/api/move-in` | Admin | Create move-in for tenant + listing |
-| `GET` | `/api/move-in/me` | Tenant | Active move-in for current tenant |
-| `GET` | `/api/move-in/:id/checklist` | Tenant | All checklist items |
-| `PATCH` | `/api/move-in/:id/checklist/:itemId` | Tenant | Mark complete, attach `fileUrl` |
-| `GET` | `/api/move-in/:id/inventory` | Tenant | Inventory list |
-| `POST` | `/api/move-in/:id/inventory` | Tenant/Admin | Add inventory item |
-| `POST` | `/api/move-in/:id/extension` | Tenant | Request stay extension |
-| `PATCH` | `/api/admin/extension/:id` | Admin | Approve or reject extension |
+| Method  | Endpoint                             | Auth         | Description                         |
+| ------- | ------------------------------------ | ------------ | ----------------------------------- |
+| `POST`  | `/api/move-in`                       | Admin        | Create move-in for tenant + listing |
+| `GET`   | `/api/move-in/me`                    | Tenant       | Active move-in for current tenant   |
+| `GET`   | `/api/move-in/:id/checklist`         | Tenant       | All checklist items                 |
+| `PATCH` | `/api/move-in/:id/checklist/:itemId` | Tenant       | Mark complete, attach `fileUrl`     |
+| `GET`   | `/api/move-in/:id/inventory`         | Tenant       | Inventory list                      |
+| `POST`  | `/api/move-in/:id/inventory`         | Tenant/Admin | Add inventory item                  |
+| `POST`  | `/api/move-in/:id/extension`         | Tenant       | Request stay extension              |
+| `PATCH` | `/api/admin/extension/:id`           | Admin        | Approve or reject extension         |
 
 ### Support Tickets
 
-| Method | Endpoint | Auth | Description |
-|---|---|---|---|
-| `POST` | `/api/tickets` | Tenant | Create ticket with subject + first message |
-| `GET` | `/api/tickets/me` | Tenant | All tickets for current tenant |
-| `GET` | `/api/tickets/:id` | Tenant/Admin | Ticket detail with threaded messages |
-| `POST` | `/api/tickets/:id/messages` | Tenant/Admin | Add reply to thread |
-| `PATCH` | `/api/admin/tickets/:id/status` | Admin | Change status |
-| `GET` | `/api/admin/tickets` | Admin | All tickets sorted by priority |
+| Method  | Endpoint                        | Auth         | Description                                |
+| ------- | ------------------------------- | ------------ | ------------------------------------------ |
+| `POST`  | `/api/tickets`                  | Tenant       | Create ticket with subject + first message |
+| `GET`   | `/api/tickets/me`               | Tenant       | All tickets for current tenant             |
+| `GET`   | `/api/tickets/:id`              | Tenant/Admin | Ticket detail with threaded messages       |
+| `POST`  | `/api/tickets/:id/messages`     | Tenant/Admin | Add reply to thread                        |
+| `PATCH` | `/api/admin/tickets/:id/status` | Admin        | Change status                              |
+| `GET`   | `/api/admin/tickets`            | Admin        | All tickets sorted by priority             |
 
 ---
 
@@ -465,7 +465,7 @@ npm install -D tailwindcss @shadcn/ui
 
 ```env
 # packages/server/.env
-DATABASE_URL=postgresql://postgres:[password]@db.[project].supabase.co:5432/postgres
+DATABASE_URL=postgresql://[user]:[password]@[project].neon.tech/neondb?sslmode=require
 BETTER_AUTH_SECRET=your-secret-32-chars-min
 BETTER_AUTH_URL=http://localhost:4000
 GOOGLE_CLIENT_ID=your-google-client-id
@@ -477,13 +477,13 @@ RESEND_API_KEY=your-resend-api-key
 VITE_API_URL=http://localhost:4000
 ```
 
-> ⚠️ **Supabase Note:** Use the **Session Pooler** connection string (port `5432`, mode `session`) from Supabase dashboard → Settings → Database. Do NOT use the Transaction Pooler (port `6543`) with Prisma migrations.
+> ⚠️ **Neon Note:** Use the connection string directly from the Neon dashboard. A connection pooler string (ends with `?sslmode=require`) is usually optimal.
 
 ### Prisma Commands
 
 ```bash
 npx prisma init          # Creates schema.prisma + .env placeholder
-npx prisma db push       # Push schema to Supabase (dev/prototyping)
+npx prisma db push       # Push schema to Neon (dev/prototyping)
 npx prisma migrate dev   # Create migration files (production workflow)
 npx prisma generate      # Regenerate Prisma Client after schema changes
 npx prisma studio        # Visual DB browser at localhost:5555
@@ -516,38 +516,43 @@ npx prisma studio        # Visual DB browser at localhost:5555
 
 ### State Management
 
-| State Type | Tool | Used For |
-|---|---|---|
-| Server state | TanStack Query | All API fetching, caching, mutations |
-| Client state | Zustand | Compare basket (2–3 listings), optimistic shortlist UI |
-| Form state | React Hook Form + Zod | All forms with validation |
-| Auth state | Better Auth client | Session, sign in/out |
+| State Type   | Tool                  | Used For                                               |
+| ------------ | --------------------- | ------------------------------------------------------ |
+| Server state | TanStack Query        | All API fetching, caching, mutations                   |
+| Client state | Zustand               | Compare basket (2–3 listings), optimistic shortlist UI |
+| Form state   | React Hook Form + Zod | All forms with validation                              |
+| Auth state   | Better Auth client    | Session, sign in/out                                   |
 
 ### Key Component Breakdown
 
 #### Tenant Dashboard
+
 - `StatsBar` — active visits count, shortlisted count, open tickets
 - `RecentVisits` — last 3 visits with status pill badge
 - `MoveInProgress` — checklist progress ring (X/Y complete)
 - `RecentTickets` — open tickets with priority badge
 
 #### Listings Browse
+
 - `FilterBar` — city input, rent range slider, date picker, furnished toggle
 - `ListingGrid` — card grid with thumbnail, price, bedrooms, shortlist icon
 - `CompareDrawer` — sticky bottom tray when 1+ listings added (max 3)
 
 #### Visit Tracker
+
 - `VisitCard` — property thumbnail + address
 - `StatusStepper` — 4-step bar: Requested → Scheduled → Visited → Decision
 - `ActionRow` — cancel (if REQUESTED/SCHEDULED), decision selector (if VISITED)
 
 #### Move-In Checklist
+
 - `ProgressHeader` — filled ring showing X of Y complete
 - `ChecklistSection` — grouped by type: DOCUMENT_UPLOAD, AGREEMENT, INVENTORY_REVIEW
 - `InventoryTable` — editable table with name, quantity, condition
 - `ExtensionForm` — date picker + reason textarea
 
 #### Admin Listings Board
+
 - `KanbanBoard` — three columns: Draft | Under Review | Published
 - `ListingCard` — quick status change buttons
 - `ListingReviewModal` — full property preview + Approve / Reject actions
@@ -557,16 +562,18 @@ npx prisma studio        # Visual DB browser at localhost:5555
 ## 7. Implementation Phases
 
 ### Phase 1 — Foundation `Week 1`
+
 - [ ] Initialize monorepo with workspaces
 - [ ] Set up Express with TypeScript, cors, helmet, morgan
 - [ ] Create Vite React app with Tailwind + Shadcn/ui
-- [ ] Write Prisma schema and run first migration against Supabase
+- [ ] Write Prisma schema and run first migration against Neon
 - [ ] Configure Better Auth in Express (email + Google OAuth)
 - [ ] Build login / register pages in React client
 - [ ] Set up TanStack Query provider and Axios instance
 - [ ] Create shared Zod schemas for all models
 
 ### Phase 2 — Listings & Browse `Week 2`
+
 - [ ] `GET /api/listings` with filters
 - [ ] `GET /api/listings/:id` full detail
 - [ ] Listings browse page with FilterBar + ListingGrid
@@ -578,6 +585,7 @@ npx prisma studio        # Visual DB browser at localhost:5555
 - [ ] Admin listings board with Kanban columns
 
 ### Phase 3 — Visits `Week 3`
+
 - [ ] `POST /api/visits` — request visit from property page
 - [ ] `GET /api/visits/me` — tenant visit list
 - [ ] Visit tracker with StatusStepper component
@@ -588,6 +596,7 @@ npx prisma studio        # Visual DB browser at localhost:5555
 - [ ] Email notification on visit scheduled (Resend)
 
 ### Phase 4 — Move-In & Operations `Week 4`
+
 - [ ] Move-in creation by admin
 - [ ] Move-in checklist API (GET + PATCH per item)
 - [ ] File upload for checklist documents (Uploadthing)
@@ -599,6 +608,7 @@ npx prisma studio        # Visual DB browser at localhost:5555
 - [ ] Admin ticket queue with priority sorting
 
 ### Phase 5 — Dashboards & Polish `Week 5`
+
 - [ ] Tenant dashboard with real stat counters
 - [ ] Admin dashboard: pending reviews, open tickets, recent activity
 - [ ] Global loading states + skeleton screens
@@ -611,19 +621,19 @@ npx prisma studio        # Visual DB browser at localhost:5555
 
 ## 8. Tech Decisions
 
-| Concern | Choice | Reason |
-|---|---|---|
-| Database hosting | Supabase (Postgres) | Managed Postgres, free tier, built-in dashboard + backups |
-| ORM | Prisma | Type-safe queries, migrations, excellent TS integration |
-| Auth | Better Auth + Express | Runs in Node, Prisma adapter, supports OAuth, no vendor lock-in |
-| File uploads | Uploadthing | Simple Express integration, handles S3 backing automatically |
-| API fetching | TanStack Query | Caching, background refetch, built-in loading/error state |
-| Global client state | Zustand | Lightweight — used only for compare basket + optimistic shortlist |
-| Forms | React Hook Form + Zod | Shared Zod schemas between client and server validation |
-| Email | Resend + React Email | Developer-friendly transactional emails with React templates |
-| Date handling | date-fns | Lightweight, tree-shakeable |
-| Admin tables | TanStack Table | Headless, flexible sorting/filtering |
-| Styling | Tailwind + Shadcn/ui | Fast UI with consistent design tokens + accessible components |
+| Concern             | Choice                | Reason                                                            |
+| ------------------- | --------------------- | ----------------------------------------------------------------- |
+| Database hosting    | Neon (Postgres)       | Serverless Postgres, compute scaling, branching, free tier        |
+| ORM                 | Prisma                | Type-safe queries, migrations, excellent TS integration           |
+| Auth                | Better Auth + Express | Runs in Node, Prisma adapter, supports OAuth, no vendor lock-in   |
+| File uploads        | Uploadthing           | Simple Express integration, handles S3 backing automatically      |
+| API fetching        | TanStack Query        | Caching, background refetch, built-in loading/error state         |
+| Global client state | Zustand               | Lightweight — used only for compare basket + optimistic shortlist |
+| Forms               | React Hook Form + Zod | Shared Zod schemas between client and server validation           |
+| Email               | Resend + React Email  | Developer-friendly transactional emails with React templates      |
+| Date handling       | date-fns              | Lightweight, tree-shakeable                                       |
+| Admin tables        | TanStack Table        | Headless, flexible sorting/filtering                              |
+| Styling             | Tailwind + Shadcn/ui  | Fast UI with consistent design tokens + accessible components     |
 
 ---
 
@@ -638,12 +648,12 @@ Admin     Admin     Admin
 creates  submits  approves
 ```
 
-| Status | Who Triggers | Action |
-|---|---|---|
-| DRAFT | Admin creates | Fill fields, upload images, submit for review |
-| REVIEW | Admin submits | Senior admin reviews content |
-| PUBLISHED | Admin approves | Visible on browse page to all tenants |
-| ARCHIVED | Admin archives | Hidden from browse, data retained |
+| Status    | Who Triggers   | Action                                        |
+| --------- | -------------- | --------------------------------------------- |
+| DRAFT     | Admin creates  | Fill fields, upload images, submit for review |
+| REVIEW    | Admin submits  | Senior admin reviews content                  |
+| PUBLISHED | Admin approves | Visible on browse page to all tenants         |
+| ARCHIVED  | Admin archives | Hidden from browse, data retained             |
 
 ### Visit Lifecycle
 
@@ -653,13 +663,13 @@ REQUESTED → SCHEDULED → VISITED → DECISION
                            INTERESTED / NOT_INTERESTED / APPLIED
 ```
 
-| Status | Actor | Details |
-|---|---|---|
-| REQUESTED | Tenant | Submits with preferred date/time |
-| SCHEDULED | Admin | Confirms slot, tenant gets email |
-| VISITED | Admin | Marks complete after physical visit |
-| DECISION | Tenant | Sets outcome |
-| CANCELLED | Tenant or Admin | Can cancel before VISITED |
+| Status    | Actor           | Details                             |
+| --------- | --------------- | ----------------------------------- |
+| REQUESTED | Tenant          | Submits with preferred date/time    |
+| SCHEDULED | Admin           | Confirms slot, tenant gets email    |
+| VISITED   | Admin           | Marks complete after physical visit |
+| DECISION  | Tenant          | Sets outcome                        |
+| CANCELLED | Tenant or Admin | Can cancel before VISITED           |
 
 ### Move-In Checklist Workflow
 
