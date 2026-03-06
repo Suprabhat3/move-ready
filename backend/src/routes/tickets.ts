@@ -65,6 +65,144 @@ router.get("/agent", requireAgentOrAdmin, async (req, res) => {
 });
 
 /**
+ * POST /api/tickets
+ * Create a new support ticket (Tenant initiating contact about a property).
+ */
+router.post("/", async (req, res) => {
+  try {
+    const session = await auth.api.getSession({
+      headers: fromNodeHeaders(req.headers),
+    });
+
+    if (!session || !session.user) {
+      return res.status(401).json({ message: "Unauthorized" });
+    }
+
+    const { subject, message, listingId } = req.body;
+    const user = session.user;
+
+    if (!subject || !message) {
+      return res.status(400).json({ message: "Subject and message are required" });
+    }
+
+    // Create the ticket linking to the listing, and the first message
+    const newTicket = await prisma.supportTicket.create({
+      data: {
+        tenantId: user.id,
+        listingId: listingId || null,
+        subject,
+        messages: {
+          create: {
+            authorId: user.id,
+            content: message
+          }
+        }
+      },
+      include: {
+        messages: true
+      }
+    });
+
+    res.status(201).json(newTicket);
+  } catch (error) {
+    console.error("Create Ticket Error:", error);
+    res.status(500).json({ message: "Internal Server Error" });
+  }
+});
+
+/**
+ * POST /api/tickets
+ * Create a new support ticket (Tenant initiating contact about a property).
+ */
+router.post("/", async (req, res) => {
+  try {
+    const session = await auth.api.getSession({
+      headers: fromNodeHeaders(req.headers),
+    });
+
+    if (!session || !session.user) {
+      return res.status(401).json({ message: "Unauthorized" });
+    }
+
+    const { subject, message, listingId } = req.body;
+    const user = session.user;
+
+    if (!subject || !message) {
+      return res.status(400).json({ message: "Subject and message are required" });
+    }
+
+    // Create the ticket linking to the listing, and the first message
+    const newTicket = await prisma.supportTicket.create({
+      data: {
+        tenantId: user.id,
+        listingId: listingId || null,
+        subject,
+        messages: {
+          create: {
+            authorId: user.id,
+            content: message
+          }
+        }
+      },
+      include: {
+        messages: true
+      }
+    });
+
+    res.status(201).json(newTicket);
+  } catch (error) {
+    console.error("Create Ticket Error:", error);
+    res.status(500).json({ message: "Internal Server Error" });
+  }
+});
+
+/**
+ * POST /api/tickets
+ * Create a new support ticket (Tenant initiating contact about a property).
+ */
+router.post("/", async (req, res) => {
+  try {
+    const session = await auth.api.getSession({
+      headers: fromNodeHeaders(req.headers),
+    });
+
+    if (!session || !session.user) {
+      return res.status(401).json({ message: "Unauthorized" });
+    }
+
+    const { subject, message, listingId } = req.body;
+    const user = session.user;
+
+    if (!subject || !message) {
+      return res.status(400).json({ message: "Subject and message are required" });
+    }
+
+    // Create the ticket linking to the listing, and the first message
+    const newTicket = await prisma.supportTicket.create({
+      data: {
+        tenantId: user.id,
+        listingId: listingId || null,
+        subject,
+        messages: {
+          create: {
+            authorId: user.id,
+            content: message
+          }
+        }
+      },
+      include: {
+        messages: true
+      }
+    });
+
+    res.status(201).json(newTicket);
+  } catch (error) {
+    console.error("Create Ticket Error:", error);
+    res.status(500).json({ message: "Internal Server Error" });
+  }
+});
+
+/**
  * POST /api/tickets/:ticketId/reply
  * Reply to a specific ticket.
  */

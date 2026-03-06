@@ -33,6 +33,14 @@ const Navbar = ({
         <nav className="hidden md:block">
           <ul className="flex items-center gap-10">
             <li>
+              <button
+                onClick={() => onNavigate && onNavigate("properties")}
+                className="font-medium text-text-muted text-sm hover:text-primary-blue transition-colors bg-transparent border-none cursor-pointer p-0"
+              >
+                Properties
+              </button>
+            </li>
+            <li>
               <a
                 href="#features"
                 className="font-medium text-text-muted text-sm hover:text-primary-blue transition-colors"

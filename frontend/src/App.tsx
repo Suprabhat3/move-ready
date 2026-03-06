@@ -7,6 +7,7 @@ import Footer from "./components/Footer";
 import Login from "./pages/Login";
 import Register from "./pages/Register";
 import Dashboard from "./pages/Dashboard";
+import Properties from "./pages/Properties";
 
 const API_BASE_URL = import.meta.env.VITE_API_URL || "http://localhost:4000";
 
@@ -74,6 +75,21 @@ function App() {
         />
         <main className="flex-1">
           <Dashboard user={user} />
+        </main>
+      </div>
+    );
+  }
+
+  if (currentPage === "properties") {
+    return (
+      <div className="min-h-screen flex flex-col font-sans">
+        <Navbar
+          onNavigate={setCurrentPage}
+          user={user}
+          onLogout={handleLogout}
+        />
+        <main className="flex-1">
+          <Properties user={user} />
         </main>
       </div>
     );

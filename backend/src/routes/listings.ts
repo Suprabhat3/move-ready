@@ -31,6 +31,35 @@ const requireAgentOrAdmin = async (req: express.Request, res: express.Response, 
 };
 
 /**
+ * GET /api/listings
+ * Public (or Tenant) accessible route to fetch all published listings.
+ */
+router.get("/", async (req, res) => {
+  try {
+    const listings = await prisma.listing.findMany({
+      where: {
+        status: "PUBLISHED"
+      },
+      include: {
+        images: {
+          orderBy: {
+            order: "asc"
+          }
+        }
+      },
+      orderBy: {
+        createdAt: "desc"
+      }
+    });
+    
+    res.status(200).json(listings);
+  } catch (error) {
+    console.error("Fetch Public Listings Error:", error);
+    res.status(500).json({ message: "Internal Server Error" });
+  }
+});
+
+/**
  * POST /api/listings
  * Create a new property listing.
  */
