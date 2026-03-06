@@ -2,7 +2,7 @@ import { ArrowRight } from "lucide-react";
 
 const CallToAction = () => {
   return (
-    <section className="py-24 pb-32 bg-bg-base relative overflow-hidden">
+    <section className="py-24 pb-32 relative overflow-hidden">
       {/* Background brutalist decorative elements */}
       <div className="absolute top-10 left-10 w-24 h-24 border-4 border-black bg-[#ff00ff] shadow-brutal rotate-12 z-0 hidden lg:block"></div>
       <div className="absolute bottom-10 right-20 w-32 h-32 rounded-full border-4 border-black bg-[#00e5ff] shadow-brutal -rotate-6 z-0 hidden lg:block"></div>

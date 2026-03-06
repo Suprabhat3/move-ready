@@ -1,9 +1,10 @@
+import { Link } from "react-router";
 import { ArrowRight, Search, Key } from "lucide-react";
 import heroMockup from "../assets/hero-mockup.png";
 
 const Hero = () => {
   return (
-    <section className="relative min-h-[calc(100vh-5rem)] mt-20 py-24 overflow-hidden border-b-4 border-black bg-bg-base">
+    <section className="relative min-h-screen pt-32 pb-24 overflow-hidden border-b-4 border-black">
       <div className="absolute top-0 left-0 w-full h-full pointer-events-none overflow-hidden z-0">
         {/* Playful bold background blobs */}
         <div className="absolute rounded-full z-[1] opacity-30 bg-[#39ff14] blur-[100px] w-[500px] h-[500px] -top-[100px] -left-[100px]"></div>
@@ -38,9 +39,12 @@ const Hero = () => {
           </p>
 
           <div className="flex flex-col sm:flex-row gap-6 mb-16 w-full sm:w-auto animate-[fade-in-up_0.8s_ease-out_0.3s_forwards] opacity-0 [animation-fill-mode:forwards]">
-            <button className="flex items-center justify-center gap-2 py-4 px-8 rounded-xl font-bold transition-all duration-300 text-lg text-black bg-[#39ff14] border-2 border-black shadow-brutal-lg hover-brutal">
+            <Link
+              to="/properties"
+              className="flex items-center justify-center gap-2 py-4 px-8 rounded-xl font-bold transition-all duration-300 text-lg text-black bg-[#39ff14] border-2 border-black shadow-brutal-lg hover-brutal"
+            >
               Browse Properties <ArrowRight size={24} strokeWidth={3} />
-            </button>
+            </Link>
             <button className="flex items-center justify-center py-4 px-8 rounded-xl text-lg font-bold transition-all duration-300 border-2 border-black text-black bg-white shadow-brutal hover-brutal">
               How it Works
             </button>

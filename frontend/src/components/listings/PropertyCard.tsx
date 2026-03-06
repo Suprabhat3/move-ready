@@ -30,15 +30,6 @@ const PropertyCard = ({
     listing.images?.[0]?.url ||
     "https://images.unsplash.com/photo-1568605114967-8130f3a36994?auto=format&fit=crop&q=80&w=800";
 
-  // Format currency
-  const formatPrice = (amount: number) => {
-    return new Intl.NumberFormat("en-IN", {
-      style: "currency",
-      currency: "INR",
-      maximumFractionDigits: 0,
-    }).format(amount);
-  };
-
   const handleShortlist = async () => {
     if (!user) {
       navigate("/login");
@@ -50,39 +41,39 @@ const PropertyCard = ({
   };
 
   return (
-    <div className="group relative bg-white border-2 border-black rounded-3xl overflow-hidden shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:translate-x-[-2px] hover:translate-y-[-2px] hover:shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] transition-all duration-300 h-full flex flex-col">
+    <div className="group relative bg-white/60 backdrop-blur-xl border-2 border-black/20 rounded-[2.5rem] overflow-hidden shadow-[8px_8px_0px_0px_rgba(0,0,0,0.8)] hover:shadow-[12px_12px_0px_0px_rgba(0,0,0,0.9)] hover:-translate-y-2 transition-all duration-500 h-full flex flex-col p-4">
       {/* Image Section */}
-      <div className="relative h-64 overflow-hidden">
+      <div className="relative h-64 overflow-hidden rounded-[1.8rem] border-2 border-black shadow-inner bg-black/5">
         <img
           src={mainImage}
           alt={listing.title}
-          className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
+          className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
         />
         <div className="absolute top-4 left-4 flex gap-2">
-          <span className="px-3 py-1 bg-white border-2 border-black rounded-lg text-xs font-black shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]">
+          <span className="px-4 py-1.5 bg-[#ff00ff] text-white border-2 border-black rounded-full text-xs font-black uppercase tracking-wider shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]">
             {listing.furnished.replace("_", " ")}
           </span>
         </div>
-        <div className="absolute bottom-4 left-4">
-          <div className="bg-black text-white px-4 py-2 rounded-xl border-2 border-white shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]">
-            <span className="text-xl font-black">
-              {formatPrice(listing.rentAmount)}
+        <div className="absolute bottom-4 right-4 translate-y-1">
+          <div className="bg-black/90 backdrop-blur-md text-white px-5 py-2.5 rounded-2xl border-2 border-[#00e5ff] shadow-[4px_4px_0px_0px_rgba(0,229,255,1)] group-hover:shadow-[2px_2px_0px_0px_rgba(0,229,255,1)] transition-all">
+            <span className="text-2xl font-black">
+              ₹{listing.rentAmount.toLocaleString()}
             </span>
-            <span className="text-xs ml-1 opacity-80">/ month</span>
+            <span className="text-xs ml-1 font-bold opacity-60">/ mo</span>
           </div>
         </div>
       </div>
 
       {/* Content Section */}
-      <div className="p-6 flex-1 flex flex-col">
+      <div className="px-2 pt-6 pb-2 flex-1 flex flex-col">
         <div className="flex items-start justify-between mb-4">
-          <div>
-            <h3 className="text-xl font-black text-black leading-tight mb-1 group-hover:text-primary-blue transition-colors">
+          <div className="flex-1">
+            <h3 className="text-2xl font-black text-black leading-tight mb-2 group-hover:text-[#ff00ff] transition-colors line-clamp-1">
               {listing.title}
             </h3>
-            <div className="flex items-center text-text-muted gap-1 text-sm">
-              <MapPin className="w-3.5 h-3.5" />
-              <span>
+            <div className="flex items-center text-black/50 gap-1.5 text-sm font-bold">
+              <MapPin className="w-4 h-4 text-[#00e5ff]" />
+              <span className="truncate">
                 {listing.city}, {listing.state}
               </span>
             </div>
@@ -90,56 +81,72 @@ const PropertyCard = ({
         </div>
 
         {/* Stats */}
-        <div className="grid grid-cols-3 gap-2 py-4 border-y-2 border-black/5 mb-6">
-          <div className="flex flex-col items-center gap-1">
-            <BedDouble className="w-4 h-4 text-primary-blue" />
-            <span className="text-sm font-bold">{listing.bedrooms} Beds</span>
+        <div className="grid grid-cols-3 gap-3 py-5 border-y-2 border-black/5 mb-6">
+          <div className="flex flex-col items-center gap-1.5">
+            <div className="bg-black/5 p-2 rounded-lg">
+              <BedDouble className="w-4 h-4 text-black" />
+            </div>
+            <span className="text-xs font-black uppercase text-black/60 tracking-wider text-center">
+              {listing.bedrooms} Beds
+            </span>
           </div>
-          <div className="flex flex-col items-center gap-1 border-x-2 border-black/5">
-            <Bath className="w-4 h-4 text-primary-blue" />
-            <span className="text-sm font-bold">{listing.bathrooms} Baths</span>
+          <div className="flex flex-col items-center gap-1.5 border-x-2 border-black/5">
+            <div className="bg-black/5 p-2 rounded-lg">
+              <Bath className="w-4 h-4 text-black" />
+            </div>
+            <span className="text-xs font-black uppercase text-black/60 tracking-wider text-center">
+              {listing.bathrooms} Baths
+            </span>
           </div>
-          <div className="flex flex-col items-center gap-1">
-            <Square className="w-4 h-4 text-primary-blue" />
-            <span className="text-sm font-bold">{listing.area} sqft</span>
+          <div className="flex flex-col items-center gap-1.5">
+            <div className="bg-black/5 p-2 rounded-lg">
+              <Square className="w-4 h-4 text-black" />
+            </div>
+            <span className="text-xs font-black uppercase text-black/60 tracking-wider text-center">
+              {listing.area} sqft
+            </span>
           </div>
         </div>
 
-        {/* CTA */}
-        <div className="mt-auto space-y-3">
-          <button
-            onClick={() => setIsModalOpen(true)}
-            className="flex-1 flex items-center justify-center gap-2 bg-primary-blue text-white font-black py-3 rounded-xl border-2 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:translate-x-[2px] hover:translate-y-[2px] hover:shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] transition-all cursor-pointer"
-          >
-            <MessageSquare className="w-4 h-4" />
-            Contact Agent
-          </button>
+        {/* Action Grid */}
+        <div className="mt-auto space-y-4">
+          {/* Secondary Actions */}
           <div className="flex items-center gap-3">
             <button
               type="button"
               onClick={handleShortlist}
-              className="w-12 h-12 flex items-center justify-center bg-white border-2 border-black rounded-xl shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] transition-all cursor-pointer"
+              className={`flex-1 h-14 flex items-center justify-center gap-2 border-2 border-black rounded-2xl shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:translate-x-[2px] hover:translate-y-[2px] hover:shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] transition-all cursor-pointer font-black ${isShortlisted ? "bg-[#ff00ff] text-white" : "bg-white"}`}
             >
               <Heart
                 className={`w-5 h-5 ${isShortlisted ? "fill-current" : ""}`}
               />
+              <span className="hidden sm:inline">Save</span>
             </button>
             <button
               type="button"
               disabled={!isCompared(listing.id) && compareIds.length >= 3}
               onClick={() => toggleCompare(listing.id)}
-              className="w-12 h-12 flex items-center justify-center bg-white border-2 border-black rounded-xl shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] transition-all cursor-pointer disabled:opacity-50"
+              className={`flex-1 h-14 flex items-center justify-center gap-2 border-2 border-black rounded-2xl shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:translate-x-[2px] hover:translate-y-[2px] hover:shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] transition-all cursor-pointer font-black ${isCompared(listing.id) ? "bg-[#39ff14] text-black" : "bg-white"} disabled:opacity-30`}
             >
               <ArrowRightLeft className="w-5 h-5" />
+              <span className="hidden sm:inline">Compare</span>
             </button>
+
             <Link
               to={`/properties/${listing.id}`}
-              className="flex-1 flex items-center justify-center gap-2 bg-white border-2 border-black rounded-xl shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] px-4 py-3 font-black"
+              className="h-14 w-14 flex items-center justify-center bg-black text-white border-2 border-black rounded-2xl shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:translate-x-[2px] hover:translate-y-[2px] hover:shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] transition-all"
             >
-              View Details
-              <ChevronRight className="w-5 h-5 group-hover/btn:translate-x-0.5 transition-transform" />
+              <ChevronRight className="w-6 h-6" />
             </Link>
           </div>
+
+          <button
+            onClick={() => setIsModalOpen(true)}
+            className="w-full flex items-center justify-center gap-3 bg-[#00e5ff] text-black font-black py-4 rounded-full border-2 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:translate-x-[2px] hover:translate-y-[2px] hover:shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] transition-all cursor-pointer text-lg"
+          >
+            <MessageSquare className="w-5 h-5" />
+            Contact Agent
+          </button>
         </div>
       </div>
 

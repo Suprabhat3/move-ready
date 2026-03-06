@@ -67,7 +67,7 @@ const features = [
 const Features = () => {
   return (
     <section
-      className="py-24 bg-bg-base border-b-4 border-black relative overflow-hidden"
+      className="py-24 border-b-4 border-black relative overflow-hidden"
       id="features"
     >
       <div className="absolute top-40 right-10 w-32 h-32 bg-[#ff00ff] rounded-full blur-[80px] opacity-20 pointer-events-none"></div>
