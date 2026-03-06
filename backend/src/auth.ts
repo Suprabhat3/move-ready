@@ -14,6 +14,13 @@ export const auth = betterAuth({
   }),
   user: {
     modelName: 'User',
+    additionalFields: {
+      role: {
+        type: "string",
+        required: false,
+        defaultValue: "TENANT"
+      }
+    }
   },
   session: {
     modelName: 'Session',

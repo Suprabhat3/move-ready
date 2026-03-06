@@ -15,6 +15,7 @@ type SessionUser = {
   name?: string | null;
   email?: string | null;
   image?: string | null;
+  role?: string | null;
 };
 
 function App() {
@@ -66,7 +67,11 @@ function App() {
   if (currentPage === "dashboard") {
     return (
       <div className="min-h-screen flex flex-col font-sans">
-        <Navbar onNavigate={setCurrentPage} user={user} onLogout={handleLogout} />
+        <Navbar
+          onNavigate={setCurrentPage}
+          user={user}
+          onLogout={handleLogout}
+        />
         <main className="flex-1">
           <Dashboard user={user} />
         </main>

@@ -14,6 +14,7 @@ export default function Register({
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [role, setRole] = useState("TENANT");
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState("");
 
@@ -33,6 +34,7 @@ export default function Register({
           name,
           email,
           password,
+          role,
         }),
       });
 
@@ -71,6 +73,49 @@ export default function Register({
         </p>
 
         <form className="space-y-6 mt-8" onSubmit={handleSubmit}>
+          {/* Role Selection */}
+          <div className="space-y-2">
+            <label className="block text-sm font-bold text-black">
+              I am a...
+            </label>
+            <div className="flex gap-4">
+              <label
+                className={`flex-1 flex items-center justify-center py-3 px-4 border-2 border-black rounded-xl font-black cursor-pointer transition-all duration-200 uppercase tracking-wide text-sm ${
+                  role === "TENANT"
+                    ? "bg-[#39ff14] shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] -translate-x-0.5 -translate-y-0.5 text-black"
+                    : "bg-white hover:bg-gray-100 shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] text-text-muted hover:text-black"
+                }`}
+              >
+                <input
+                  type="radio"
+                  name="role"
+                  value="TENANT"
+                  checked={role === "TENANT"}
+                  onChange={(e) => setRole(e.target.value)}
+                  className="sr-only"
+                />
+                Tenant
+              </label>
+              <label
+                className={`flex-1 flex items-center justify-center py-3 px-4 border-2 border-black rounded-xl font-black cursor-pointer transition-all duration-200 uppercase tracking-wide text-sm ${
+                  role === "SITE_AGENT"
+                    ? "bg-[#00e5ff] shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] -translate-x-0.5 -translate-y-0.5 text-black"
+                    : "bg-white hover:bg-gray-100 shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] text-text-muted hover:text-black"
+                }`}
+              >
+                <input
+                  type="radio"
+                  name="role"
+                  value="SITE_AGENT"
+                  checked={role === "SITE_AGENT"}
+                  onChange={(e) => setRole(e.target.value)}
+                  className="sr-only"
+                />
+                Site Agent
+              </label>
+            </div>
+          </div>
+
           <div>
             <label className="block text-sm font-bold text-black mb-1">
               Full Name
