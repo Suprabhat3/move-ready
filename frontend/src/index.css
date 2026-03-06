@@ -1,39 +1,74 @@
 @import "tailwindcss";
 
 @theme {
-  --color-primary-green: #10b981;
-  --color-primary-green-light: #34d399;
-  --color-primary-green-dark: #059669;
+  --color-primary-green: #39ff14;
+  /* Neon green */
+  --color-primary-green-light: #a3ff99;
+  --color-primary-green-dark: #2bc010;
 
-  --color-primary-blue: #3b82f6;
-  --color-primary-blue-light: #60a5fa;
-  --color-primary-blue-dark: #2563eb;
+  --color-primary-blue: #00e5ff;
+  /* Cyan / Electric blue */
+  --color-primary-blue-light: #80f2ff;
+  --color-primary-blue-dark: #00acc1;
 
-  --color-bg-base: #f8fafc;
+  --color-primary-pink: #ff00ff;
+  /* Neon pink for accents */
+
+  --color-bg-base: #f4f4f0;
+  /* Soft off-white */
   --color-bg-alt: #ffffff;
 
-  --color-text-main: #0f172a;
-  --color-text-muted: #64748b;
-  --color-text-light: #94a3b8;
+  --color-text-main: #000000;
+  --color-text-muted: #333333;
+  --color-text-light: #666666;
 
   --color-border-light: #e2e8f0;
-  --color-border-dark: #cbd5e1;
+  --color-border-dark: #000000;
+  /* Bold brutalist borders */
 
   --font-sans: "Outfit", system-ui, sans-serif;
+  --font-display: "Space Grotesk", "Outfit", system-ui, sans-serif;
 }
 
 @layer utilities {
   .text-gradient {
-    @apply bg-clip-text text-transparent bg-gradient-to-br from-primary-green to-primary-blue;
+    @apply bg-clip-text text-transparent bg-gradient-to-br from-[#00e5ff] to-[#ff00ff];
   }
 
+  /* Traditional glass effect */
   .glass {
     @apply bg-white/70 backdrop-blur-md border border-white/40;
+  }
+
+  /* Brutalist utilities */
+  .shadow-brutal {
+    box-shadow: 4px 4px 0px 0px rgba(0, 0, 0, 1);
+  }
+
+  .shadow-brutal-lg {
+    box-shadow: 8px 8px 0px 0px rgba(0, 0, 0, 1);
+  }
+
+  .hover-brutal {
+    transition: all 200ms cubic-bezier(0.4, 0, 0.2, 1);
+  }
+
+  .hover-brutal:hover {
+    transform: translate(2px, 2px);
+    box-shadow: 2px 2px 0px 0px rgba(0, 0, 0, 1);
+  }
+
+  /* The Light Hybrid: Frosted Glass + Brutalist Borders/Shadows */
+  .glass-brutal {
+    @apply bg-white/80 backdrop-blur-xl border-2 border-black;
+    box-shadow: 4px 4px 0px 0px rgba(0, 0, 0, 1);
   }
 }
 
 body {
   background-color: var(--color-bg-base);
   color: var(--color-text-main);
-  font-family: "Outfit", system-ui, sans-serif;
+  font-family: var(--font-sans);
+  background-image: radial-gradient(#d1d5db 1px, transparent 1px);
+  background-size: 24px 24px;
 }

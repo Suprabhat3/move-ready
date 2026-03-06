@@ -3,103 +3,118 @@ import heroMockup from "../assets/hero-mockup.png";
 
 const Hero = () => {
   return (
-    <section className="relative min-h-[calc(100vh-5rem)] mt-20 py-24 overflow-hidden bg-bg-alt">
+    <section className="relative min-h-[calc(100vh-5rem)] mt-20 py-24 overflow-hidden border-b-4 border-black bg-bg-base">
       <div className="absolute top-0 left-0 w-full h-full pointer-events-none overflow-hidden z-0">
-        <div className="absolute blur-[80px] rounded-full z-[1] opacity-15 bg-primary-green w-[600px] h-[600px] -top-[200px] -left-[200px]"></div>
-        <div className="absolute blur-[80px] rounded-full z-[1] opacity-15 bg-primary-blue w-[500px] h-[500px] top-[100px] -right-[150px]"></div>
+        {/* Playful bold background blobs */}
+        <div className="absolute rounded-full z-[1] opacity-30 bg-[#39ff14] blur-[100px] w-[500px] h-[500px] -top-[100px] -left-[100px]"></div>
+        <div className="absolute rounded-full z-[1] opacity-30 bg-[#00e5ff] blur-[100px] w-[600px] h-[600px] top-[20%] -right-[200px]"></div>
+        <div className="absolute rounded-full z-[1] opacity-20 bg-[#ff00ff] blur-[100px] w-[400px] h-[400px] bottom-0 left-[20%]"></div>
       </div>
 
       <div className="w-full max-w-7xl mx-auto px-6 relative z-10 flex flex-col lg:flex-row items-center gap-16 text-center lg:text-left">
         <div className="flex-1 max-w-[600px] flex flex-col items-center lg:items-start">
-          <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-primary-green/10 border border-primary-green/20 mb-6 animate-[fade-in-up_0.8s_ease-out_forwards]">
-            <span>✨</span>
-            <span className="text-primary-green-dark font-semibold text-sm">
+          <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white border-2 border-black shadow-brutal mb-8 animate-[fade-in-up_0.8s_ease-out_forwards]">
+            <span className="text-xl">⚡</span>
+            <span className="text-black font-extrabold text-sm uppercase tracking-wider">
               The new standard in rental housing
             </span>
           </div>
 
-          <h1 className="text-5xl lg:text-6xl font-extrabold text-text-main leading-tight mb-6 tracking-tight animate-[fade-in-up_0.8s_ease-out_0.1s_forwards] opacity-0 [animation-fill-mode:forwards]">
-            Find your perfect home, <br />
-            <span className="text-gradient">Ready to move in.</span>
+          <h1
+            className="text-6xl lg:text-7xl font-extrabold text-black leading-[1.1] mb-6 tracking-tighter animate-[fade-in-up_0.8s_ease-out_0.1s_forwards] opacity-0 [animation-fill-mode:forwards]"
+            style={{ fontFamily: "var(--font-display)" }}
+          >
+            Find your <br /> perfect home, <br />
+            <span className="relative inline-block">
+              <span className="relative z-10">Ready to move in.</span>
+              <span className="absolute bottom-2 left-0 w-full h-8 bg-[#39ff14] -z-10 -rotate-2"></span>
+            </span>
           </h1>
 
-          <p className="text-lg text-text-muted leading-relaxed mb-10 max-w-[90%] animate-[fade-in-up_0.8s_ease-out_0.2s_forwards] opacity-0 [animation-fill-mode:forwards]">
+          <p className="text-xl text-text-muted font-medium leading-relaxed mb-10 max-w-[90%] animate-[fade-in-up_0.8s_ease-out_0.2s_forwards] opacity-0 [animation-fill-mode:forwards]">
             MoveReady simplifies your rental journey. From verified listings and
             seamless scheduling to digital agreements. Experience renting the
             way it should be.
           </p>
 
-          <div className="flex flex-col sm:flex-row gap-4 mb-14 w-full sm:w-auto animate-[fade-in-up_0.8s_ease-out_0.3s_forwards] opacity-0 [animation-fill-mode:forwards]">
-            <button className="flex items-center justify-center gap-2 py-4 px-8 rounded-full font-semibold transition-all duration-300 text-lg text-white bg-gradient-to-br from-primary-green to-[#14b8a6] hover:-translate-y-0.5 hover:shadow-lg hover:shadow-primary-green/40 shadow-md shadow-primary-green/30">
-              Browse Properties <ArrowRight size={20} />
+          <div className="flex flex-col sm:flex-row gap-6 mb-16 w-full sm:w-auto animate-[fade-in-up_0.8s_ease-out_0.3s_forwards] opacity-0 [animation-fill-mode:forwards]">
+            <button className="flex items-center justify-center gap-2 py-4 px-8 rounded-xl font-bold transition-all duration-300 text-lg text-black bg-[#39ff14] border-2 border-black shadow-brutal-lg hover-brutal">
+              Browse Properties <ArrowRight size={24} strokeWidth={3} />
             </button>
-            <button className="flex items-center justify-center py-4 px-8 rounded-full text-lg font-semibold transition-all duration-300 border border-primary-blue/30 text-primary-blue-dark glass hover:bg-primary-blue/5 hover:border-primary-blue">
+            <button className="flex items-center justify-center py-4 px-8 rounded-xl text-lg font-bold transition-all duration-300 border-2 border-black text-black bg-white shadow-brutal hover-brutal">
               How it Works
             </button>
           </div>
 
-          <div className="flex flex-wrap justify-center lg:justify-start items-center gap-6 sm:gap-8 animate-[fade-in-up_0.8s_ease-out_0.4s_forwards] opacity-0 [animation-fill-mode:forwards]">
-            <div className="flex flex-col">
-              <span className="text-4xl font-extrabold text-text-main leading-none mb-1">
+          <div className="flex flex-wrap justify-center lg:justify-start items-center gap-6 sm:gap-10 animate-[fade-in-up_0.8s_ease-out_0.4s_forwards] opacity-0 [animation-fill-mode:forwards]">
+            <div className="flex flex-col items-center lg:items-start glass-brutal px-6 py-4 rounded-xl">
+              <span
+                className="text-3xl font-black text-black mb-1"
+                style={{ fontFamily: "var(--font-display)" }}
+              >
                 10k+
               </span>
-              <span className="text-sm text-text-muted font-medium">
-                Verified Homes
+              <span className="text-xs text-black font-bold uppercase tracking-widest">
+                Verified
               </span>
             </div>
-            <div className="w-[1px] h-10 bg-border-light"></div>
-            <div className="flex flex-col">
-              <span className="text-4xl font-extrabold text-text-main leading-none mb-1">
+            <div className="flex flex-col items-center lg:items-start glass-brutal px-6 py-4 rounded-xl">
+              <span
+                className="text-3xl font-black text-black mb-1"
+                style={{ fontFamily: "var(--font-display)" }}
+              >
                 4.9/5
               </span>
-              <span className="text-sm text-text-muted font-medium">
-                User Reviews
+              <span className="text-xs text-black font-bold uppercase tracking-widest">
+                Reviews
               </span>
             </div>
-            <div className="w-[1px] h-10 bg-border-light"></div>
-            <div className="flex flex-col">
-              <span className="text-4xl font-extrabold text-text-main leading-none mb-1">
-                24hr
+            <div className="flex flex-col items-center lg:items-start glass-brutal px-6 py-4 rounded-xl">
+              <span
+                className="text-3xl font-black text-black mb-1"
+                style={{ fontFamily: "var(--font-display)" }}
+              >
+                24h
               </span>
-              <span className="text-sm text-text-muted font-medium">
-                Avg. Approval
+              <span className="text-xs text-black font-bold uppercase tracking-widest">
+                Approval
               </span>
             </div>
           </div>
         </div>
 
         <div className="flex-1 relative flex justify-center items-center animate-[fade-in-up_0.8s_ease-out_0.2s_forwards] opacity-0 [animation-fill-mode:forwards] w-full mt-10 lg:mt-0 hidden md:flex">
-          <div className="relative rounded-3xl p-4 shadow-2xl shadow-black/10 transform perspective-1000 -rotate-y-5 rotate-x-5 transition-transform duration-500 hover:rotate-y-0 hover:rotate-x-0 glass">
+          <div className="relative rounded-3xl p-4 glass-brutal shadow-brutal-lg transform transition-transform duration-500 hover:-translate-y-2">
             <img
               src={heroMockup}
               alt="MoveReady App Interface"
-              className="rounded-2xl shadow-md w-full max-w-[450px]"
+              className="rounded-2xl border-2 border-black shadow-brutal w-full max-w-[450px]"
             />
 
             {/* Floating cards */}
-            <div className="absolute flex items-center gap-4 p-4 rounded-2xl shadow-xl shadow-black/10 animate-[float_6s_ease-in-out_infinite] top-[10%] -left-[20%] glass">
-              <div className="w-10 h-10 rounded-xl flex items-center justify-center bg-primary-blue">
-                <Search size={18} color="#fff" />
+            <div className="absolute flex items-center gap-4 p-4 rounded-xl glass-brutal animate-[float_6s_ease-in-out_infinite] top-[5%] -left-[15%]">
+              <div className="w-12 h-12 rounded-lg border-2 border-black flex items-center justify-center bg-[#00e5ff] shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]">
+                <Search size={24} color="#000" strokeWidth={2.5} />
               </div>
               <div className="flex flex-col">
-                <span className="font-bold text-sm text-text-main">
+                <span className="font-extrabold text-sm text-black uppercase tracking-wide">
                   Smart Search
                 </span>
-                <span className="text-xs text-text-muted">
+                <span className="text-xs font-semibold text-text-muted">
                   Find exactly what you need
                 </span>
               </div>
             </div>
 
-            <div className="absolute flex items-center gap-4 p-4 rounded-2xl shadow-xl shadow-black/10 animate-[float_6s_ease-in-out_infinite] bottom-[20%] -right-[10%] delay-[-3s] glass">
-              <div className="w-10 h-10 rounded-xl flex items-center justify-center bg-primary-green">
-                <Key size={18} color="#fff" />
+            <div className="absolute flex items-center gap-4 p-4 rounded-xl glass-brutal animate-[float_6s_ease-in-out_infinite] bottom-[10%] -right-[15%] delay-[-3s]">
+              <div className="w-12 h-12 rounded-lg border-2 border-black flex items-center justify-center bg-[#ff00ff] shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]">
+                <Key size={24} color="#000" strokeWidth={2.5} />
               </div>
               <div className="flex flex-col">
-                <span className="font-bold text-sm text-text-main">
+                <span className="font-extrabold text-sm text-black uppercase tracking-wide">
                   Instant Move-in
                 </span>
-                <span className="text-xs text-text-muted">
+                <span className="text-xs font-semibold text-text-muted">
                   Digital agreements
                 </span>
               </div>
