@@ -29,6 +29,15 @@ app.all('/api/auth', authHandler);
 
 app.use(express.json());
 
+import imagekitRoutes from './routes/imagekit';
+app.use('/api/imagekit', imagekitRoutes);
+
+import listingsRoutes from './routes/listings';
+app.use('/api/listings', listingsRoutes);
+
+import ticketsRoutes from './routes/tickets';
+app.use('/api/tickets', ticketsRoutes);
+
 app.get('/api/health', async (req: Request, res: Response, next: NextFunction) => {
   try {
     await prisma.$queryRaw`SELECT 1`;
