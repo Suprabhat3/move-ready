@@ -1,110 +1,221 @@
-import { useCallback, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
+import {
+  BrowserRouter,
+  Navigate,
+  Outlet,
+  Route,
+  Routes,
+  useLocation,
+  useNavigate,
+} from "react-router";
 import Navbar from "./components/Navbar";
-import Hero from "./components/Hero";
-import Features from "./components/Features";
-import CallToAction from "./components/CallToAction";
 import Footer from "./components/Footer";
-import Login from "./pages/Login";
-import Register from "./pages/Register";
+import { CompareProvider } from "./components/listings/CompareContext";
+import { fetchSession, signOut } from "./lib/api";
+import type { SessionUser } from "./types/listings";
 import Dashboard from "./pages/Dashboard";
+import HomePage from "./pages/HomePage";
+import Login from "./pages/Login";
 import Properties from "./pages/Properties";
+import PropertyDetailPage from "./pages/PropertyDetailPage";
+import Register from "./pages/Register";
+import ShortlistPage from "./pages/ShortlistPage";
+import ComparePage from "./pages/ComparePage";
+import ListingEditorPage from "./pages/ListingEditorPage";
+import DashboardListingsPage from "./pages/DashboardListingsPage";
 
-const API_BASE_URL = import.meta.env.VITE_API_URL || "http://localhost:4000";
+function AppShell({
+  user,
+  onLogout,
+}: {
+  user: SessionUser | null;
+  onLogout: () => Promise<void>;
+}) {
+  const location = useLocation();
+  const hideChrome =
+    location.pathname === "/login" || location.pathname === "/register";
 
-type SessionUser = {
-  id?: string;
-  name?: string | null;
-  email?: string | null;
-  image?: string | null;
-  role?: string | null;
-};
+  return (
+    <div className="min-h-screen flex flex-col font-sans">
+      {hideChrome ? null : <Navbar user={user} onLogout={onLogout} />}
+      <main className="flex-1">
+        <Outlet />
+      </main>
+      {hideChrome ? null : <Footer />}
+    </div>
+  );
+}
 
-function App() {
-  const [currentPage, setCurrentPage] = useState("home");
-  const [user, setUser] = useState<SessionUser | null>(null);
+function RequireAuth({
+  user,
+  children,
+}: {
+  user: SessionUser | null;
+  children: React.JSX.Element;
+}) {
+  const location = useLocation();
 
-  const loadSession = useCallback(async () => {
-    try {
-      const response = await fetch(`${API_BASE_URL}/api/me`, {
-        credentials: "include",
-      });
-
-      if (!response.ok) {
-        setUser(null);
-        return;
-      }
-
-      const data = await response.json();
-      setUser(data?.user || null);
-    } catch {
-      setUser(null);
-    }
-  }, []);
-
-  const handleLogout = useCallback(async () => {
-    try {
-      await fetch(`${API_BASE_URL}/api/auth/sign-out`, {
-        method: "POST",
-        credentials: "include",
-      });
-    } finally {
-      setUser(null);
-      setCurrentPage("home");
-    }
-  }, []);
-
-  useEffect(() => {
-    void loadSession();
-  }, [loadSession]);
-
-  if (currentPage === "login") {
-    return <Login onNavigate={setCurrentPage} onAuthSuccess={loadSession} />;
+  if (!user) {
+    return <Navigate to="/login" replace state={{ from: location.pathname }} />;
   }
 
-  if (currentPage === "register") {
-    return <Register onNavigate={setCurrentPage} onAuthSuccess={loadSession} />;
+  return children;
+}
+
+function RequireAgentOrAdmin({
+  user,
+  children,
+}: {
+  user: SessionUser | null;
+  children: React.JSX.Element;
+}) {
+  if (!user) {
+    return <Navigate to="/login" replace />;
   }
 
-  if (currentPage === "dashboard") {
+  if (user.role !== "SITE_AGENT" && user.role !== "ADMIN") {
+    return <Navigate to="/dashboard" replace />;
+  }
+
+  return children;
+}
+
+function AuthPage({
+  type,
+  onAuthSuccess,
+}: {
+  type: "login" | "register";
+  onAuthSuccess: () => Promise<void>;
+}) {
+  const navigate = useNavigate();
+
+  const handleNavigate = (path: string) => {
+    navigate(path);
+  };
+
+  if (type === "login") {
     return (
-      <div className="min-h-screen flex flex-col font-sans">
-        <Navbar
-          onNavigate={setCurrentPage}
-          user={user}
-          onLogout={handleLogout}
-        />
-        <main className="flex-1">
-          <Dashboard user={user} />
-        </main>
-      </div>
+      <Login onNavigate={handleNavigate} onAuthSuccess={onAuthSuccess} />
     );
   }
 
-  if (currentPage === "properties") {
-    return (
-      <div className="min-h-screen flex flex-col font-sans">
-        <Navbar
-          onNavigate={setCurrentPage}
-          user={user}
-          onLogout={handleLogout}
+  return <Register onNavigate={handleNavigate} onAuthSuccess={onAuthSuccess} />;
+}
+
+function AppRoutes({
+  user,
+  reloadSession,
+  onLogout,
+}: {
+  user: SessionUser | null;
+  reloadSession: () => Promise<void>;
+  onLogout: () => Promise<void>;
+}) {
+  return (
+    <Routes>
+      <Route element={<AppShell user={user} onLogout={onLogout} />}>
+        <Route path="/" element={<HomePage />} />
+        <Route
+          path="/login"
+          element={<AuthPage type="login" onAuthSuccess={reloadSession} />}
         />
-        <main className="flex-1">
-          <Properties user={user} />
-        </main>
+        <Route
+          path="/register"
+          element={<AuthPage type="register" onAuthSuccess={reloadSession} />}
+        />
+        <Route path="/properties" element={<Properties user={user} />} />
+        <Route
+          path="/properties/:id"
+          element={<PropertyDetailPage user={user} />}
+        />
+        <Route
+          path="/shortlist"
+          element={
+            <RequireAuth user={user}>
+              <ShortlistPage user={user} />
+            </RequireAuth>
+          }
+        />
+        <Route path="/compare" element={<ComparePage />} />
+        <Route
+          path="/dashboard"
+          element={
+            <RequireAuth user={user}>
+              <Dashboard user={user} />
+            </RequireAuth>
+          }
+        />
+        <Route
+          path="/dashboard/listings"
+          element={
+            <RequireAgentOrAdmin user={user}>
+              <DashboardListingsPage user={user} />
+            </RequireAgentOrAdmin>
+          }
+        />
+        <Route
+          path="/dashboard/listings/new"
+          element={
+            <RequireAgentOrAdmin user={user}>
+              <ListingEditorPage user={user} />
+            </RequireAgentOrAdmin>
+          }
+        />
+        <Route
+          path="/dashboard/listings/:id/edit"
+          element={
+            <RequireAgentOrAdmin user={user}>
+              <ListingEditorPage user={user} />
+            </RequireAgentOrAdmin>
+          }
+        />
+        <Route
+          path="/dashboard/reviews"
+          element={<Navigate to="/dashboard/listings?status=REVIEW" replace />}
+        />
+        <Route path="*" element={<Navigate to="/" replace />} />
+      </Route>
+    </Routes>
+  );
+}
+
+function App() {
+  const [user, setUser] = useState<SessionUser | null>(null);
+  const [isLoadingSession, setIsLoadingSession] = useState(true);
+
+  const loadSession = async () => {
+    const nextUser = await fetchSession();
+    setUser(nextUser);
+    setIsLoadingSession(false);
+  };
+
+  useEffect(() => {
+    void loadSession();
+  }, []);
+
+  const handleLogout = async () => {
+    await signOut();
+    setUser(null);
+  };
+
+  if (isLoadingSession) {
+    return (
+      <div className="min-h-screen grid place-items-center font-black">
+        Loading...
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen flex flex-col font-sans">
-      <Navbar onNavigate={setCurrentPage} user={user} onLogout={handleLogout} />
-      <main className="flex-1">
-        <Hero />
-        <Features />
-        <CallToAction />
-      </main>
-      <Footer />
-    </div>
+    <CompareProvider>
+      <BrowserRouter>
+        <AppRoutes
+          user={user}
+          reloadSession={loadSession}
+          onLogout={handleLogout}
+        />
+      </BrowserRouter>
+    </CompareProvider>
   );
 }
 

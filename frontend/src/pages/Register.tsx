@@ -47,7 +47,7 @@ export default function Register({
       }
 
       await onAuthSuccess();
-      onNavigate("dashboard");
+      onNavigate("/dashboard");
     } catch {
       setError("Network error. Please check your connection and retry.");
     } finally {
@@ -210,7 +210,7 @@ export default function Register({
             Already have an account?
           </span>
           <button
-            onClick={() => onNavigate("login")}
+            onClick={() => onNavigate("/login")}
             className="font-black text-black hover:text-[#00e5ff] transition-colors cursor-pointer bg-transparent border-none p-0 inline-flex uppercase tracking-wider underline decoration-2 underline-offset-4"
           >
             Sign in

@@ -1,16 +1,31 @@
 import {
+  ArrowRightLeft,
   MapPin,
   BedDouble,
   Bath,
   Square,
   ChevronRight,
   MessageSquare,
+  Heart,
 } from "lucide-react";
 import { useState } from "react";
+import { Link, useNavigate } from "react-router";
 import ContactAgentModal from "./ContactAgentModal";
+import { toggleShortlist } from "../../lib/api";
+import { useCompare } from "./CompareContext";
+import type { ListingSummary, SessionUser } from "../../types/listings";
 
-const PropertyCard = ({ listing, user }: { listing: any; user: any }) => {
+const PropertyCard = ({
+  listing,
+  user,
+}: {
+  listing: ListingSummary;
+  user: SessionUser | null;
+}) => {
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isShortlisted, setIsShortlisted] = useState(false);
+  const navigate = useNavigate();
+  const { isCompared, toggleCompare, compareIds } = useCompare();
   const mainImage =
     listing.images?.[0]?.url ||
     "https://images.unsplash.com/photo-1568605114967-8130f3a36994?auto=format&fit=crop&q=80&w=800";
@@ -22,6 +37,16 @@ const PropertyCard = ({ listing, user }: { listing: any; user: any }) => {
       currency: "INR",
       maximumFractionDigits: 0,
     }).format(amount);
+  };
+
+  const handleShortlist = async () => {
+    if (!user) {
+      navigate("/login");
+      return;
+    }
+
+    const response = await toggleShortlist(listing.id);
+    setIsShortlisted(response.shortlisted);
   };
 
   return (
@@ -81,7 +106,7 @@ const PropertyCard = ({ listing, user }: { listing: any; user: any }) => {
         </div>
 
         {/* CTA */}
-        <div className="mt-auto flex items-center gap-3">
+        <div className="mt-auto space-y-3">
           <button
             onClick={() => setIsModalOpen(true)}
             className="flex-1 flex items-center justify-center gap-2 bg-primary-blue text-white font-black py-3 rounded-xl border-2 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:translate-x-[2px] hover:translate-y-[2px] hover:shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] transition-all cursor-pointer"
@@ -89,9 +114,32 @@ const PropertyCard = ({ listing, user }: { listing: any; user: any }) => {
             <MessageSquare className="w-4 h-4" />
             Contact Agent
           </button>
-          <button className="w-12 h-12 flex items-center justify-center bg-white border-2 border-black rounded-xl shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:translate-x-[2px] hover:translate-y-[2px] hover:shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] transition-all cursor-pointer group/btn">
-            <ChevronRight className="w-5 h-5 group-hover/btn:translate-x-0.5 transition-transform" />
-          </button>
+          <div className="flex items-center gap-3">
+            <button
+              type="button"
+              onClick={handleShortlist}
+              className="w-12 h-12 flex items-center justify-center bg-white border-2 border-black rounded-xl shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] transition-all cursor-pointer"
+            >
+              <Heart
+                className={`w-5 h-5 ${isShortlisted ? "fill-current" : ""}`}
+              />
+            </button>
+            <button
+              type="button"
+              disabled={!isCompared(listing.id) && compareIds.length >= 3}
+              onClick={() => toggleCompare(listing.id)}
+              className="w-12 h-12 flex items-center justify-center bg-white border-2 border-black rounded-xl shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] transition-all cursor-pointer disabled:opacity-50"
+            >
+              <ArrowRightLeft className="w-5 h-5" />
+            </button>
+            <Link
+              to={`/properties/${listing.id}`}
+              className="flex-1 flex items-center justify-center gap-2 bg-white border-2 border-black rounded-xl shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] px-4 py-3 font-black"
+            >
+              View Details
+              <ChevronRight className="w-5 h-5 group-hover/btn:translate-x-0.5 transition-transform" />
+            </Link>
+          </div>
         </div>
       </div>
 

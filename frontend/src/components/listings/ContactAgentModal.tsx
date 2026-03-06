@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { X, Send, AlertCircle, CheckCircle2 } from "lucide-react";
-
-const API_BASE_URL = import.meta.env.VITE_API_URL || "http://localhost:4000";
+import { createInquiry } from "../../lib/api";
+import type { ListingDetail, ListingSummary, SessionUser } from "../../types/listings";
 
 const ContactAgentModal = ({
   isOpen,
@@ -11,8 +11,8 @@ const ContactAgentModal = ({
 }: {
   isOpen: boolean;
   onClose: () => void;
-  listing: any;
-  user: any;
+  listing: ListingSummary | ListingDetail;
+  user: SessionUser | null;
 }) => {
   const [message, setMessage] = useState("");
   const [sending, setSending] = useState(false);
@@ -32,22 +32,11 @@ const ContactAgentModal = ({
       setSending(true);
       setError(null);
 
-      const res = await fetch(`${API_BASE_URL}/api/tickets`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          subject: `Inquiry for ${listing.title}`,
-          message: message,
-          listingId: listing.id,
-        }),
-        credentials: "include",
+      await createInquiry({
+        subject: `Inquiry for ${listing.title}`,
+        message,
+        listingId: listing.id,
       });
-
-      if (!res.ok) {
-        throw new Error("Failed to send message");
-      }
 
       setSuccess(true);
       setTimeout(() => {
@@ -55,8 +44,8 @@ const ContactAgentModal = ({
         setSuccess(false);
         setMessage("");
       }, 2000);
-    } catch (err: any) {
-      setError(err.message || "An error occurred");
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "An error occurred");
     } finally {
       setSending(false);
     }

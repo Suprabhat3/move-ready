@@ -1,358 +1,473 @@
-import { useState } from "react";
+import { useEffect, useMemo, useState } from "react";
+import { Link } from "react-router";
 import { IKContext, IKUpload } from "imagekitio-react";
-import { Plus, X, Upload } from "lucide-react";
+import { Upload, X } from "lucide-react";
+import {
+  createListing,
+  fetchListing,
+  updateListing,
+  updateListingStatus,
+} from "../../lib/api";
+import {
+  amenityOptions,
+  facingOptions,
+  furnishedOptions,
+  listedByOptions,
+  parkingOptions,
+  petPolicyOptions,
+  powerBackupOptions,
+  preferredTenantOptions,
+  propertyTypeOptions,
+  ruleOptions,
+  waterSupplyOptions,
+} from "../../lib/listing-options";
+import type {
+  ListingDetail,
+  ListingFormValues,
+  ListingImage,
+  SessionUser,
+} from "../../types/listings";
+
+type Props = {
+  user: SessionUser | null;
+  listingId?: string;
+  onSuccess: (listingId: string) => void;
+  onCancel: () => void;
+};
+
+const today = new Date().toISOString().slice(0, 10);
+
+const emptyForm: ListingFormValues = {
+  title: "",
+  description: "",
+  address: "",
+  city: "",
+  state: "",
+  pincode: "",
+  rentAmount: "",
+  deposit: "",
+  maintenanceAmount: "0",
+  brokerageAmount: "0",
+  bedrooms: "1",
+  bathrooms: "1",
+  balconies: "0",
+  floorNumber: "",
+  totalFloors: "",
+  area: "",
+  ageOfProperty: "",
+  propertyType: "APARTMENT",
+  furnished: "UNFURNISHED",
+  preferredTenantType: "ANY",
+  parking: "NONE",
+  facing: "",
+  listedBy: "AGENT",
+  availableFor: "RENT",
+  leaseDurationMonths: "",
+  noticePeriodDays: "",
+  petPolicy: "NOT_ALLOWED",
+  waterSupply: "",
+  powerBackup: "NONE",
+  availableFrom: today,
+  videoTourUrl: "",
+  amenities: [],
+  rules: [],
+  nearbyLandmarks: [],
+};
+
+function splitTextRows(value: string) {
+  return value
+    .split("\n")
+    .map((item) => item.trim())
+    .filter(Boolean);
+}
+
+function toFormValues(listing: ListingDetail): ListingFormValues {
+  return {
+    title: listing.title,
+    description: listing.description,
+    address: listing.address,
+    city: listing.city,
+    state: listing.state,
+    pincode: listing.pincode,
+    rentAmount: String(listing.rentAmount),
+    deposit: String(listing.deposit),
+    maintenanceAmount: String(listing.maintenanceAmount),
+    brokerageAmount: String(listing.brokerageAmount),
+    bedrooms: String(listing.bedrooms),
+    bathrooms: String(listing.bathrooms),
+    balconies: String(listing.balconies),
+    floorNumber: listing.floorNumber === null ? "" : String(listing.floorNumber),
+    totalFloors: listing.totalFloors === null ? "" : String(listing.totalFloors),
+    area: String(listing.area),
+    ageOfProperty: listing.ageOfProperty === null ? "" : String(listing.ageOfProperty),
+    propertyType: listing.propertyType,
+    furnished: listing.furnished,
+    preferredTenantType: listing.preferredTenantType,
+    parking: listing.parking,
+    facing: listing.facing ?? "",
+    listedBy: listing.listedBy,
+    availableFor: listing.availableFor,
+    leaseDurationMonths:
+      listing.leaseDurationMonths === null ? "" : String(listing.leaseDurationMonths),
+    noticePeriodDays:
+      listing.noticePeriodDays === null ? "" : String(listing.noticePeriodDays),
+    petPolicy: listing.petPolicy,
+    waterSupply: listing.waterSupply ?? "",
+    powerBackup: listing.powerBackup,
+    availableFrom: listing.availableFrom.slice(0, 10),
+    videoTourUrl: listing.videoTourUrl ?? "",
+    amenities: listing.amenities,
+    rules: listing.rules,
+    nearbyLandmarks: listing.nearbyLandmarks,
+  };
+}
 
 export default function AddPropertyForm({
+  user,
+  listingId,
   onSuccess,
-}: {
-  onSuccess: () => void;
-}) {
-  const [isSubmitting, setIsSubmitting] = useState(false);
-  const [error, setError] = useState("");
-  const [formData, setFormData] = useState({
-    title: "",
-    description: "",
-    address: "",
-    city: "",
-    state: "",
-    pincode: "",
-    rentAmount: "",
-    deposit: "",
-    bedrooms: "1",
-    bathrooms: "1",
-    area: "",
-    furnished: "UNFURNISHED",
-    availableFrom: new Date().toISOString().split("T")[0],
-  });
-
-  const [images, setImages] = useState<{ url: string; fileId: string }[]>([]);
+  onCancel,
+}: Props) {
+  const [formValues, setFormValues] = useState<ListingFormValues>(emptyForm);
+  const [images, setImages] = useState<ListingImage[]>([]);
+  const [landmarksText, setLandmarksText] = useState("");
   const [uploadingImage, setUploadingImage] = useState(false);
+  const [loading, setLoading] = useState(Boolean(listingId));
+  const [submitting, setSubmitting] = useState(false);
+  const [error, setError] = useState("");
+  const [success, setSuccess] = useState("");
+  const [statusLoading, setStatusLoading] = useState(false);
+  const [status, setStatus] = useState<string>("DRAFT");
 
-  const API_URL = import.meta.env.VITE_API_URL || "http://localhost:4000";
+  const isEdit = Boolean(listingId);
+  const isAdmin = user?.role === "ADMIN";
+  const apiBaseUrl = import.meta.env.VITE_API_URL || "http://localhost:4000";
 
-  // ImageKit handlers
-  const authenticator = async () => {
-    try {
-      const response = await fetch(`${API_URL}/api/imagekit/auth`, {
-        // Provide any credentials if needed, though getAuthenticationParameters usually doesn't require strict auth
-      });
-
-      if (!response.ok) {
-        const errorText = await response.text();
-        throw new Error(
-          `Request failed with status ${response.status}: ${errorText}`,
-        );
-      }
-
-      const data = await response.json();
-      const { signature, expire, token } = data;
-      return { signature, expire, token };
-    } catch (error: any) {
-      throw new Error(`Authentication request failed: ${error.message}`);
+  useEffect(() => {
+    if (!listingId) {
+      return;
     }
+
+    void (async () => {
+      try {
+        setLoading(true);
+        const listing = await fetchListing(listingId);
+        setFormValues(toFormValues(listing));
+        setImages(listing.images);
+        setLandmarksText(listing.nearbyLandmarks.join("\n"));
+        setStatus(listing.status);
+      } catch (err) {
+        setError(err instanceof Error ? err.message : "Unable to load listing");
+      } finally {
+        setLoading(false);
+      }
+    })();
+  }, [listingId]);
+
+  const payload = useMemo(
+    () => ({
+      ...formValues,
+      nearbyLandmarks: splitTextRows(landmarksText),
+      images,
+    }),
+    [formValues, landmarksText, images],
+  );
+
+  const setField = (field: keyof ListingFormValues, value: string | string[]) => {
+    setFormValues((prev) => ({
+      ...prev,
+      [field]: value,
+    }));
   };
 
-  const onUploadError = (err: any) => {
-    console.error("Image upload error", err);
-    setError("Failed to upload image. Please try again.");
-    setUploadingImage(false);
+  const toggleMulti = (field: "amenities" | "rules", value: string) => {
+    setFormValues((prev) => {
+      const current = prev[field];
+      return {
+        ...prev,
+        [field]: current.includes(value)
+          ? current.filter((item) => item !== value)
+          : [...current, value],
+      };
+    });
   };
 
-  const onUploadSuccess = (res: any) => {
-    setImages((prev) => [...prev, { url: res.url, fileId: res.fileId }]);
+  const authenticator = async () => {
+    const response = await fetch(`${apiBaseUrl}/api/imagekit/auth`, {
+      credentials: "include",
+    });
+    if (!response.ok) {
+      throw new Error("Unable to authenticate image upload");
+    }
+    const data = await response.json();
+    return {
+      signature: data.signature as string,
+      expire: data.expire as number,
+      token: data.token as string,
+    };
+  };
+
+  const onUploadError = () => {
     setUploadingImage(false);
+    setError("Image upload failed. Try again.");
+  };
+
+  const onUploadSuccess = (result: { url: string }) => {
+    setUploadingImage(false);
+    setImages((prev) => [...prev, { url: result.url }]);
   };
 
   const removeImage = (index: number) => {
     setImages((prev) => prev.filter((_, i) => i !== index));
-    // Note: We aren't deleting from ImageKit here to conserve API calls, just removing from payload.
   };
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setIsSubmitting(true);
-    setError("");
-
+  const submit = async (event: React.FormEvent) => {
+    event.preventDefault();
     try {
-      const payload = {
-        ...formData,
-        images: images.map((img) => img.url),
-      };
+      setSubmitting(true);
+      setError("");
+      setSuccess("");
 
-      const res = await fetch(`${API_URL}/api/listings`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        credentials: "include",
-        body: JSON.stringify(payload),
-      });
-
-      if (!res.ok) {
-        const data = await res.json().catch(() => null);
-        throw new Error(data?.message || "Failed to create property");
+      if (isEdit && listingId) {
+        const response = await updateListing(listingId, payload);
+        setStatus(response.listing.status);
+        setSuccess("Listing updated successfully");
+        onSuccess(response.listing.id);
+      } else {
+        const response = await createListing(payload);
+        setStatus(response.listing.status);
+        setSuccess("Draft listing created successfully");
+        onSuccess(response.listing.id);
       }
-
-      onSuccess();
-    } catch (err: any) {
-      setError(err.message || "An unexpected error occurred.");
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Unable to save listing");
     } finally {
-      setIsSubmitting(false);
+      setSubmitting(false);
     }
   };
 
-  const handleChange = (
-    e: React.ChangeEvent<
-      HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement
-    >,
-  ) => {
-    setFormData((prev) => ({
-      ...prev,
-      [e.target.name]: e.target.value,
-    }));
+  const changeStatus = async (nextStatus: "REVIEW" | "PUBLISHED" | "ARCHIVED") => {
+    if (!listingId) {
+      return;
+    }
+    try {
+      setStatusLoading(true);
+      setError("");
+      const response = await updateListingStatus(listingId, nextStatus);
+      setStatus(response.listing.status);
+      setSuccess(`Listing moved to ${response.listing.status}`);
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Unable to update status");
+    } finally {
+      setStatusLoading(false);
+    }
   };
 
+  if (loading) {
+    return <div className="p-8 font-black">Loading listing...</div>;
+  }
+
   return (
-    <div className="bg-white border-4 border-black p-6 md:p-8 rounded-2xl shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] relative">
-      <h2 className="text-2xl font-black uppercase tracking-widest bg-[#ff00ff] text-black inline-block px-3 py-1 border-2 border-black mb-6 transform -rotate-1">
-        Add New Property
-      </h2>
-
-      {error && (
-        <div className="mb-6 p-4 border-4 border-black bg-white shadow-brutal text-black font-bold">
-          <p className="flex items-center text-red-600">
-            <span className="text-xl mr-2">!</span> {error}
-          </p>
+    <div className="bg-white border-4 border-black p-6 md:p-8 rounded-2xl shadow-[8px_8px_0px_0px_rgba(0,0,0,1)]">
+      <div className="flex flex-wrap items-center justify-between gap-4 mb-6">
+        <h2 className="text-2xl font-black uppercase tracking-widest bg-[#ff00ff] text-black inline-block px-3 py-1 border-2 border-black">
+          {isEdit ? "Edit Listing" : "Create Listing Draft"}
+        </h2>
+        <div className="text-sm font-black border-2 border-black px-3 py-1 bg-black text-white">
+          Status: {status}
         </div>
-      )}
+      </div>
 
-      <form onSubmit={handleSubmit} className="space-y-6">
-        {/* Basic Info */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          <div className="md:col-span-2">
-            <label className="block text-sm font-black text-black uppercase tracking-wide mb-2">
-              Property Title
-            </label>
-            <input
-              required
-              name="title"
-              value={formData.title}
-              onChange={handleChange}
-              className="w-full border-4 border-black p-3 bg-[#fdfdfd] focus:bg-[#39ff14] focus:outline-none focus:shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] transition-all font-bold text-black"
-              placeholder="e.g. Sunny 2BHK in Downtown"
-            />
-          </div>
+      {error ? (
+        <div className="mb-4 p-3 border-2 border-black bg-[#ff00ff] text-white font-bold">{error}</div>
+      ) : null}
+      {success ? (
+        <div className="mb-4 p-3 border-2 border-black bg-[#39ff14] text-black font-bold">{success}</div>
+      ) : null}
 
-          <div className="md:col-span-2">
-            <label className="block text-sm font-black text-black uppercase tracking-wide mb-2">
-              Description
-            </label>
-            <textarea
-              required
-              name="description"
-              value={formData.description}
-              onChange={handleChange}
-              rows={4}
-              className="w-full border-4 border-black p-3 bg-[#fdfdfd] focus:bg-[#00e5ff] focus:outline-none focus:shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] transition-all font-bold text-black resize-none"
-              placeholder="Describe the property..."
-            />
-          </div>
+      <form onSubmit={submit} className="space-y-8">
+        <section className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <input required value={formValues.title} onChange={(e) => setField("title", e.target.value)} placeholder="Title" className="md:col-span-2 border-2 border-black p-3 font-bold" />
+          <textarea required value={formValues.description} onChange={(e) => setField("description", e.target.value)} placeholder="Description" rows={4} className="md:col-span-2 border-2 border-black p-3 font-bold" />
+          <input required value={formValues.address} onChange={(e) => setField("address", e.target.value)} placeholder="Address" className="md:col-span-2 border-2 border-black p-3 font-bold" />
+          <input required value={formValues.city} onChange={(e) => setField("city", e.target.value)} placeholder="City" className="border-2 border-black p-3 font-bold" />
+          <input required value={formValues.state} onChange={(e) => setField("state", e.target.value)} placeholder="State" className="border-2 border-black p-3 font-bold" />
+          <input required value={formValues.pincode} onChange={(e) => setField("pincode", e.target.value)} placeholder="Pincode" className="border-2 border-black p-3 font-bold" />
+        </section>
 
-          <div>
-            <label className="block text-sm font-black text-black uppercase tracking-wide mb-2">
-              Rent Amount (₹)
-            </label>
-            <input
-              required
-              type="number"
-              name="rentAmount"
-              value={formData.rentAmount}
-              onChange={handleChange}
-              min="0"
-              className="w-full border-4 border-black p-3 bg-[#fdfdfd] focus:bg-white focus:outline-none focus:shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] transition-all font-bold text-black"
-              placeholder="e.g. 25000"
-            />
-          </div>
+        <section className="grid grid-cols-1 md:grid-cols-4 gap-4">
+          <input required type="number" min="0" value={formValues.rentAmount} onChange={(e) => setField("rentAmount", e.target.value)} placeholder="Rent" className="border-2 border-black p-3 font-bold" />
+          <input required type="number" min="0" value={formValues.deposit} onChange={(e) => setField("deposit", e.target.value)} placeholder="Deposit" className="border-2 border-black p-3 font-bold" />
+          <input type="number" min="0" value={formValues.maintenanceAmount} onChange={(e) => setField("maintenanceAmount", e.target.value)} placeholder="Maintenance" className="border-2 border-black p-3 font-bold" />
+          <input type="number" min="0" value={formValues.brokerageAmount} onChange={(e) => setField("brokerageAmount", e.target.value)} placeholder="Brokerage" className="border-2 border-black p-3 font-bold" />
+        </section>
 
-          <div>
-            <label className="block text-sm font-black text-black uppercase tracking-wide mb-2">
-              Security Deposit (₹)
-            </label>
-            <input
-              required
-              type="number"
-              name="deposit"
-              value={formData.deposit}
-              onChange={handleChange}
-              min="0"
-              className="w-full border-4 border-black p-3 bg-[#fdfdfd] focus:bg-white focus:outline-none focus:shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] transition-all font-bold text-black"
-              placeholder="e.g. 50000"
-            />
-          </div>
-        </div>
+        <section className="grid grid-cols-1 md:grid-cols-4 gap-4">
+          <select value={formValues.propertyType} onChange={(e) => setField("propertyType", e.target.value)} className="border-2 border-black p-3 font-bold">{propertyTypeOptions.map((option) => <option key={option} value={option}>{option}</option>)}</select>
+          <select value={formValues.furnished} onChange={(e) => setField("furnished", e.target.value)} className="border-2 border-black p-3 font-bold">{furnishedOptions.map((option) => <option key={option} value={option}>{option}</option>)}</select>
+          <select value={formValues.preferredTenantType} onChange={(e) => setField("preferredTenantType", e.target.value)} className="border-2 border-black p-3 font-bold">{preferredTenantOptions.map((option) => <option key={option} value={option}>{option}</option>)}</select>
+          <select value={formValues.parking} onChange={(e) => setField("parking", e.target.value)} className="border-2 border-black p-3 font-bold">{parkingOptions.map((option) => <option key={option} value={option}>{option}</option>)}</select>
+          <input required type="number" min="0" value={formValues.bedrooms} onChange={(e) => setField("bedrooms", e.target.value)} placeholder="Bedrooms" className="border-2 border-black p-3 font-bold" />
+          <input required type="number" min="0" value={formValues.bathrooms} onChange={(e) => setField("bathrooms", e.target.value)} placeholder="Bathrooms" className="border-2 border-black p-3 font-bold" />
+          <input type="number" min="0" value={formValues.balconies} onChange={(e) => setField("balconies", e.target.value)} placeholder="Balconies" className="border-2 border-black p-3 font-bold" />
+          <input required type="number" min="1" value={formValues.area} onChange={(e) => setField("area", e.target.value)} placeholder="Area sqft" className="border-2 border-black p-3 font-bold" />
+          <input type="number" min="0" value={formValues.floorNumber} onChange={(e) => setField("floorNumber", e.target.value)} placeholder="Floor" className="border-2 border-black p-3 font-bold" />
+          <input type="number" min="0" value={formValues.totalFloors} onChange={(e) => setField("totalFloors", e.target.value)} placeholder="Total Floors" className="border-2 border-black p-3 font-bold" />
+          <input type="number" min="0" value={formValues.ageOfProperty} onChange={(e) => setField("ageOfProperty", e.target.value)} placeholder="Age of Property" className="border-2 border-black p-3 font-bold" />
+          <select value={formValues.facing} onChange={(e) => setField("facing", e.target.value)} className="border-2 border-black p-3 font-bold"><option value="">Facing</option>{facingOptions.map((option) => <option key={option} value={option}>{option}</option>)}</select>
+        </section>
 
-        {/* Location Info */}
-        <div className="p-4 border-4 border-black bg-black/5 rounded-xl space-y-4">
-          <h3 className="text-lg font-black uppercase border-b-4 border-black pb-2 inline-block shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] bg-[#00e5ff]">
-            Location Details
-          </h3>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div className="md:col-span-2">
-              <input
-                required
-                name="address"
-                value={formData.address}
-                onChange={handleChange}
-                className="w-full border-4 border-black p-3 bg-white focus:outline-none focus:shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] font-bold mb-2 text-black placeholder-gray-500"
-                placeholder="Full Address / Street Name"
-              />
-            </div>
-            <input
-              required
-              name="city"
-              value={formData.city}
-              onChange={handleChange}
-              className="w-full border-4 border-black p-3 bg-white focus:outline-none focus:shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] font-bold text-black"
-              placeholder="City"
-            />
-            <input
-              required
-              name="state"
-              value={formData.state}
-              onChange={handleChange}
-              className="w-full border-4 border-black p-3 bg-white focus:outline-none focus:shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] font-bold text-black"
-              placeholder="State"
-            />
-            <input
-              required
-              name="pincode"
-              value={formData.pincode}
-              onChange={handleChange}
-              className="w-full border-4 border-black p-3 bg-white focus:outline-none focus:shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] font-bold text-black"
-              placeholder="Pincode"
-            />
-          </div>
-        </div>
+        <section className="grid grid-cols-1 md:grid-cols-3 gap-4">
+          <select value={formValues.listedBy} onChange={(e) => setField("listedBy", e.target.value)} className="border-2 border-black p-3 font-bold">{listedByOptions.map((option) => <option key={option} value={option}>{option}</option>)}</select>
+          <select value={formValues.petPolicy} onChange={(e) => setField("petPolicy", e.target.value)} className="border-2 border-black p-3 font-bold">{petPolicyOptions.map((option) => <option key={option} value={option}>{option}</option>)}</select>
+          <select value={formValues.powerBackup} onChange={(e) => setField("powerBackup", e.target.value)} className="border-2 border-black p-3 font-bold">{powerBackupOptions.map((option) => <option key={option} value={option}>{option}</option>)}</select>
+          <select value={formValues.waterSupply} onChange={(e) => setField("waterSupply", e.target.value)} className="border-2 border-black p-3 font-bold"><option value="">Water Supply</option>{waterSupplyOptions.map((option) => <option key={option} value={option}>{option}</option>)}</select>
+          <input type="number" min="1" value={formValues.leaseDurationMonths} onChange={(e) => setField("leaseDurationMonths", e.target.value)} placeholder="Lease months" className="border-2 border-black p-3 font-bold" />
+          <input type="number" min="0" value={formValues.noticePeriodDays} onChange={(e) => setField("noticePeriodDays", e.target.value)} placeholder="Notice days" className="border-2 border-black p-3 font-bold" />
+          <input type="date" value={formValues.availableFrom} onChange={(e) => setField("availableFrom", e.target.value)} className="border-2 border-black p-3 font-bold" />
+          <input value={formValues.videoTourUrl} onChange={(e) => setField("videoTourUrl", e.target.value)} placeholder="Video tour URL" className="md:col-span-2 border-2 border-black p-3 font-bold" />
+        </section>
 
-        {/* Features Info */}
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-          <div>
-            <label className="block text-xs font-black text-black uppercase tracking-wide mb-1">
-              Bedrooms
-            </label>
-            <input
-              required
-              type="number"
-              name="bedrooms"
-              value={formData.bedrooms}
-              onChange={handleChange}
-              min="1"
-              className="w-full border-4 border-black p-2 bg-white font-bold focus:shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] outline-none"
-            />
-          </div>
-          <div>
-            <label className="block text-xs font-black text-black uppercase tracking-wide mb-1">
-              Bathrooms
-            </label>
-            <input
-              required
-              type="number"
-              name="bathrooms"
-              value={formData.bathrooms}
-              onChange={handleChange}
-              min="1"
-              className="w-full border-4 border-black p-2 bg-white font-bold focus:shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] outline-none"
-            />
-          </div>
-          <div>
-            <label className="block text-xs font-black text-black uppercase tracking-wide mb-1">
-              Area (sq ft)
-            </label>
-            <input
-              required
-              type="number"
-              name="area"
-              value={formData.area}
-              onChange={handleChange}
-              min="0"
-              className="w-full border-4 border-black p-2 bg-white font-bold focus:shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] outline-none"
-            />
-          </div>
-          <div>
-            <label className="block text-xs font-black text-black uppercase tracking-wide mb-1">
-              Furnishing
-            </label>
-            <select
-              name="furnished"
-              value={formData.furnished}
-              onChange={handleChange}
-              className="w-full border-4 border-black p-2 bg-white font-bold focus:shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] outline-none"
-            >
-              <option value="UNFURNISHED">Unfurnished</option>
-              <option value="SEMI_FURNISHED">Semi-Furnished</option>
-              <option value="FULLY_FURNISHED">Fully Furnished</option>
-            </select>
-          </div>
-        </div>
-
-        {/* Image Upload Area */}
-        <div className="p-6 border-4 border-black border-dashed bg-white">
-          <label className="block text-sm font-black text-black uppercase tracking-wide mb-4">
-            Property Images
-          </label>
-
-          <div className="flex flex-wrap gap-4 mb-4">
-            {images.map((img, idx) => (
-              <div
-                key={img.fileId}
-                className="relative w-24 h-24 border-4 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] group"
+        <section className="space-y-4">
+          <p className="font-black uppercase">Amenities</p>
+          <div className="flex flex-wrap gap-2">
+            {amenityOptions.map((amenity) => (
+              <button
+                type="button"
+                key={amenity}
+                onClick={() => toggleMulti("amenities", amenity)}
+                className={`px-3 py-2 border-2 border-black font-bold ${
+                  formValues.amenities.includes(amenity) ? "bg-[#00e5ff]" : "bg-white"
+                }`}
               >
-                <img
-                  src={img.url}
-                  alt={`Upload ${idx}`}
-                  className="w-full h-full object-cover"
-                />
-                <button
-                  type="button"
-                  onClick={() => removeImage(idx)}
-                  className="absolute -top-3 -right-3 bg-[#ff00ff] text-white border-2 border-black rounded-full p-1 shadow-brutal opacity-0 group-hover:opacity-100 transition-opacity"
-                >
-                  <X size={14} strokeWidth={4} />
-                </button>
-              </div>
+                {amenity}
+              </button>
             ))}
           </div>
+        </section>
 
+        <section className="space-y-4">
+          <p className="font-black uppercase">Rules</p>
+          <div className="flex flex-wrap gap-2">
+            {ruleOptions.map((rule) => (
+              <button
+                type="button"
+                key={rule}
+                onClick={() => toggleMulti("rules", rule)}
+                className={`px-3 py-2 border-2 border-black font-bold ${
+                  formValues.rules.includes(rule) ? "bg-[#39ff14]" : "bg-white"
+                }`}
+              >
+                {rule}
+              </button>
+            ))}
+          </div>
+        </section>
+
+        <section className="space-y-2">
+          <p className="font-black uppercase">Nearby Landmarks (one per line)</p>
+          <textarea
+            rows={4}
+            value={landmarksText}
+            onChange={(e) => setLandmarksText(e.target.value)}
+            className="w-full border-2 border-black p-3 font-bold"
+          />
+        </section>
+
+        <section className="space-y-3">
+          <p className="font-black uppercase">Media</p>
           <IKContext
             publicKey={import.meta.env.VITE_IMAGEKIT_PUBLIC_KEY || ""}
             urlEndpoint={import.meta.env.VITE_IMAGEKIT_URL_ENDPOINT || ""}
             authenticator={authenticator}
           >
-            <label className="cursor-pointer inline-flex items-center px-4 py-2 border-4 border-black bg-[#39ff14] text-black font-black uppercase text-sm shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:translate-x-1 hover:translate-y-1 hover:shadow-none transition-all disabled:opacity-50">
-              <Upload className="mr-2" size={18} strokeWidth={3} />
+            <label className="inline-flex items-center gap-2 px-4 py-3 border-2 border-black bg-[#39ff14] font-black cursor-pointer">
+              <Upload size={18} />
               {uploadingImage ? "Uploading..." : "Upload Image"}
               <IKUpload
-                fileName="property-image.jpg"
-                tags={["property"]}
+                className="hidden"
+                fileName="listing-image.jpg"
                 useUniqueFileName={true}
-                isPrivateFile={false}
                 onUploadStart={() => setUploadingImage(true)}
                 onError={onUploadError}
                 onSuccess={onUploadSuccess}
-                className="hidden"
               />
             </label>
           </IKContext>
-        </div>
+          {images.length === 0 ? (
+            <div className="border-2 border-dashed border-black bg-white p-6 text-sm font-bold text-text-muted">
+              No images uploaded yet.
+            </div>
+          ) : (
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+              {images.map((image, index) => (
+                <div
+                  key={`${image.url}-${index}`}
+                  className="relative border-2 border-black bg-white overflow-hidden"
+                >
+                  <img
+                    src={image.url}
+                    alt={`Listing media ${index + 1}`}
+                    className="w-full h-48 md:h-56 object-fill"
+                  />
+                  <button
+                    type="button"
+                    onClick={() => removeImage(index)}
+                    className="absolute top-2 right-2 p-2 border-2 border-black bg-white/95 font-black"
+                    aria-label={`Remove image ${index + 1}`}
+                    title="Remove image"
+                  >
+                    <X size={16} />
+                  </button>
+                </div>
+              ))}
+            </div>
+          )}
+        </section>
 
-        {/* Submit Button */}
-        <button
-          type="submit"
-          disabled={isSubmitting || uploadingImage}
-          className="w-full py-4 bg-black text-white font-black uppercase tracking-widest text-lg border-2 border-transparent hover:bg-white hover:text-black hover:border-black shadow-[8px_8px_0px_0px_rgba(0,229,255,1)] hover:shadow-[4px_4px_0px_0px_rgba(0,229,255,1)] hover:translate-x-1 hover:translate-y-1 transition-all disabled:opacity-50"
-        >
-          {isSubmitting ? "Creating Property..." : "Publish Listing"}
-        </button>
+        <div className="flex flex-wrap gap-3">
+          <button type="submit" disabled={submitting || uploadingImage} className="px-5 py-3 border-2 border-black bg-black text-white font-black">
+            {submitting ? "Saving..." : isEdit ? "Save Changes" : "Create Draft"}
+          </button>
+          <button type="button" onClick={onCancel} className="px-5 py-3 border-2 border-black bg-white font-black">
+            Cancel
+          </button>
+          {isEdit && status === "DRAFT" && !isAdmin ? (
+            <button
+              type="button"
+              disabled={statusLoading}
+              onClick={() => void changeStatus("REVIEW")}
+              className="px-5 py-3 border-2 border-black bg-[#00e5ff] font-black"
+            >
+              Submit For Review
+            </button>
+          ) : null}
+          {isEdit && status === "REVIEW" && isAdmin ? (
+            <button
+              type="button"
+              disabled={statusLoading}
+              onClick={() => void changeStatus("PUBLISHED")}
+              className="px-5 py-3 border-2 border-black bg-[#39ff14] font-black"
+            >
+              Publish
+            </button>
+          ) : null}
+          {isEdit && status === "PUBLISHED" && isAdmin ? (
+            <button
+              type="button"
+              disabled={statusLoading}
+              onClick={() => void changeStatus("ARCHIVED")}
+              className="px-5 py-3 border-2 border-black bg-[#ff00ff] text-white font-black"
+            >
+              Archive
+            </button>
+          ) : null}
+          {isEdit ? (
+            <Link to="/dashboard/listings" className="px-5 py-3 border-2 border-black bg-white font-black">
+              Back To Listings
+            </Link>
+          ) : null}
+        </div>
       </form>
     </div>
   );

@@ -1,20 +1,8 @@
-import { useState } from "react";
-import AddPropertyForm from "../components/dashboards/AddPropertyForm";
-import AgentPropertiesGrid from "../components/dashboards/AgentPropertiesGrid";
+import { Link } from "react-router";
 import AgentTicketsView from "../components/dashboards/AgentTicketsView";
+import type { SessionUser } from "../types/listings";
 
-type DashboardUser = {
-  id?: string;
-  name?: string | null;
-  email?: string | null;
-  image?: string | null;
-  role?: string | null;
-};
-
-export default function Dashboard({ user }: { user: DashboardUser | null }) {
-  const [activeTab, setActiveTab] = useState<
-    "profile" | "add_property" | "my_properties" | "tickets"
-  >("profile");
+export default function Dashboard({ user }: { user: SessionUser | null }) {
 
   if (!user) {
     return (
@@ -39,55 +27,32 @@ export default function Dashboard({ user }: { user: DashboardUser | null }) {
       <div className="absolute bottom-20 left-10 w-32 h-32 rounded-full border-4 border-black bg-[#39ff14] shadow-brutal -rotate-6 hidden md:block z-0 opacity-20"></div>
 
       <div className="max-w-6xl mx-auto relative z-10 transition-all duration-300 space-y-8">
-        {/* Navigation Tabs (Only for Site Agents/Admins, though Tenants might just see profile) */}
-        {isAgent && (
-          <div className="flex flex-wrap gap-4 mb-8">
-            <button
-              onClick={() => setActiveTab("profile")}
-              className={`px-6 py-3 font-black uppercase tracking-widest border-4 border-black transition-all ${
-                activeTab === "profile"
-                  ? "bg-black text-[#00e5ff] shadow-[4px_4px_0px_0px_rgba(0,229,255,1)] translate-x-1 translate-y-1"
-                  : "bg-white text-black hover:bg-[#39ff14] hover:-translate-y-1 hover:shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]"
-              }`}
+        {isAgent ? (
+          <div className="flex flex-wrap gap-4">
+            <Link
+              to="/dashboard/listings"
+              className="px-6 py-3 font-black uppercase tracking-widest border-4 border-black bg-white shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]"
             >
-              Profile
-            </button>
-            <button
-              onClick={() => setActiveTab("my_properties")}
-              className={`px-6 py-3 font-black uppercase tracking-widest border-4 border-black transition-all ${
-                activeTab === "my_properties"
-                  ? "bg-black text-[#ff00ff] shadow-[4px_4px_0px_0px_rgba(255,0,255,1)] translate-x-1 translate-y-1"
-                  : "bg-white text-black hover:bg-[#ff00ff] hover:-translate-y-1 hover:shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]"
-              }`}
+              Manage Listings
+            </Link>
+            <Link
+              to="/dashboard/listings/new"
+              className="px-6 py-3 font-black uppercase tracking-widest border-4 border-black bg-[#39ff14] shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]"
             >
-              My Properties
-            </button>
-            <button
-              onClick={() => setActiveTab("add_property")}
-              className={`px-6 py-3 font-black uppercase tracking-widest border-4 border-black transition-all ${
-                activeTab === "add_property"
-                  ? "bg-black text-[#39ff14] shadow-[4px_4px_0px_0px_rgba(57,255,20,1)] translate-x-1 translate-y-1"
-                  : "bg-white text-black hover:bg-[#00e5ff] hover:-translate-y-1 hover:shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]"
-              }`}
-            >
-              Add Property
-            </button>
-            <button
-              onClick={() => setActiveTab("tickets")}
-              className={`px-6 py-3 font-black uppercase tracking-widest border-4 border-black transition-all ${
-                activeTab === "tickets"
-                  ? "bg-black text-white shadow-[4px_4px_0px_0px_rgba(255,255,255,1)] translate-x-1 translate-y-1"
-                  : "bg-white text-black hover:bg-black hover:text-white hover:-translate-y-1 hover:shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]"
-              }`}
-            >
-              Messages
-            </button>
+              New Listing
+            </Link>
+            {user.role === "ADMIN" ? (
+              <Link
+                to="/dashboard/reviews"
+                className="px-6 py-3 font-black uppercase tracking-widest border-4 border-black bg-[#ff00ff] shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]"
+              >
+                Review Queue
+              </Link>
+            ) : null}
           </div>
-        )}
+        ) : null}
 
-        {/* --- PROFILE TAB --- */}
-        {activeTab === "profile" && (
-          <div className="glass-brutal rounded-2xl p-6 md:p-10">
+        <div className="glass-brutal rounded-2xl p-6 md:p-10">
             <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 border-b-4 border-black pb-8 mb-8">
               <div>
                 <h1
@@ -146,35 +111,16 @@ export default function Dashboard({ user }: { user: DashboardUser | null }) {
                 </p>
               </div>
             </div>
-          </div>
-        )}
+        </div>
 
-        {/* --- MY PROPERTIES TAB --- */}
-        {activeTab === "my_properties" && isAgent && (
-          <div className="animate-in fade-in slide-in-from-bottom-4 duration-500">
-            <h2 className="text-4xl font-black uppercase mb-8 inline-block shadow-[4px_4px_0px_0px_rgba(0,229,255,1)] bg-white px-4 py-2 border-4 border-black">
-              Manage Listings
-            </h2>
-            <AgentPropertiesGrid />
-          </div>
-        )}
-
-        {/* --- ADD PROPERTY TAB --- */}
-        {activeTab === "add_property" && isAgent && (
-          <div className="max-w-4xl mx-auto animate-in fade-in zoom-in-95 duration-500">
-            <AddPropertyForm onSuccess={() => setActiveTab("my_properties")} />
-          </div>
-        )}
-
-        {/* --- TICKETS TAB --- */}
-        {activeTab === "tickets" && isAgent && (
+        {isAgent ? (
           <div className="animate-in fade-in slide-in-from-right-8 duration-500">
             <h2 className="text-4xl font-black uppercase mb-8 inline-block shadow-[4px_4px_0px_0px_rgba(57,255,20,1)] bg-white px-4 py-2 border-4 border-black -rotate-1">
               Tenant Hub
             </h2>
             <AgentTicketsView currentUserId={user.id!} />
           </div>
-        )}
+        ) : null}
       </div>
     </div>
   );
