@@ -71,16 +71,19 @@ const Navbar = ({
           <div className="flex items-center gap-3">
             <button
               onClick={() => onNavigate && onNavigate("dashboard")}
-              className="hidden md:flex items-center justify-center font-semibold transition-all duration-300 rounded-full py-2 px-5 text-text-main border border-border-dark hover:bg-bg-alt hover:border-text-main hover:-translate-y-0.5 shadow-sm cursor-pointer"
+              className="hidden md:flex items-center justify-center font-bold transition-all duration-300 rounded-xl py-2 px-5 text-black bg-white border-2 border-black shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] hover-brutal cursor-pointer"
             >
               Dashboard
             </button>
-            <span className="hidden md:block text-sm text-text-muted max-w-44 truncate">
+            <span
+              className="hidden md:block font-bold text-sm text-black max-w-44 truncate px-4 py-1.5 border-2 border-black rounded-lg bg-black/5"
+              style={{ fontFamily: "var(--font-display)" }}
+            >
               {displayName}
             </span>
             <button
               onClick={onLogout}
-              className="flex items-center justify-center font-semibold transition-all duration-300 rounded-full py-2.5 px-7 text-white bg-gradient-to-br from-primary-blue to-primary-blue-dark hover:-translate-y-0.5 hover:shadow-lg shadow-md cursor-pointer"
+              className="flex items-center justify-center font-bold transition-all duration-300 rounded-xl py-2.5 px-7 text-black bg-[#ff00ff] border-2 border-black shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] hover-brutal cursor-pointer"
             >
               Log Out
             </button>
@@ -89,13 +92,13 @@ const Navbar = ({
           <div className="flex items-center gap-4">
             <button
               onClick={() => onNavigate && onNavigate("login")}
-              className="hidden md:flex items-center justify-center font-semibold transition-all duration-300 rounded-full py-2 px-5 text-text-main border border-border-dark hover:bg-bg-alt hover:border-text-main hover:-translate-y-0.5 shadow-sm cursor-pointer"
+              className="hidden md:flex items-center justify-center font-bold transition-all duration-300 rounded-xl py-2 px-5 text-black bg-white border-2 border-black shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] hover-brutal cursor-pointer"
             >
               Log In
             </button>
             <button
               onClick={() => onNavigate && onNavigate("register")}
-              className="flex items-center justify-center font-semibold transition-all duration-300 rounded-full py-2.5 px-7 text-white bg-gradient-to-br from-primary-green to-[#14b8a6] hover:-translate-y-0.5 hover:shadow-lg hover:shadow-primary-green/40 shadow-md shadow-primary-green/30 cursor-pointer"
+              className="flex items-center justify-center font-bold transition-all duration-300 rounded-xl py-2.5 px-7 text-black bg-[#39ff14] border-2 border-black shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] hover-brutal cursor-pointer"
             >
               Get Started
             </button>

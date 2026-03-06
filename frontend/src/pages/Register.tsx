@@ -1,4 +1,4 @@
-import { FormEvent, useState } from "react";
+import { type FormEvent, useState } from "react";
 import { Mail, Lock, User, Eye, EyeOff, ArrowRight } from "lucide-react";
 
 const API_BASE_URL = import.meta.env.VITE_API_URL || "http://localhost:4000";
@@ -38,7 +38,9 @@ export default function Register({
 
       if (!response.ok) {
         const data = await response.json().catch(() => null);
-        setError(data?.message || "Unable to create account. Please try again.");
+        setError(
+          data?.message || "Unable to create account. Please try again.",
+        );
         return;
       }
 
@@ -52,74 +54,87 @@ export default function Register({
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-bg-base px-4">
-      <div className="w-full max-w-md bg-bg-alt border border-border-light rounded-2xl p-6 shadow-sm">
-        <h2 className="text-3xl font-extrabold text-text-main tracking-tight">
+    <div className="min-h-screen flex items-center justify-center bg-bg-base px-4 relative overflow-hidden">
+      {/* Brutalist geometric background elements */}
+      <div className="absolute top-20 right-20 w-32 h-32 border-4 border-black bg-[#ff00ff] shadow-brutal -rotate-[15deg] hidden md:block z-0"></div>
+      <div className="absolute bottom-20 left-20 w-40 h-40 rounded-full border-4 border-black bg-[#39ff14] shadow-brutal rotate-[10deg] hidden md:block z-0"></div>
+
+      <div className="w-full max-w-md glass-brutal rounded-2xl p-8 relative z-10">
+        <h2
+          className="text-4xl font-black text-black tracking-tight mb-2"
+          style={{ fontFamily: "var(--font-display)" }}
+        >
           Create an account
         </h2>
-        <p className="mt-2 text-sm text-text-muted">
+        <p className="text-text-muted font-bold">
           Join Move-Ready to find your perfect home.
         </p>
 
-        <form className="space-y-5 mt-8" onSubmit={handleSubmit}>
+        <form className="space-y-6 mt-8" onSubmit={handleSubmit}>
           <div>
-            <label className="block text-sm font-medium text-text-main">Full Name</label>
-            <div className="mt-1 relative">
-              <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                <User className="h-5 w-5 text-text-light" />
+            <label className="block text-sm font-bold text-black mb-1">
+              Full Name
+            </label>
+            <div className="relative">
+              <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none z-10">
+                <User className="h-5 w-5 text-black" strokeWidth={2.5} />
               </div>
               <input
                 type="text"
                 required
                 value={name}
                 onChange={(e) => setName(e.target.value)}
-                className="block w-full pl-10 px-3 py-2.5 border border-border-light rounded-xl bg-bg-alt text-text-main placeholder-text-light focus:outline-none focus:ring-2 focus:ring-primary-blue focus:border-transparent transition duration-200"
+                className="block w-full pl-10 px-3 py-3 border-2 border-black rounded-xl bg-white text-black font-medium placeholder-text-light focus:outline-none focus:ring-none focus:shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] transition-all duration-200"
                 placeholder="Your name"
               />
             </div>
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-text-main">Email</label>
-            <div className="mt-1 relative">
-              <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                <Mail className="h-5 w-5 text-text-light" />
+            <label className="block text-sm font-bold text-black mb-1">
+              Email
+            </label>
+            <div className="relative">
+              <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none z-10">
+                <Mail className="h-5 w-5 text-black" strokeWidth={2.5} />
               </div>
               <input
                 type="email"
                 required
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                className="block w-full pl-10 px-3 py-2.5 border border-border-light rounded-xl bg-bg-alt text-text-main placeholder-text-light focus:outline-none focus:ring-2 focus:ring-primary-blue focus:border-transparent transition duration-200"
+                className="block w-full pl-10 px-3 py-3 border-2 border-black rounded-xl bg-white text-black font-medium placeholder-text-light focus:outline-none focus:ring-none focus:shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] transition-all duration-200"
                 placeholder="Enter your email"
               />
             </div>
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-text-main">Password</label>
-            <div className="mt-1 relative">
-              <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                <Lock className="h-5 w-5 text-text-light" />
+            <label className="block text-sm font-bold text-black mb-1">
+              Password
+            </label>
+            <div className="relative">
+              <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none z-10">
+                <Lock className="h-5 w-5 text-black" strokeWidth={2.5} />
               </div>
               <input
                 type={showPassword ? "text" : "password"}
                 required
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
-                className="block w-full pl-10 pr-10 px-3 py-2.5 border border-border-light rounded-xl bg-bg-alt text-text-main placeholder-text-light focus:outline-none focus:ring-2 focus:ring-primary-blue focus:border-transparent transition duration-200"
+                className="block w-full pl-10 pr-10 px-3 py-3 border-2 border-black rounded-xl bg-white text-black font-medium placeholder-text-light focus:outline-none focus:ring-none focus:shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] transition-all duration-200"
                 placeholder="Create a password"
               />
-              <div className="absolute inset-y-0 right-0 pr-3 flex items-center">
+              <div className="absolute inset-y-0 right-0 pr-3 flex items-center z-10">
                 <button
                   type="button"
                   onClick={() => setShowPassword(!showPassword)}
-                  className="text-text-muted hover:text-text-main transition-colors focus:outline-none cursor-pointer"
+                  className="text-black hover:scale-110 transition-transform focus:outline-none cursor-pointer"
                 >
                   {showPassword ? (
-                    <EyeOff className="h-5 w-5" />
+                    <EyeOff className="h-5 w-5" strokeWidth={2.5} />
                   ) : (
-                    <Eye className="h-5 w-5" />
+                    <Eye className="h-5 w-5" strokeWidth={2.5} />
                   )}
                 </button>
               </div>
@@ -127,7 +142,7 @@ export default function Register({
           </div>
 
           {error ? (
-            <p className="text-sm text-red-600 bg-red-50 border border-red-200 rounded-lg px-3 py-2">
+            <p className="text-sm font-bold text-black bg-[#ff00ff] border-2 border-black shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] rounded-xl px-4 py-3">
               {error}
             </p>
           ) : null}
@@ -135,18 +150,23 @@ export default function Register({
           <button
             type="submit"
             disabled={isSubmitting}
-            className="w-full flex justify-center items-center mt-2 py-2.5 px-4 border border-transparent rounded-xl shadow-sm shadow-primary-green/30 text-sm font-semibold text-white bg-gradient-to-br from-primary-green to-[#14b8a6] disabled:opacity-70"
+            className="w-full flex justify-center items-center py-3 px-4 mt-4 border-2 border-black rounded-xl shadow-brutal text-lg font-black text-black bg-[#39ff14] disabled:opacity-70 hover-brutal group"
           >
             {isSubmitting ? "Creating account..." : "Create account"}
-            <ArrowRight className="ml-2 h-4 w-4" />
+            <ArrowRight
+              className="ml-2 h-6 w-6 transform group-hover:translate-x-1 transition-transform"
+              strokeWidth={3}
+            />
           </button>
         </form>
 
         <div className="mt-10 text-center text-sm flex items-center justify-center space-x-2 pb-2">
-          <span className="text-text-muted">Already have an account?</span>
+          <span className="text-text-muted font-bold">
+            Already have an account?
+          </span>
           <button
             onClick={() => onNavigate("login")}
-            className="font-bold text-primary-blue hover:text-primary-blue-dark transition-colors cursor-pointer bg-transparent border-none p-0 inline-flex"
+            className="font-black text-black hover:text-[#00e5ff] transition-colors cursor-pointer bg-transparent border-none p-0 inline-flex uppercase tracking-wider underline decoration-2 underline-offset-4"
           >
             Sign in
           </button>
