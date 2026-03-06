@@ -96,10 +96,13 @@ function toFormValues(listing: ListingDetail): ListingFormValues {
     bedrooms: String(listing.bedrooms),
     bathrooms: String(listing.bathrooms),
     balconies: String(listing.balconies),
-    floorNumber: listing.floorNumber === null ? "" : String(listing.floorNumber),
-    totalFloors: listing.totalFloors === null ? "" : String(listing.totalFloors),
+    floorNumber:
+      listing.floorNumber === null ? "" : String(listing.floorNumber),
+    totalFloors:
+      listing.totalFloors === null ? "" : String(listing.totalFloors),
     area: String(listing.area),
-    ageOfProperty: listing.ageOfProperty === null ? "" : String(listing.ageOfProperty),
+    ageOfProperty:
+      listing.ageOfProperty === null ? "" : String(listing.ageOfProperty),
     propertyType: listing.propertyType,
     furnished: listing.furnished,
     preferredTenantType: listing.preferredTenantType,
@@ -108,7 +111,9 @@ function toFormValues(listing: ListingDetail): ListingFormValues {
     listedBy: listing.listedBy,
     availableFor: listing.availableFor,
     leaseDurationMonths:
-      listing.leaseDurationMonths === null ? "" : String(listing.leaseDurationMonths),
+      listing.leaseDurationMonths === null
+        ? ""
+        : String(listing.leaseDurationMonths),
     noticePeriodDays:
       listing.noticePeriodDays === null ? "" : String(listing.noticePeriodDays),
     petPolicy: listing.petPolicy,
@@ -138,6 +143,15 @@ export default function AddPropertyForm({
   const [success, setSuccess] = useState("");
   const [statusLoading, setStatusLoading] = useState(false);
   const [status, setStatus] = useState<string>("DRAFT");
+  const [currentStep, setCurrentStep] = useState(0);
+
+  const steps = [
+    "Basic Details",
+    "Financials",
+    "Property Features",
+    "Terms & Resources",
+    "Media & Extras",
+  ];
 
   const isEdit = Boolean(listingId);
   const isAdmin = user?.role === "ADMIN";
@@ -173,7 +187,10 @@ export default function AddPropertyForm({
     [formValues, landmarksText, images],
   );
 
-  const setField = (field: keyof ListingFormValues, value: string | string[]) => {
+  const setField = (
+    field: keyof ListingFormValues,
+    value: string | string[],
+  ) => {
     setFormValues((prev) => ({
       ...prev,
       [field]: value,
@@ -246,7 +263,9 @@ export default function AddPropertyForm({
     }
   };
 
-  const changeStatus = async (nextStatus: "REVIEW" | "PUBLISHED" | "ARCHIVED") => {
+  const changeStatus = async (
+    nextStatus: "REVIEW" | "PUBLISHED" | "ARCHIVED",
+  ) => {
     if (!listingId) {
       return;
     }
@@ -264,209 +283,704 @@ export default function AddPropertyForm({
   };
 
   if (loading) {
-    return <div className="p-8 font-black">Loading listing...</div>;
+    return (
+      <div className="p-8 font-black flex items-center justify-center min-h-[400px] text-2xl animate-pulse">
+        Loading listing...
+      </div>
+    );
   }
 
+  const inputClass =
+    "w-full border-2 border-black bg-white/40 backdrop-blur-md rounded-xl p-3 font-bold shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] focus:outline-none focus:bg-white/80 focus:translate-y-[2px] focus:translate-x-[2px] focus:shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] transition-all";
+  const selectClass =
+    "w-full border-2 border-black bg-white/40 backdrop-blur-md rounded-xl p-3 font-bold shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:bg-white/80 transition-all cursor-pointer";
+  const btnClass =
+    "px-6 py-3 rounded-xl border-2 border-black font-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:translate-y-[2px] hover:translate-x-[2px] hover:shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] transition-all";
+
   return (
-    <div className="bg-white border-4 border-black p-6 md:p-8 rounded-2xl shadow-[8px_8px_0px_0px_rgba(0,0,0,1)]">
-      <div className="flex flex-wrap items-center justify-between gap-4 mb-6">
-        <h2 className="text-2xl font-black uppercase tracking-widest bg-[#ff00ff] text-black inline-block px-3 py-1 border-2 border-black">
+    <div className="bg-white/60 backdrop-blur-xl border-2 border-black/20 p-6 md:p-8 rounded-3xl shadow-[8px_8px_0px_0px_rgba(0,0,0,0.8)] max-w-7xl mx-auto">
+      <div className="flex flex-wrap items-center justify-between gap-4 mb-8">
+        <h2 className="text-2xl font-black uppercase tracking-widest bg-gradient-to-r from-[#ff00ff]/40 to-[#00e5ff]/40 backdrop-blur-md text-black inline-block px-5 py-2 border-2 border-black rounded-2xl shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]">
           {isEdit ? "Edit Listing" : "Create Listing Draft"}
         </h2>
-        <div className="text-sm font-black border-2 border-black px-3 py-1 bg-black text-white">
+        <div className="text-sm font-black border-2 border-black px-4 py-2 bg-black/90 backdrop-blur-md text-white rounded-xl shadow-[4px_4px_0px_0px_rgba(0,229,255,1)]">
           Status: {status}
         </div>
       </div>
 
+      <div className="flex flex-wrap gap-3 mb-8">
+        {steps.map((step, idx) => (
+          <button
+            key={step}
+            type="button"
+            onClick={() => setCurrentStep(idx)}
+            className={`flex-1 min-w-[140px] px-4 py-3 border-2 border-black rounded-xl font-black text-center text-sm transition-all ${
+              currentStep === idx
+                ? "bg-[#ff00ff]/90 text-white translate-y-[2px] translate-x-[2px] shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]"
+                : currentStep > idx
+                  ? "bg-[#39ff14]/70 text-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:bg-[#39ff14]/90 hover:-translate-y-[1px]"
+                  : "bg-white/60 backdrop-blur-md text-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:bg-white/90 hover:-translate-y-[1px]"
+            }`}
+          >
+            {idx + 1}. {step}
+          </button>
+        ))}
+      </div>
+
       {error ? (
-        <div className="mb-4 p-3 border-2 border-black bg-[#ff00ff] text-white font-bold">{error}</div>
+        <div className="mb-6 p-4 rounded-2xl border-2 border-black bg-[#ff00ff]/80 backdrop-blur-md text-white font-bold shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]">
+          {error}
+        </div>
       ) : null}
       {success ? (
-        <div className="mb-4 p-3 border-2 border-black bg-[#39ff14] text-black font-bold">{success}</div>
+        <div className="mb-6 p-4 rounded-2xl border-2 border-black bg-[#39ff14]/80 backdrop-blur-md text-black font-bold shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]">
+          {success}
+        </div>
       ) : null}
 
-      <form onSubmit={submit} className="space-y-8">
-        <section className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          <input required value={formValues.title} onChange={(e) => setField("title", e.target.value)} placeholder="Title" className="md:col-span-2 border-2 border-black p-3 font-bold" />
-          <textarea required value={formValues.description} onChange={(e) => setField("description", e.target.value)} placeholder="Description" rows={4} className="md:col-span-2 border-2 border-black p-3 font-bold" />
-          <input required value={formValues.address} onChange={(e) => setField("address", e.target.value)} placeholder="Address" className="md:col-span-2 border-2 border-black p-3 font-bold" />
-          <input required value={formValues.city} onChange={(e) => setField("city", e.target.value)} placeholder="City" className="border-2 border-black p-3 font-bold" />
-          <input required value={formValues.state} onChange={(e) => setField("state", e.target.value)} placeholder="State" className="border-2 border-black p-3 font-bold" />
-          <input required value={formValues.pincode} onChange={(e) => setField("pincode", e.target.value)} placeholder="Pincode" className="border-2 border-black p-3 font-bold" />
-        </section>
-
-        <section className="grid grid-cols-1 md:grid-cols-4 gap-4">
-          <input required type="number" min="0" value={formValues.rentAmount} onChange={(e) => setField("rentAmount", e.target.value)} placeholder="Rent" className="border-2 border-black p-3 font-bold" />
-          <input required type="number" min="0" value={formValues.deposit} onChange={(e) => setField("deposit", e.target.value)} placeholder="Deposit" className="border-2 border-black p-3 font-bold" />
-          <input type="number" min="0" value={formValues.maintenanceAmount} onChange={(e) => setField("maintenanceAmount", e.target.value)} placeholder="Maintenance" className="border-2 border-black p-3 font-bold" />
-          <input type="number" min="0" value={formValues.brokerageAmount} onChange={(e) => setField("brokerageAmount", e.target.value)} placeholder="Brokerage" className="border-2 border-black p-3 font-bold" />
-        </section>
-
-        <section className="grid grid-cols-1 md:grid-cols-4 gap-4">
-          <select value={formValues.propertyType} onChange={(e) => setField("propertyType", e.target.value)} className="border-2 border-black p-3 font-bold">{propertyTypeOptions.map((option) => <option key={option} value={option}>{option}</option>)}</select>
-          <select value={formValues.furnished} onChange={(e) => setField("furnished", e.target.value)} className="border-2 border-black p-3 font-bold">{furnishedOptions.map((option) => <option key={option} value={option}>{option}</option>)}</select>
-          <select value={formValues.preferredTenantType} onChange={(e) => setField("preferredTenantType", e.target.value)} className="border-2 border-black p-3 font-bold">{preferredTenantOptions.map((option) => <option key={option} value={option}>{option}</option>)}</select>
-          <select value={formValues.parking} onChange={(e) => setField("parking", e.target.value)} className="border-2 border-black p-3 font-bold">{parkingOptions.map((option) => <option key={option} value={option}>{option}</option>)}</select>
-          <input required type="number" min="0" value={formValues.bedrooms} onChange={(e) => setField("bedrooms", e.target.value)} placeholder="Bedrooms" className="border-2 border-black p-3 font-bold" />
-          <input required type="number" min="0" value={formValues.bathrooms} onChange={(e) => setField("bathrooms", e.target.value)} placeholder="Bathrooms" className="border-2 border-black p-3 font-bold" />
-          <input type="number" min="0" value={formValues.balconies} onChange={(e) => setField("balconies", e.target.value)} placeholder="Balconies" className="border-2 border-black p-3 font-bold" />
-          <input required type="number" min="1" value={formValues.area} onChange={(e) => setField("area", e.target.value)} placeholder="Area sqft" className="border-2 border-black p-3 font-bold" />
-          <input type="number" min="0" value={formValues.floorNumber} onChange={(e) => setField("floorNumber", e.target.value)} placeholder="Floor" className="border-2 border-black p-3 font-bold" />
-          <input type="number" min="0" value={formValues.totalFloors} onChange={(e) => setField("totalFloors", e.target.value)} placeholder="Total Floors" className="border-2 border-black p-3 font-bold" />
-          <input type="number" min="0" value={formValues.ageOfProperty} onChange={(e) => setField("ageOfProperty", e.target.value)} placeholder="Age of Property" className="border-2 border-black p-3 font-bold" />
-          <select value={formValues.facing} onChange={(e) => setField("facing", e.target.value)} className="border-2 border-black p-3 font-bold"><option value="">Facing</option>{facingOptions.map((option) => <option key={option} value={option}>{option}</option>)}</select>
-        </section>
-
-        <section className="grid grid-cols-1 md:grid-cols-3 gap-4">
-          <select value={formValues.listedBy} onChange={(e) => setField("listedBy", e.target.value)} className="border-2 border-black p-3 font-bold">{listedByOptions.map((option) => <option key={option} value={option}>{option}</option>)}</select>
-          <select value={formValues.petPolicy} onChange={(e) => setField("petPolicy", e.target.value)} className="border-2 border-black p-3 font-bold">{petPolicyOptions.map((option) => <option key={option} value={option}>{option}</option>)}</select>
-          <select value={formValues.powerBackup} onChange={(e) => setField("powerBackup", e.target.value)} className="border-2 border-black p-3 font-bold">{powerBackupOptions.map((option) => <option key={option} value={option}>{option}</option>)}</select>
-          <select value={formValues.waterSupply} onChange={(e) => setField("waterSupply", e.target.value)} className="border-2 border-black p-3 font-bold"><option value="">Water Supply</option>{waterSupplyOptions.map((option) => <option key={option} value={option}>{option}</option>)}</select>
-          <input type="number" min="1" value={formValues.leaseDurationMonths} onChange={(e) => setField("leaseDurationMonths", e.target.value)} placeholder="Lease months" className="border-2 border-black p-3 font-bold" />
-          <input type="number" min="0" value={formValues.noticePeriodDays} onChange={(e) => setField("noticePeriodDays", e.target.value)} placeholder="Notice days" className="border-2 border-black p-3 font-bold" />
-          <input type="date" value={formValues.availableFrom} onChange={(e) => setField("availableFrom", e.target.value)} className="border-2 border-black p-3 font-bold" />
-          <input value={formValues.videoTourUrl} onChange={(e) => setField("videoTourUrl", e.target.value)} placeholder="Video tour URL" className="md:col-span-2 border-2 border-black p-3 font-bold" />
-        </section>
-
-        <section className="space-y-4">
-          <p className="font-black uppercase">Amenities</p>
-          <div className="flex flex-wrap gap-2">
-            {amenityOptions.map((amenity) => (
-              <button
-                type="button"
-                key={amenity}
-                onClick={() => toggleMulti("amenities", amenity)}
-                className={`px-3 py-2 border-2 border-black font-bold ${
-                  formValues.amenities.includes(amenity) ? "bg-[#00e5ff]" : "bg-white"
-                }`}
-              >
-                {amenity}
-              </button>
-            ))}
+      <form onSubmit={submit} className="space-y-10">
+        {currentStep === 0 && (
+          <div className="space-y-6 bg-white/30 p-6 md:p-8 rounded-3xl border border-white/50 shadow-inner animate-in fade-in slide-in-from-bottom-4 duration-500">
+            <h3 className="text-xl font-black border-b-2 border-black/10 pb-2">
+              Basic Details
+            </h3>
+            <section className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div className="md:col-span-2">
+                <input
+                  required
+                  value={formValues.title}
+                  onChange={(e) => setField("title", e.target.value)}
+                  placeholder="Title"
+                  className={inputClass}
+                />
+              </div>
+              <div className="md:col-span-2">
+                <textarea
+                  required
+                  value={formValues.description}
+                  onChange={(e) => setField("description", e.target.value)}
+                  placeholder="Description"
+                  rows={4}
+                  className={inputClass}
+                />
+              </div>
+              <div className="md:col-span-2">
+                <input
+                  required
+                  value={formValues.address}
+                  onChange={(e) => setField("address", e.target.value)}
+                  placeholder="Address"
+                  className={inputClass}
+                />
+              </div>
+              <div>
+                <input
+                  required
+                  value={formValues.city}
+                  onChange={(e) => setField("city", e.target.value)}
+                  placeholder="City"
+                  className={inputClass}
+                />
+              </div>
+              <div>
+                <input
+                  required
+                  value={formValues.state}
+                  onChange={(e) => setField("state", e.target.value)}
+                  placeholder="State"
+                  className={inputClass}
+                />
+              </div>
+              <div>
+                <input
+                  required
+                  value={formValues.pincode}
+                  onChange={(e) => setField("pincode", e.target.value)}
+                  placeholder="Pincode"
+                  className={inputClass}
+                />
+              </div>
+            </section>
           </div>
-        </section>
+        )}
 
-        <section className="space-y-4">
-          <p className="font-black uppercase">Rules</p>
-          <div className="flex flex-wrap gap-2">
-            {ruleOptions.map((rule) => (
-              <button
-                type="button"
-                key={rule}
-                onClick={() => toggleMulti("rules", rule)}
-                className={`px-3 py-2 border-2 border-black font-bold ${
-                  formValues.rules.includes(rule) ? "bg-[#39ff14]" : "bg-white"
-                }`}
-              >
-                {rule}
-              </button>
-            ))}
+        {currentStep === 1 && (
+          <div className="space-y-6 bg-white/30 p-6 md:p-8 rounded-3xl border border-white/50 shadow-inner animate-in fade-in slide-in-from-bottom-4 duration-500">
+            <h3 className="text-xl font-black border-b-2 border-black/10 pb-2">
+              Financials
+            </h3>
+            <section className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+              <div>
+                <label className="text-xs font-bold mb-1 block">
+                  Rent Amount
+                </label>
+                <input
+                  required
+                  type="number"
+                  min="0"
+                  value={formValues.rentAmount}
+                  onChange={(e) => setField("rentAmount", e.target.value)}
+                  placeholder="Rent"
+                  className={inputClass}
+                />
+              </div>
+              <div>
+                <label className="text-xs font-bold mb-1 block">Deposit</label>
+                <input
+                  required
+                  type="number"
+                  min="0"
+                  value={formValues.deposit}
+                  onChange={(e) => setField("deposit", e.target.value)}
+                  placeholder="Deposit"
+                  className={inputClass}
+                />
+              </div>
+              <div>
+                <label className="text-xs font-bold mb-1 block">
+                  Maintenance
+                </label>
+                <input
+                  type="number"
+                  min="0"
+                  value={formValues.maintenanceAmount}
+                  onChange={(e) =>
+                    setField("maintenanceAmount", e.target.value)
+                  }
+                  placeholder="Maintenance"
+                  className={inputClass}
+                />
+              </div>
+              <div>
+                <label className="text-xs font-bold mb-1 block">
+                  Brokerage
+                </label>
+                <input
+                  type="number"
+                  min="0"
+                  value={formValues.brokerageAmount}
+                  onChange={(e) => setField("brokerageAmount", e.target.value)}
+                  placeholder="Brokerage"
+                  className={inputClass}
+                />
+              </div>
+            </section>
           </div>
-        </section>
+        )}
 
-        <section className="space-y-2">
-          <p className="font-black uppercase">Nearby Landmarks (one per line)</p>
-          <textarea
-            rows={4}
-            value={landmarksText}
-            onChange={(e) => setLandmarksText(e.target.value)}
-            className="w-full border-2 border-black p-3 font-bold"
-          />
-        </section>
-
-        <section className="space-y-3">
-          <p className="font-black uppercase">Media</p>
-          <IKContext
-            publicKey={import.meta.env.VITE_IMAGEKIT_PUBLIC_KEY || ""}
-            urlEndpoint={import.meta.env.VITE_IMAGEKIT_URL_ENDPOINT || ""}
-            authenticator={authenticator}
-          >
-            <label className="inline-flex items-center gap-2 px-4 py-3 border-2 border-black bg-[#39ff14] font-black cursor-pointer">
-              <Upload size={18} />
-              {uploadingImage ? "Uploading..." : "Upload Image"}
-              <IKUpload
-                className="hidden"
-                fileName="listing-image.jpg"
-                useUniqueFileName={true}
-                onUploadStart={() => setUploadingImage(true)}
-                onError={onUploadError}
-                onSuccess={onUploadSuccess}
-              />
-            </label>
-          </IKContext>
-          {images.length === 0 ? (
-            <div className="border-2 border-dashed border-black bg-white p-6 text-sm font-bold text-text-muted">
-              No images uploaded yet.
-            </div>
-          ) : (
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-              {images.map((image, index) => (
-                <div
-                  key={`${image.url}-${index}`}
-                  className="relative border-2 border-black bg-white overflow-hidden"
+        {currentStep === 2 && (
+          <div className="space-y-6 bg-white/30 p-6 md:p-8 rounded-3xl border border-white/50 shadow-inner animate-in fade-in slide-in-from-bottom-4 duration-500">
+            <h3 className="text-xl font-black border-b-2 border-black/10 pb-2">
+              Property Features
+            </h3>
+            <section className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+              <div>
+                <label className="text-xs font-bold mb-1 block">
+                  Property Type
+                </label>
+                <select
+                  value={formValues.propertyType}
+                  onChange={(e) => setField("propertyType", e.target.value)}
+                  className={selectClass}
                 >
-                  <img
-                    src={image.url}
-                    alt={`Listing media ${index + 1}`}
-                    className="w-full h-48 md:h-56 object-fill"
-                  />
-                  <button
-                    type="button"
-                    onClick={() => removeImage(index)}
-                    className="absolute top-2 right-2 p-2 border-2 border-black bg-white/95 font-black"
-                    aria-label={`Remove image ${index + 1}`}
-                    title="Remove image"
-                  >
-                    <X size={16} />
-                  </button>
-                </div>
-              ))}
-            </div>
-          )}
-        </section>
+                  {propertyTypeOptions.map((option) => (
+                    <option key={option} value={option}>
+                      {option}
+                    </option>
+                  ))}
+                </select>
+              </div>
+              <div>
+                <label className="text-xs font-bold mb-1 block">
+                  Furnishing
+                </label>
+                <select
+                  value={formValues.furnished}
+                  onChange={(e) => setField("furnished", e.target.value)}
+                  className={selectClass}
+                >
+                  {furnishedOptions.map((option) => (
+                    <option key={option} value={option}>
+                      {option}
+                    </option>
+                  ))}
+                </select>
+              </div>
+              <div>
+                <label className="text-xs font-bold mb-1 block">
+                  Preferred Tenant
+                </label>
+                <select
+                  value={formValues.preferredTenantType}
+                  onChange={(e) =>
+                    setField("preferredTenantType", e.target.value)
+                  }
+                  className={selectClass}
+                >
+                  {preferredTenantOptions.map((option) => (
+                    <option key={option} value={option}>
+                      {option}
+                    </option>
+                  ))}
+                </select>
+              </div>
+              <div>
+                <label className="text-xs font-bold mb-1 block">Parking</label>
+                <select
+                  value={formValues.parking}
+                  onChange={(e) => setField("parking", e.target.value)}
+                  className={selectClass}
+                >
+                  {parkingOptions.map((option) => (
+                    <option key={option} value={option}>
+                      {option}
+                    </option>
+                  ))}
+                </select>
+              </div>
 
-        <div className="flex flex-wrap gap-3">
-          <button type="submit" disabled={submitting || uploadingImage} className="px-5 py-3 border-2 border-black bg-black text-white font-black">
-            {submitting ? "Saving..." : isEdit ? "Save Changes" : "Create Draft"}
-          </button>
-          <button type="button" onClick={onCancel} className="px-5 py-3 border-2 border-black bg-white font-black">
-            Cancel
-          </button>
-          {isEdit && status === "DRAFT" && !isAdmin ? (
+              <div>
+                <label className="text-xs font-bold mb-1 block">Bedrooms</label>
+                <input
+                  required
+                  type="number"
+                  min="0"
+                  value={formValues.bedrooms}
+                  onChange={(e) => setField("bedrooms", e.target.value)}
+                  placeholder="Bedrooms"
+                  className={inputClass}
+                />
+              </div>
+              <div>
+                <label className="text-xs font-bold mb-1 block">
+                  Bathrooms
+                </label>
+                <input
+                  required
+                  type="number"
+                  min="0"
+                  value={formValues.bathrooms}
+                  onChange={(e) => setField("bathrooms", e.target.value)}
+                  placeholder="Bathrooms"
+                  className={inputClass}
+                />
+              </div>
+              <div>
+                <label className="text-xs font-bold mb-1 block">
+                  Balconies
+                </label>
+                <input
+                  type="number"
+                  min="0"
+                  value={formValues.balconies}
+                  onChange={(e) => setField("balconies", e.target.value)}
+                  placeholder="Balconies"
+                  className={inputClass}
+                />
+              </div>
+              <div>
+                <label className="text-xs font-bold mb-1 block">
+                  Area (sqft)
+                </label>
+                <input
+                  required
+                  type="number"
+                  min="1"
+                  value={formValues.area}
+                  onChange={(e) => setField("area", e.target.value)}
+                  placeholder="Area sqft"
+                  className={inputClass}
+                />
+              </div>
+
+              <div>
+                <label className="text-xs font-bold mb-1 block">
+                  Floor Number
+                </label>
+                <input
+                  type="number"
+                  min="0"
+                  value={formValues.floorNumber}
+                  onChange={(e) => setField("floorNumber", e.target.value)}
+                  placeholder="Floor"
+                  className={inputClass}
+                />
+              </div>
+              <div>
+                <label className="text-xs font-bold mb-1 block">
+                  Total Floors
+                </label>
+                <input
+                  type="number"
+                  min="0"
+                  value={formValues.totalFloors}
+                  onChange={(e) => setField("totalFloors", e.target.value)}
+                  placeholder="Total Floors"
+                  className={inputClass}
+                />
+              </div>
+              <div>
+                <label className="text-xs font-bold mb-1 block">
+                  Age of Property (Yrs)
+                </label>
+                <input
+                  type="number"
+                  min="0"
+                  value={formValues.ageOfProperty}
+                  onChange={(e) => setField("ageOfProperty", e.target.value)}
+                  placeholder="Age of Property"
+                  className={inputClass}
+                />
+              </div>
+              <div>
+                <label className="text-xs font-bold mb-1 block">Facing</label>
+                <select
+                  value={formValues.facing}
+                  onChange={(e) => setField("facing", e.target.value)}
+                  className={selectClass}
+                >
+                  <option value="">Facing</option>
+                  {facingOptions.map((option) => (
+                    <option key={option} value={option}>
+                      {option}
+                    </option>
+                  ))}
+                </select>
+              </div>
+            </section>
+          </div>
+        )}
+
+        {currentStep === 3 && (
+          <div className="space-y-6 bg-white/30 p-6 md:p-8 rounded-3xl border border-white/50 shadow-inner animate-in fade-in slide-in-from-bottom-4 duration-500">
+            <h3 className="text-xl font-black border-b-2 border-black/10 pb-2">
+              Listing Terms & Resources
+            </h3>
+            <section className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+              <div>
+                <label className="text-xs font-bold mb-1 block">
+                  Listed By
+                </label>
+                <select
+                  value={formValues.listedBy}
+                  onChange={(e) => setField("listedBy", e.target.value)}
+                  className={selectClass}
+                >
+                  {listedByOptions.map((option) => (
+                    <option key={option} value={option}>
+                      {option}
+                    </option>
+                  ))}
+                </select>
+              </div>
+              <div>
+                <label className="text-xs font-bold mb-1 block">
+                  Pet Policy
+                </label>
+                <select
+                  value={formValues.petPolicy}
+                  onChange={(e) => setField("petPolicy", e.target.value)}
+                  className={selectClass}
+                >
+                  {petPolicyOptions.map((option) => (
+                    <option key={option} value={option}>
+                      {option}
+                    </option>
+                  ))}
+                </select>
+              </div>
+              <div>
+                <label className="text-xs font-bold mb-1 block">
+                  Power Backup
+                </label>
+                <select
+                  value={formValues.powerBackup}
+                  onChange={(e) => setField("powerBackup", e.target.value)}
+                  className={selectClass}
+                >
+                  {powerBackupOptions.map((option) => (
+                    <option key={option} value={option}>
+                      {option}
+                    </option>
+                  ))}
+                </select>
+              </div>
+              <div>
+                <label className="text-xs font-bold mb-1 block">
+                  Water Supply
+                </label>
+                <select
+                  value={formValues.waterSupply}
+                  onChange={(e) => setField("waterSupply", e.target.value)}
+                  className={selectClass}
+                >
+                  <option value="">Water Supply</option>
+                  {waterSupplyOptions.map((option) => (
+                    <option key={option} value={option}>
+                      {option}
+                    </option>
+                  ))}
+                </select>
+              </div>
+              <div>
+                <label className="text-xs font-bold mb-1 block">
+                  Lease Duration (Months)
+                </label>
+                <input
+                  type="number"
+                  min="1"
+                  value={formValues.leaseDurationMonths}
+                  onChange={(e) =>
+                    setField("leaseDurationMonths", e.target.value)
+                  }
+                  placeholder="Lease months"
+                  className={inputClass}
+                />
+              </div>
+              <div>
+                <label className="text-xs font-bold mb-1 block">
+                  Notice Period (Days)
+                </label>
+                <input
+                  type="number"
+                  min="0"
+                  value={formValues.noticePeriodDays}
+                  onChange={(e) => setField("noticePeriodDays", e.target.value)}
+                  placeholder="Notice days"
+                  className={inputClass}
+                />
+              </div>
+              <div>
+                <label className="text-xs font-bold mb-1 block">
+                  Available From
+                </label>
+                <input
+                  type="date"
+                  value={formValues.availableFrom}
+                  onChange={(e) => setField("availableFrom", e.target.value)}
+                  className={inputClass}
+                />
+              </div>
+              <div className="md:col-span-2">
+                <label className="text-xs font-bold mb-1 block">
+                  Video Tour URL
+                </label>
+                <input
+                  value={formValues.videoTourUrl}
+                  onChange={(e) => setField("videoTourUrl", e.target.value)}
+                  placeholder="Video tour URL"
+                  className={inputClass}
+                />
+              </div>
+            </section>
+          </div>
+        )}
+
+        {currentStep === 4 && (
+          <div className="space-y-10 animate-in fade-in slide-in-from-bottom-4 duration-500">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-10">
+              <section className="space-y-4">
+                <p className="font-black uppercase text-lg border-b-2 border-black/10 pb-2">
+                  Amenities
+                </p>
+                <div className="flex flex-wrap gap-3">
+                  {amenityOptions.map((amenity) => (
+                    <button
+                      type="button"
+                      key={amenity}
+                      onClick={() => toggleMulti("amenities", amenity)}
+                      className={`px-4 py-2 rounded-xl border-2 border-black font-bold shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] transition-all hover:translate-x-[2px] hover:translate-y-[2px] hover:shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] ${
+                        formValues.amenities.includes(amenity)
+                          ? "bg-[#00e5ff] text-black"
+                          : "bg-white/40 backdrop-blur-md hover:bg-white/80"
+                      }`}
+                    >
+                      {amenity}
+                    </button>
+                  ))}
+                </div>
+              </section>
+
+              <section className="space-y-4">
+                <p className="font-black uppercase text-lg border-b-2 border-black/10 pb-2">
+                  Rules
+                </p>
+                <div className="flex flex-wrap gap-3">
+                  {ruleOptions.map((rule) => (
+                    <button
+                      type="button"
+                      key={rule}
+                      onClick={() => toggleMulti("rules", rule)}
+                      className={`px-4 py-2 rounded-xl border-2 border-black font-bold shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] transition-all hover:translate-x-[2px] hover:translate-y-[2px] hover:shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] ${
+                        formValues.rules.includes(rule)
+                          ? "bg-[#39ff14] text-black"
+                          : "bg-white/40 backdrop-blur-md hover:bg-white/80"
+                      }`}
+                    >
+                      {rule}
+                    </button>
+                  ))}
+                </div>
+              </section>
+            </div>
+
+            <section className="space-y-4">
+              <p className="font-black uppercase text-lg border-b-2 border-black/10 pb-2">
+                Nearby Landmarks (one per line)
+              </p>
+              <textarea
+                rows={4}
+                value={landmarksText}
+                onChange={(e) => setLandmarksText(e.target.value)}
+                className={inputClass}
+                placeholder="E.g. Nexus Mall, 2km away"
+              />
+            </section>
+
+            <section className="space-y-4 bg-white/30 p-6 rounded-3xl border border-white/50 shadow-inner">
+              <div className="flex flex-wrap items-center justify-between gap-4 border-b-2 border-black/10 pb-4">
+                <p className="font-black uppercase text-lg">Media</p>
+                <IKContext
+                  publicKey={import.meta.env.VITE_IMAGEKIT_PUBLIC_KEY || ""}
+                  urlEndpoint={import.meta.env.VITE_IMAGEKIT_URL_ENDPOINT || ""}
+                  authenticator={authenticator}
+                >
+                  <label className="inline-flex items-center gap-2 px-5 py-2 border-2 border-black rounded-xl bg-[#ff00ff]/80 text-white font-black cursor-pointer shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:translate-y-[2px] hover:translate-x-[2px] hover:shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] transition-all">
+                    <Upload size={18} />
+                    {uploadingImage ? "Uploading..." : "Upload Image"}
+                    <IKUpload
+                      className="hidden"
+                      fileName="listing-image.jpg"
+                      useUniqueFileName={true}
+                      onUploadStart={() => setUploadingImage(true)}
+                      onError={onUploadError}
+                      onSuccess={onUploadSuccess}
+                    />
+                  </label>
+                </IKContext>
+              </div>
+
+              {images.length === 0 ? (
+                <div className="border-2 border-dashed border-black/30 rounded-2xl bg-white/40 backdrop-blur-md p-10 text-center text-sm font-bold text-black/60">
+                  No images uploaded yet. Adding great photos helps rent faster!
+                </div>
+              ) : (
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+                  {images.map((image, index) => (
+                    <div
+                      key={`${image.url}-${index}`}
+                      className="relative group rounded-2xl border-2 border-black bg-white/40 backdrop-blur-md overflow-hidden shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]"
+                    >
+                      <img
+                        src={image.url}
+                        alt={`Listing media ${index + 1}`}
+                        className="w-full h-48 md:h-56 object-cover transition-transform duration-300 group-hover:scale-105"
+                      />
+                      <button
+                        type="button"
+                        onClick={() => removeImage(index)}
+                        className="absolute top-3 right-3 p-2 rounded-xl border-2 border-black bg-white/80 backdrop-blur-md font-black shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] hover:bg-[#ff00ff] hover:text-white transition-all"
+                        aria-label={`Remove image ${index + 1}`}
+                        title="Remove image"
+                      >
+                        <X size={16} />
+                      </button>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </section>
+          </div>
+        )}
+
+        {/* Action Buttons Section */}
+        <div className="flex flex-wrap gap-4 pt-8 border-t-4 border-black/10 justify-between items-center">
+          <div className="flex gap-4">
             <button
               type="button"
-              disabled={statusLoading}
-              onClick={() => void changeStatus("REVIEW")}
-              className="px-5 py-3 border-2 border-black bg-[#00e5ff] font-black"
+              disabled={currentStep === 0}
+              onClick={() => setCurrentStep((p) => Math.max(0, p - 1))}
+              className={`${btnClass} ${
+                currentStep === 0
+                  ? "opacity-50 cursor-not-allowed bg-black/5"
+                  : "bg-white/60 backdrop-blur-md hover:bg-white"
+              }`}
             >
-              Submit For Review
+              Previous
             </button>
-          ) : null}
-          {isEdit && status === "REVIEW" && isAdmin ? (
             <button
               type="button"
-              disabled={statusLoading}
-              onClick={() => void changeStatus("PUBLISHED")}
-              className="px-5 py-3 border-2 border-black bg-[#39ff14] font-black"
+              onClick={onCancel}
+              className={`${btnClass} bg-white/40 backdrop-blur-md hover:bg-white`}
             >
-              Publish
+              Cancel
             </button>
-          ) : null}
-          {isEdit && status === "PUBLISHED" && isAdmin ? (
-            <button
-              type="button"
-              disabled={statusLoading}
-              onClick={() => void changeStatus("ARCHIVED")}
-              className="px-5 py-3 border-2 border-black bg-[#ff00ff] text-white font-black"
-            >
-              Archive
-            </button>
-          ) : null}
-          {isEdit ? (
-            <Link to="/dashboard/listings" className="px-5 py-3 border-2 border-black bg-white font-black">
-              Back To Listings
-            </Link>
-          ) : null}
+          </div>
+
+          <div className="flex flex-wrap gap-4 items-center">
+            {isEdit && status === "DRAFT" && !isAdmin ? (
+              <button
+                type="button"
+                disabled={statusLoading}
+                onClick={() => void changeStatus("REVIEW")}
+                className={`${btnClass} bg-[#00e5ff]/80 text-black hover:bg-[#00e5ff]`}
+              >
+                Submit For Review
+              </button>
+            ) : null}
+            {isEdit && status === "REVIEW" && isAdmin ? (
+              <button
+                type="button"
+                disabled={statusLoading}
+                onClick={() => void changeStatus("PUBLISHED")}
+                className={`${btnClass} bg-[#39ff14]/80 text-black hover:bg-[#39ff14]`}
+              >
+                Publish
+              </button>
+            ) : null}
+            {isEdit && status === "PUBLISHED" && isAdmin ? (
+              <button
+                type="button"
+                disabled={statusLoading}
+                onClick={() => void changeStatus("ARCHIVED")}
+                className={`${btnClass} bg-[#ff00ff]/80 text-white hover:bg-[#ff00ff]`}
+              >
+                Archive
+              </button>
+            ) : null}
+            {isEdit ? (
+              <Link
+                to="/dashboard/listings"
+                className={`${btnClass} bg-white/60 backdrop-blur-md hover:bg-white hidden sm:block`}
+              >
+                Back To Listings
+              </Link>
+            ) : null}
+
+            {currentStep < steps.length - 1 ? (
+              <button
+                type="button"
+                onClick={() =>
+                  setCurrentStep((p) => Math.min(steps.length - 1, p + 1))
+                }
+                className={`${btnClass} bg-[#00e5ff]/90 text-black hover:bg-[#00e5ff]`}
+              >
+                Next Step
+              </button>
+            ) : (
+              <button
+                type="submit"
+                disabled={submitting || uploadingImage}
+                className={`${btnClass} bg-black text-white hover:bg-black/80`}
+              >
+                {submitting
+                  ? "Saving..."
+                  : isEdit
+                    ? "Save Changes"
+                    : "Create Draft"}
+              </button>
+            )}
+          </div>
         </div>
       </form>
     </div>
