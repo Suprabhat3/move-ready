@@ -1,5 +1,5 @@
 <div align="center">
-  <img src="https://raw.githubusercontent.com/supratik/moveready/main/frontend/move-ready/src/assets/logo.png" alt="MoveReady Logo" width="120" />
+  <img src="frontend/src/assets/logo.png" alt="MoveReady Logo" width="120" />
   <h1>🏠 MoveReady</h1>
   <p><strong>The new standard in rental housing management.</strong></p>
   <p>A full-stack platform that simplifies the rental journey — from discovery to digital move-ins.</p>
