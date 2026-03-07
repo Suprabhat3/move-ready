@@ -7,11 +7,11 @@ import type {
   SessionUser,
 } from "../types/listings";
 
-export const API_BASE_URL =
-  import.meta.env.VITE_API_URL || "http://localhost:4000";
+export const API_BASE_URL = "http://localhost:4000";
 
 async function apiFetch<T>(path: string, init?: RequestInit): Promise<T> {
-  const response = await fetch(`${API_BASE_URL}${path}`, {
+  const url = `${API_BASE_URL}${path}`;
+  const response = await fetch(url, {
     credentials: "include",
     ...init,
     headers: {
@@ -21,8 +21,18 @@ async function apiFetch<T>(path: string, init?: RequestInit): Promise<T> {
   });
 
   if (!response.ok) {
-    const errorBody = await response.json().catch(() => null);
-    throw new Error(errorBody?.message || "Request failed");
+    let errorDetail = "Request failed";
+    try {
+      if (response.headers.get("Content-Type")?.includes("application/json")) {
+        const errorBody = await response.json();
+        errorDetail = errorBody.message || errorDetail;
+      } else {
+        errorDetail = `Error ${response.status}: ${response.statusText}`;
+      }
+    } catch (e) {
+      console.error("Error reading error response:", e);
+    }
+    throw new Error(errorDetail);
   }
 
   return response.json() as Promise<T>;
@@ -115,5 +125,89 @@ export async function createInquiry(input: {
   return apiFetch("/api/tickets", {
     method: "POST",
     body: JSON.stringify(input),
+  });
+}
+
+// Visit Management
+export async function fetchMyVisits() {
+  return apiFetch<any[]>("/api/visits/me");
+}
+
+export async function fetchAdminVisits(status?: string) {
+  return apiFetch<any[]>(`/api/visits/admin${status ? `?status=${status}` : ""}`);
+}
+
+export async function createVisitRequest(listingId: string, proposedAt: string, notes?: string) {
+  return apiFetch("/api/visits", {
+    method: "POST",
+    body: JSON.stringify({ listingId, proposedAt, notes }),
+  });
+}
+
+export async function updateVisitDecision(visitId: string, decision: string) {
+  return apiFetch(`/api/visits/${visitId}/decision`, {
+    method: "PATCH",
+    body: JSON.stringify({ decision }),
+  });
+}
+
+export async function cancelVisit(visitId: string) {
+  return apiFetch(`/api/visits/${visitId}/cancel`, {
+    method: "PATCH",
+  });
+}
+
+export async function scheduleVisit(visitId: string, scheduledAt: string) {
+  return apiFetch(`/api/visits/${visitId}/schedule`, {
+    method: "PATCH",
+    body: JSON.stringify({ scheduledAt }),
+  });
+}
+
+export async function confirmVisit(visitId: string) {
+  return apiFetch(`/api/visits/${visitId}/confirm`, {
+    method: "PATCH",
+  });
+}
+
+// Move-In Management
+export async function fetchMyMoveIn() {
+  return apiFetch<any>("/api/move-in/me");
+}
+
+export async function createMoveIn(payload: any) {
+  return apiFetch("/api/move-in", {
+    method: "POST",
+    body: JSON.stringify(payload),
+  });
+}
+
+export async function updateChecklistItem(moveInId: string, itemId: string, completed: boolean) {
+  return apiFetch(`/api/move-in/${moveInId}/checklist/${itemId}`, {
+    method: "PATCH",
+    body: JSON.stringify({ completed }),
+  });
+}
+
+// Support Tickets (Tenant & Agent)
+export async function fetchMyTickets() {
+  return apiFetch<any[]>("/api/tickets/me");
+}
+
+export async function fetchAgentTickets() {
+  return apiFetch<any[]>("/api/tickets/agent");
+}
+
+export async function replyToTicket(ticketId: string, content: string) {
+  return apiFetch(`/api/tickets/${ticketId}/reply`, {
+    method: "POST",
+    body: JSON.stringify({ content }),
+  });
+}
+
+export async function updateTicketStatus(ticketId: string, status: string) {
+  return apiFetch(`/api/tickets/${ticketId}/status`, {
+    method: "PATCH",
+    body: JSON.stringify({ status }),
   });
 }

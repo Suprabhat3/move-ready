@@ -62,6 +62,18 @@ const Navbar = ({
                 </NavLink>
               </li>
             ) : null}
+            <li>
+              <NavLink to="/visits" className={navClassName}>
+                Visits
+              </NavLink>
+            </li>
+            {!isAgent && user && (
+              <li>
+                <NavLink to="/move-in" className={navClassName}>
+                  Move-In
+                </NavLink>
+              </li>
+            )}
           </ul>
         </nav>
 

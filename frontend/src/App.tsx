@@ -23,6 +23,8 @@ import ShortlistPage from "./pages/ShortlistPage";
 import ComparePage from "./pages/ComparePage";
 import ListingEditorPage from "./pages/ListingEditorPage";
 import DashboardListingsPage from "./pages/DashboardListingsPage";
+import VisitTrackerPage from "./pages/VisitTrackerPage";
+import MoveInDashboard from "./pages/MoveInDashboard";
 
 function AppShell({
   user,
@@ -94,9 +96,7 @@ function AuthPage({
   };
 
   if (type === "login") {
-    return (
-      <Login onNavigate={handleNavigate} onAuthSuccess={onAuthSuccess} />
-    );
+    return <Login onNavigate={handleNavigate} onAuthSuccess={onAuthSuccess} />;
   }
 
   return <Register onNavigate={handleNavigate} onAuthSuccess={onAuthSuccess} />;
@@ -142,6 +142,22 @@ function AppRoutes({
           element={
             <RequireAuth user={user}>
               <Dashboard user={user} />
+            </RequireAuth>
+          }
+        />
+        <Route
+          path="/visits"
+          element={
+            <RequireAuth user={user}>
+              <VisitTrackerPage user={user} />
+            </RequireAuth>
+          }
+        />
+        <Route
+          path="/move-in"
+          element={
+            <RequireAuth user={user}>
+              <MoveInDashboard user={user} />
             </RequireAuth>
           }
         />

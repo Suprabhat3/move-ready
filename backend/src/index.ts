@@ -38,6 +38,12 @@ app.use('/api/listings', listingsRoutes);
 import ticketsRoutes from './routes/tickets';
 app.use('/api/tickets', ticketsRoutes);
 
+import visitsRoutes from './routes/visits';
+app.use('/api/visits', visitsRoutes);
+
+import moveInRoutes from './routes/move-in';
+app.use('/api/move-in', moveInRoutes);
+
 app.get('/api/health', async (req: Request, res: Response, next: NextFunction) => {
   try {
     await prisma.$queryRaw`SELECT 1`;

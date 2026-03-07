@@ -5,6 +5,8 @@ import {
   type AuthedRequest,
   requireAgentOrAdmin,
   requireAuth,
+  requireTenant,
+  requireAdmin,
 } from "../lib/session";
 
 const router = express.Router();
@@ -129,10 +131,66 @@ router.post("/", requireAuth, async (req: AuthedRequest, res) => {
 });
 
 /**
+ * GET /api/tickets/me
+ * Fetch all tickets for the current tenant.
+ */
+router.get("/me", requireTenant, async (req: AuthedRequest, res) => {
+  try {
+    const tickets = await prisma.supportTicket.findMany({
+      where: { tenantId: req.user!.id },
+      include: {
+        listing: {
+          select: { id: true, title: true },
+        },
+        messages: {
+          orderBy: { createdAt: "desc" },
+          take: 1,
+        },
+      },
+      orderBy: { updatedAt: "desc" },
+    });
+
+    res.status(200).json(tickets);
+  } catch (error) {
+    console.error("Fetch tenant tickets error:", error);
+    res.status(500).json({ message: "Internal Server Error" });
+  }
+});
+
+/**
+ * PATCH /api/admin/tickets/:id/status
+ * Update ticket status (Admin/Agent)
+ */
+router.patch("/:id/status", requireAgentOrAdmin, async (req: AuthedRequest, res) => {
+  try {
+    const id = req.params.id as string;
+    const { status } = req.body;
+
+    const ticket = await prisma.supportTicket.findUnique({
+      where: { id },
+    });
+
+    if (!ticket) {
+      return res.status(404).json({ message: "Ticket not found" });
+    }
+
+    const updated = await prisma.supportTicket.update({
+      where: { id },
+      data: { status },
+    });
+
+    res.status(200).json(updated);
+  } catch (error) {
+    console.error("Update ticket status error:", error);
+    res.status(500).json({ message: "Internal Server Error" });
+  }
+});
+
+/**
  * POST /api/tickets/:ticketId/reply
  * Reply to a specific ticket.
  */
-router.post("/:ticketId/reply", requireAgentOrAdmin, async (req: AuthedRequest, res) => {
+router.post("/:ticketId/reply", requireAuth, async (req: AuthedRequest, res) => {
   try {
     const ticketId = req.params.ticketId as string;
     const { content, fileUrl } = req.body;
@@ -146,11 +204,7 @@ router.post("/:ticketId/reply", requireAgentOrAdmin, async (req: AuthedRequest, 
     const ticket = await prisma.supportTicket.findUnique({
       where: { id: ticketId },
       include: {
-        listing: {
-          select: {
-            createdById: true,
-          },
-        },
+        listing: { select: { createdById: true } },
       },
     });
 
@@ -158,10 +212,12 @@ router.post("/:ticketId/reply", requireAgentOrAdmin, async (req: AuthedRequest, 
       return res.status(404).json({ message: "Ticket not found" });
     }
 
-    if (
-      user.role !== Role.ADMIN &&
-      ticket.listing?.createdById !== user.id
-    ) {
+    // Check permissions: Admin, Agent (if listing belongs to them), or the Tenant who created the ticket
+    const isTenant = ticket.tenantId === user.id;
+    const isAdmin = user.role === Role.ADMIN;
+    const isAgent = user.role === Role.SITE_AGENT && ticket.listing?.createdById === user.id;
+
+    if (!isTenant && !isAdmin && !isAgent) {
       return res.status(403).json({ message: "Forbidden" });
     }
 
@@ -179,10 +235,13 @@ router.post("/:ticketId/reply", requireAgentOrAdmin, async (req: AuthedRequest, 
       },
     });
 
-    if (ticket.status === "OPEN") {
+    // If tenant replies, status becomes OPEN (needs attention)
+    // If agent/admin replies, status becomes IN_PROGRESS
+    const nextStatus = isTenant ? "OPEN" : "IN_PROGRESS";
+    if (ticket.status !== nextStatus && ticket.status !== "RESOLVED" && ticket.status !== "CLOSED") {
       await prisma.supportTicket.update({
         where: { id: ticketId },
-        data: { status: "IN_PROGRESS" },
+        data: { status: nextStatus },
       });
     }
 
