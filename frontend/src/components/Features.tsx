@@ -9,109 +9,91 @@ import {
 
 const features = [
   {
-    icon: <Search className="w-8 h-8 text-black" strokeWidth={2.5} />,
+    icon: <Search className="w-8 h-8 text-[#0a5ea8]" strokeWidth={2} />,
     title: "Smart Search",
     description:
       "Find verified listings that perfectly match your desired city, budget, and amenities with our advanced search filters.",
-    colorClass: "hover-brutal",
-    iconBgClass:
-      "bg-[#00e5ff] border-2 border-black shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]",
+    iconBgClass: "bg-blue-50",
   },
   {
-    icon: <Navigation className="w-8 h-8 text-black" strokeWidth={2.5} />,
+    icon: <Navigation className="w-8 h-8 text-[#28a745]" strokeWidth={2} />,
     title: "Visit Tracking",
     description:
       "Schedule property visits effortlessly. Our status stepper keeps you updated from Request to Final Decision.",
-    colorClass: "hover-brutal",
-    iconBgClass:
-      "bg-[#39ff14] border-2 border-black shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]",
+    iconBgClass: "bg-green-50",
   },
   {
-    icon: <CheckCircle2 className="w-8 h-8 text-black" strokeWidth={2.5} />,
+    icon: <CheckCircle2 className="w-8 h-8 text-[#00b8d4]" strokeWidth={2} />,
     title: "Digital Move-in",
     description:
       "Clear checklist for smoothly securing your house: digital document upload, fast approval, and inventory review.",
-    colorClass: "hover-brutal",
-    iconBgClass:
-      "bg-[#ff00ff] border-2 border-black shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]",
+    iconBgClass: "bg-cyan-50",
   },
   {
-    icon: <Building className="w-8 h-8 text-black" strokeWidth={2.5} />,
+    icon: <Building className="w-8 h-8 text-[#d81b60]" strokeWidth={2} />,
     title: "Rental Management",
     description:
       "Your complete tenant dashboard. Manage stays, request extensions, and browse shortlisted properties simultaneously.",
-    colorClass: "hover-brutal",
-    iconBgClass:
-      "bg-[#39ff14] border-2 border-black shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]",
+    iconBgClass: "bg-pink-50",
   },
   {
-    icon: <Activity className="w-8 h-8 text-black" strokeWidth={2.5} />,
+    icon: <Activity className="w-8 h-8 text-[#5e35b1]" strokeWidth={2} />,
     title: "Support Tickets",
     description:
       "24/7 dedicated tenant support with threaded messages and priority tracking till issues get completely resolved.",
-    colorClass: "hover-brutal",
-    iconBgClass:
-      "bg-[#00e5ff] border-2 border-black shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]",
+    iconBgClass: "bg-purple-50",
   },
   {
-    icon: <MapPin className="w-8 h-8 text-black" strokeWidth={2.5} />,
+    icon: <MapPin className="w-8 h-8 text-[#fb8c00]" strokeWidth={2} />,
     title: "Real-time Approvals",
     description:
       "No more waiting weeks. Direct owner verification, immediate alerts, and straightforward status dashboards.",
-    colorClass: "hover-brutal",
-    iconBgClass:
-      "bg-[#ff00ff] border-2 border-black shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]",
+    iconBgClass: "bg-orange-50",
   },
 ];
 
 const Features = () => {
   return (
     <section
-      className="py-24 border-b-4 border-black relative overflow-hidden"
+      className="py-24 bg-white border-t border-gray-100 relative"
       id="features"
     >
-      <div className="absolute top-40 right-10 w-32 h-32 bg-[#ff00ff] rounded-full blur-[80px] opacity-20 pointer-events-none"></div>
-      <div className="absolute bottom-20 left-10 w-48 h-48 bg-[#00e5ff] rounded-full blur-[80px] opacity-20 pointer-events-none"></div>
+      <div className="absolute top-0 right-0 w-1/2 h-full bg-[#f0f9ff]/50 -skew-x-12 origin-top-right -z-10 hidden lg:block"></div>
 
-      <div className="w-full max-w-7xl mx-auto px-6 relative z-10">
-        <div className="text-center max-w-[700px] mx-auto mb-20">
-          <span className="inline-block px-4 py-2 bg-[#39ff14] border-2 border-black text-black font-extrabold tracking-widest uppercase text-xs mb-6 shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]">
+      <div className="w-full max-w-[1400px] mx-auto px-6 md:px-12">
+        <div className="text-center max-w-[800px] mx-auto mb-20">
+          <h2 className="text-sm font-bold text-[#0a5ea8] uppercase tracking-[0.2em] mb-4">
             Why MoveReady?
-          </span>
-          <h2
-            className="text-5xl md:text-6xl font-black text-black mb-6 leading-[1.1]"
-            style={{ fontFamily: "var(--font-display)" }}
-          >
-            Rent housing without the{" "}
-            <span className="text-white bg-black px-2 inline-block -rotate-1">
-              headache
-            </span>
           </h2>
-          <p className="text-xl font-medium text-text-muted">
-            We overhauled the traditional rental process. Our platform directly
-            connects you with curated properties and handles all the paperwork
-            dynamically online.
+          <h2 className="text-4xl md:text-5xl lg:text-6xl font-extrabold text-[#1a1a1a] mb-6 leading-[1.1] tracking-tight">
+            Rent housing without the <br className="hidden md:block" />
+            <span className="text-[#28a745]">unnecessary complexity</span>
+          </h2>
+          <p className="text-xl text-gray-500 font-medium">
+            We've overhauled the traditional rental process. Our platform
+            directly connects you with curated properties and handles all the
+            paperwork digitally.
           </p>
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
           {features.map((feature, index) => (
             <div
-              className={`glass-brutal rounded-2xl p-8 transition-transform duration-300 ${feature.colorClass}`}
+              className={`bg-white rounded-[2rem] p-10 border border-gray-100 shadow-sm hover:shadow-2xl hover:-translate-y-2 transition-all duration-500 group relative overflow-hidden`}
               key={index}
             >
+              {/* Subtle hover background highlight */}
+              <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-transparent via-transparent to-transparent group-hover:from-[#0a5ea8] group-hover:to-[#28a745] transition-all duration-500"></div>
+
               <div
-                className={`w-14 h-14 rounded-xl flex items-center justify-center mb-8 ${feature.iconBgClass}`}
+                className={`w-16 h-16 rounded-2xl flex items-center justify-center mb-8 ${feature.iconBgClass} transition-transform duration-500 group-hover:scale-110 shadow-inner`}
               >
                 {feature.icon}
               </div>
-              <h3
-                className="text-2xl font-black mb-4 text-black tracking-tight"
-                style={{ fontFamily: "var(--font-display)" }}
-              >
+              <h3 className="text-2xl font-bold mb-4 text-[#1a1a1a] tracking-tight">
                 {feature.title}
               </h3>
-              <p className="text-text-muted font-medium leading-relaxed">
+              <p className="text-gray-500 font-medium leading-relaxed text-lg">
                 {feature.description}
               </p>
             </div>

@@ -18,50 +18,48 @@ const Navbar = ({
   const isAgent = user?.role === "SITE_AGENT" || user?.role === "ADMIN";
 
   const navClassName = ({ isActive }: { isActive: boolean }) =>
-    `font-black text-xs uppercase tracking-widest transition-all px-4 py-2 border-2 border-transparent rounded-xl ${
+    `font-bold text-sm tracking-tight transition-all px-2 py-1 ${
       isActive
-        ? "text-black bg-white border-black shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]"
-        : "text-black/60 hover:text-black hover:bg-white/40"
+        ? "text-black border-b-2 border-[#0a5ea8]"
+        : "text-gray-500 hover:text-black"
     }`;
 
   return (
     <header className="fixed top-0 left-0 w-full h-24 z-50 flex items-center justify-center px-6 pointer-events-none">
-      <div className="w-full max-w-[1400px] h-16 bg-white/60 backdrop-blur-xl border-2 border-black/10 rounded-2xl flex items-center justify-between px-6 shadow-[8px_8px_0px_0px_rgba(0,0,0,0.1)] pointer-events-auto">
+      <div className="w-full max-w-[1400px] h-16 bg-white/80 backdrop-blur-xl border-b border-gray-100 flex items-center justify-between px-8 shadow-sm pointer-events-auto rounded-2xl">
         <Link
           to="/"
-          className="flex items-center gap-3 bg-transparent hover:scale-105 transition-transform"
+          className="flex items-center gap-3 hover:scale-105 transition-transform"
         >
           <img
             src={logo}
             alt="MoveReady Logo"
-            className="h-8 md:h-9 w-auto object-contain"
+            className="h-8 md:h-10 w-auto object-contain"
           />
         </Link>
 
-        <nav className="hidden lg:block absolute left-1/2 -translate-x-1/2">
-          <ul className="flex items-center gap-4">
+        <nav className="hidden lg:block">
+          <ul className="flex items-center gap-6">
             <li>
               <NavLink to="/properties" className={navClassName}>
-                Rentals
+                Browse
               </NavLink>
             </li>
             <li>
-              <NavLink to="/shortlist" className={navClassName}>
-                Saved
+              <NavLink to="/features" className={navClassName}>
+                Features
               </NavLink>
             </li>
             <li>
-              <NavLink to="/compare" className={navClassName}>
-                Compare
+              <NavLink to="/landlords" className={navClassName}>
+                Landlords
               </NavLink>
             </li>
-            {isAgent ? (
-              <li>
-                <NavLink to="/dashboard/listings" className={navClassName}>
-                  Manager
-                </NavLink>
-              </li>
-            ) : null}
+            <li>
+              <NavLink to="/blog" className={navClassName}>
+                Blog
+              </NavLink>
+            </li>
             <li>
               <NavLink to="/visits" className={navClassName}>
                 Visits
@@ -74,43 +72,45 @@ const Navbar = ({
                 </NavLink>
               </li>
             )}
+            <li>
+              <NavLink to="/support" className={navClassName}>
+                Support
+              </NavLink>
+            </li>
           </ul>
         </nav>
 
         {user ? (
-          <div className="flex items-center gap-3">
-            <span
-              className="hidden lg:block font-black text-[10px] uppercase tracking-tighter text-black/40 px-3 truncate"
-              title={displayName}
-            >
+          <div className="flex items-center gap-4">
+            <span className="hidden lg:block text-sm font-bold text-gray-400 lowercase">
               {displayName}
             </span>
             <Link
               to={isAgent ? "/dashboard/listings" : "/dashboard"}
-              className="flex items-center justify-center font-black text-xs uppercase tracking-wider transition-all duration-300 rounded-xl h-10 px-6 text-black bg-[#00e5ff] border-2 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:translate-x-[1px] hover:translate-y-[1px] hover:shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]"
+              className="px-6 py-2.5 rounded-lg font-bold text-sm bg-gray-100 text-gray-900 border border-transparent hover:bg-gray-200 transition-all"
             >
-              Dash
+              Dashboard
             </Link>
             <button
               onClick={onLogout}
-              className="flex items-center justify-center font-black text-xs uppercase tracking-wider transition-all duration-300 rounded-xl h-10 px-6 text-white bg-black border-2 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:translate-x-[1px] hover:translate-y-[1px] hover:shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] cursor-pointer"
+              className="px-6 py-2.5 rounded-lg font-bold text-sm bg-black text-white hover:bg-gray-800 transition-all"
             >
-              Out
+              Sign Out
             </button>
           </div>
         ) : (
-          <div className="flex items-center gap-3">
+          <div className="flex items-center gap-6">
             <Link
               to="/login"
-              className="hidden md:flex items-center justify-center font-black text-xs uppercase tracking-wider transition-all duration-300 rounded-xl h-10 px-6 text-black bg-white border-2 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:translate-x-[1px] hover:translate-y-[1px] hover:shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]"
+              className="text-gray-600 font-bold hover:text-black transition-colors"
             >
-              Log In
+              Login
             </Link>
             <Link
               to="/register"
-              className="flex items-center justify-center font-black text-xs uppercase tracking-wider transition-all duration-300 rounded-xl h-10 px-8 text-black bg-[#39ff14] border-2 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:translate-x-[1px] hover:translate-y-[1px] hover:shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]"
+              className="px-8 py-2.5 bg-[#28a745] text-white font-bold rounded-lg hover:bg-[#218838] transition-all shadow-md"
             >
-              Join
+              Sign Up
             </Link>
           </div>
         )}
