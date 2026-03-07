@@ -21,7 +21,7 @@ const CallToAction = () => {
               </div>
               <h2 className="text-4xl md:text-5xl lg:text-6xl xl:text-7xl font-black text-white mb-6 leading-[1.1] tracking-tighter">
                 Ready to find your <br className="hidden lg:block" />
-                <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#a1e5b1] to-[#28a745] p-2">
+                <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#a1e5b1] to-[#28a745]">
                   perfect next home?
                 </span>
               </h2>

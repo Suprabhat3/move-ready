@@ -1,67 +1,67 @@
 @import "tailwindcss";
 
 @theme {
-  --color-primary-green: #39ff14;
-  /* Neon green */
-  --color-primary-green-light: #a3ff99;
-  --color-primary-green-dark: #2bc010;
+  /* Brand Primary - Trust & Reliability */
+  --color-primary-blue: #0a5ea8;
+  --color-primary-blue-hover: #084d8a;
+  --color-primary-blue-light: #f0f9ff;
 
-  --color-primary-blue: #00e5ff;
-  /* Cyan / Electric blue */
-  --color-primary-blue-light: #80f2ff;
-  --color-primary-blue-dark: #00acc1;
+  /* Brand Secondary - Action & Growth */
+  --color-primary-green: #28a745;
+  --color-primary-green-hover: #218838;
+  --color-primary-green-light: #f0fdf4;
 
-  --color-primary-pink: #ff00ff;
-  /* Neon pink for accents */
+  /* Neutrals */
+  --color-text-main: #1a1a1a;
+  --color-text-muted: #4b5563; /* tailwind gray-600 */
+  --color-text-light: #6b7280; /* tailwind gray-500 */
+  
+  --color-bg-base: #ffffff;
+  --color-bg-alt: #f9fafb; /* tailwind gray-50 */
+  
+  --color-border-light: #f3f4f6; /* tailwind gray-100 */
+  --color-border-medium: #e5e7eb; /* tailwind gray-200 */
 
-  --color-bg-base: #f4f4f0;
-  /* Soft off-white */
-  --color-bg-alt: #ffffff;
-
-  --color-text-main: #000000;
-  --color-text-muted: #333333;
-  --color-text-light: #666666;
-
-  --color-border-light: #e2e8f0;
-  --color-border-dark: #000000;
-  /* Bold brutalist borders */
-
-  --font-sans: "Outfit", system-ui, sans-serif;
+  /* Typography */
+  --font-sans: "Inter", system-ui, -apple-system, sans-serif;
   --font-display: "Space Grotesk", "Outfit", system-ui, sans-serif;
 }
 
 @layer utilities {
   .text-gradient {
-    @apply bg-clip-text text-transparent bg-gradient-to-br from-[#00e5ff] to-[#ff00ff];
+    @apply bg-clip-text text-transparent bg-gradient-to-r from-[#0a5ea8] to-[#28a745];
   }
 
-  /* Traditional glass effect */
+  /* Premium Glass Effect */
   .glass {
-    @apply bg-white/70 backdrop-blur-md border border-white/40;
+    @apply bg-white/70 backdrop-blur-xl border border-white/50 shadow-sm;
+  }
+  
+  .glass-dark {
+    @apply bg-black/40 backdrop-blur-xl border border-white/10 shadow-xl;
   }
 
-  /* Brutalist utilities */
-  .shadow-brutal {
-    box-shadow: 4px 4px 0px 0px rgba(0, 0, 0, 1);
+  /* Soft, elevated shadows for floating elements */
+  .shadow-premium {
+    box-shadow: 0 10px 40px -10px rgba(0, 0, 0, 0.08);
+  }
+  
+  .shadow-premium-hover {
+    box-shadow: 0 20px 40px -10px rgba(10, 94, 168, 0.15);
   }
 
-  .shadow-brutal-lg {
-    box-shadow: 8px 8px 0px 0px rgba(0, 0, 0, 1);
+  /* Standardized animated cards */
+  .card-animated {
+    @apply bg-white rounded-3xl border border-gray-100 shadow-sm transition-all duration-300;
+  }
+  
+  .card-animated:hover {
+    @apply shadow-premium -translate-y-1 border-transparent;
   }
 
-  .hover-brutal {
-    transition: all 200ms cubic-bezier(0.4, 0, 0.2, 1);
-  }
-
-  .hover-brutal:hover {
-    transform: translate(2px, 2px);
-    box-shadow: 2px 2px 0px 0px rgba(0, 0, 0, 1);
-  }
-
-  /* The Light Hybrid: Frosted Glass + Brutalist Borders/Shadows */
-  .glass-brutal {
-    @apply bg-white/80 backdrop-blur-xl border-2 border-black;
-    box-shadow: 4px 4px 0px 0px rgba(0, 0, 0, 1);
+  /* Premium Focus Rings */
+  .focus-ring {
+    @apply focus:outline-none focus:ring-2 focus:ring-[#0a5ea8]/50 focus:border-[#0a5ea8] transition-all;
   }
 }
 
@@ -69,6 +69,30 @@ body {
   background-color: var(--color-bg-base);
   color: var(--color-text-main);
   font-family: var(--font-sans);
-  background-image: radial-gradient(#d1d5db 1px, transparent 1px);
-  background-size: 24px 24px;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* Base Headings - Tracking tighter for modern look */
+h1, h2, h3, h4, h5, h6 {
+  letter-spacing: -0.02em;
+}
+
+/* Custom Scrollbar for a polished feel */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: #f9fafb;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #d1d5db;
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #9ca3af;
 }

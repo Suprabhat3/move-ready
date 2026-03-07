@@ -11,9 +11,12 @@ export default function DashboardListingsPage({
       <div className="max-w-7xl mx-auto space-y-8">
         <div className="flex flex-wrap items-end justify-between gap-4">
           <div>
-            <h1 className="text-4xl md:text-5xl font-black">LISTING INVENTORY</h1>
-            <p className="mt-2 text-text-muted font-bold">
-              Manage drafts, review submissions, published homes, and archived stock.
+            <h1 className="text-4xl md:text-5xl font-black text-[#1a1a1a]">
+              Listing Inventory
+            </h1>
+            <p className="mt-4 text-gray-500 font-medium text-lg">
+              Manage drafts, review submissions, published homes, and archived
+              stock.
             </p>
           </div>
         </div>

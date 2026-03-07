@@ -284,26 +284,25 @@ export default function AddPropertyForm({
 
   if (loading) {
     return (
-      <div className="p-8 font-black flex items-center justify-center min-h-[400px] text-2xl animate-pulse">
+      <div className="p-8 font-bold text-[#0a5ea8] flex items-center justify-center min-h-[400px] text-xl animate-pulse">
         Loading listing...
       </div>
     );
   }
 
   const inputClass =
-    "w-full border-2 border-black bg-white/40 backdrop-blur-md rounded-xl p-3 font-bold shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] focus:outline-none focus:bg-white/80 focus:translate-y-[2px] focus:translate-x-[2px] focus:shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] transition-all";
+    "w-full border border-gray-200 bg-gray-50/50 rounded-xl p-3 font-medium focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 outline-none transition-all";
   const selectClass =
-    "w-full border-2 border-black bg-white/40 backdrop-blur-md rounded-xl p-3 font-bold shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:bg-white/80 transition-all cursor-pointer";
-  const btnClass =
-    "px-6 py-3 rounded-xl border-2 border-black font-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:translate-y-[2px] hover:translate-x-[2px] hover:shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] transition-all";
+    "w-full border border-gray-200 bg-gray-50/50 rounded-xl p-4 font-medium focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 outline-none transition-all cursor-pointer";
+  const btnClass = "px-6 py-3 rounded-xl font-bold shadow-sm transition-all";
 
   return (
-    <div className="bg-white/60 backdrop-blur-xl border-2 border-black/20 p-6 md:p-8 rounded-3xl shadow-[8px_8px_0px_0px_rgba(0,0,0,0.8)] max-w-7xl mx-auto">
+    <div className="glass p-6 md:p-8 rounded-[2rem] shadow-premium max-w-7xl mx-auto border border-gray-100">
       <div className="flex flex-wrap items-center justify-between gap-4 mb-8">
-        <h2 className="text-2xl font-black uppercase tracking-widest bg-gradient-to-r from-[#ff00ff]/40 to-[#00e5ff]/40 backdrop-blur-md text-black inline-block px-5 py-2 border-2 border-black rounded-2xl shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]">
+        <h2 className="text-2xl font-bold text-[#1a1a1a]">
           {isEdit ? "Edit Listing" : "Create Listing Draft"}
         </h2>
-        <div className="text-sm font-black border-2 border-black px-4 py-2 bg-black/90 backdrop-blur-md text-white rounded-xl shadow-[4px_4px_0px_0px_rgba(0,229,255,1)]">
+        <div className="text-sm font-bold border border-gray-200 px-4 py-2 bg-gray-100 text-gray-700 rounded-xl">
           Status: {status}
         </div>
       </div>
@@ -314,12 +313,12 @@ export default function AddPropertyForm({
             key={step}
             type="button"
             onClick={() => setCurrentStep(idx)}
-            className={`flex-1 min-w-[140px] px-4 py-3 border-2 border-black rounded-xl font-black text-center text-sm transition-all ${
+            className={`flex-1 min-w-[140px] px-4 py-3 rounded-xl font-bold text-center text-sm transition-all shadow-sm border ${
               currentStep === idx
-                ? "bg-[#ff00ff]/90 text-white translate-y-[2px] translate-x-[2px] shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]"
+                ? "bg-[#0a5ea8] text-white border-transparent"
                 : currentStep > idx
-                  ? "bg-[#39ff14]/70 text-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:bg-[#39ff14]/90 hover:-translate-y-[1px]"
-                  : "bg-white/60 backdrop-blur-md text-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:bg-white/90 hover:-translate-y-[1px]"
+                  ? "bg-green-50 text-green-700 border-green-200 hover:bg-green-100"
+                  : "bg-white text-gray-600 border-gray-200 hover:bg-gray-50"
             }`}
           >
             {idx + 1}. {step}
@@ -328,20 +327,20 @@ export default function AddPropertyForm({
       </div>
 
       {error ? (
-        <div className="mb-6 p-4 rounded-2xl border-2 border-black bg-[#ff00ff]/80 backdrop-blur-md text-white font-bold shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]">
+        <div className="mb-6 p-4 rounded-xl border border-red-200 bg-red-50 text-red-700 font-medium text-sm">
           {error}
         </div>
       ) : null}
       {success ? (
-        <div className="mb-6 p-4 rounded-2xl border-2 border-black bg-[#39ff14]/80 backdrop-blur-md text-black font-bold shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]">
+        <div className="mb-6 p-4 rounded-xl border border-green-200 bg-green-50 text-green-700 font-medium text-sm">
           {success}
         </div>
       ) : null}
 
       <form onSubmit={submit} className="space-y-10">
         {currentStep === 0 && (
-          <div className="space-y-6 bg-white/30 p-6 md:p-8 rounded-3xl border border-white/50 shadow-inner animate-in fade-in slide-in-from-bottom-4 duration-500">
-            <h3 className="text-xl font-black border-b-2 border-black/10 pb-2">
+          <div className="space-y-6 bg-white border border-gray-100 p-6 md:p-8 rounded-2xl shadow-sm animate-in fade-in slide-in-from-bottom-4 duration-500">
+            <h3 className="text-xl font-bold text-[#1a1a1a] border-b border-gray-100 pb-4 mb-6">
               Basic Details
             </h3>
             <section className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -405,13 +404,13 @@ export default function AddPropertyForm({
         )}
 
         {currentStep === 1 && (
-          <div className="space-y-6 bg-white/30 p-6 md:p-8 rounded-3xl border border-white/50 shadow-inner animate-in fade-in slide-in-from-bottom-4 duration-500">
-            <h3 className="text-xl font-black border-b-2 border-black/10 pb-2">
+          <div className="space-y-6 bg-white border border-gray-100 p-6 md:p-8 rounded-2xl shadow-sm animate-in fade-in slide-in-from-bottom-4 duration-500">
+            <h3 className="text-xl font-bold text-[#1a1a1a] border-b border-gray-100 pb-4 mb-6">
               Financials
             </h3>
             <section className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
               <div>
-                <label className="text-xs font-bold mb-1 block">
+                <label className="text-xs font-bold text-gray-500 uppercase tracking-wider mb-2 block">
                   Rent Amount
                 </label>
                 <input
@@ -425,7 +424,9 @@ export default function AddPropertyForm({
                 />
               </div>
               <div>
-                <label className="text-xs font-bold mb-1 block">Deposit</label>
+                <label className="text-xs font-bold text-gray-500 uppercase tracking-wider mb-2 block">
+                  Deposit
+                </label>
                 <input
                   required
                   type="number"
@@ -437,7 +438,7 @@ export default function AddPropertyForm({
                 />
               </div>
               <div>
-                <label className="text-xs font-bold mb-1 block">
+                <label className="text-xs font-bold text-gray-500 uppercase tracking-wider mb-2 block">
                   Maintenance
                 </label>
                 <input
@@ -452,7 +453,7 @@ export default function AddPropertyForm({
                 />
               </div>
               <div>
-                <label className="text-xs font-bold mb-1 block">
+                <label className="text-xs font-bold text-gray-500 uppercase tracking-wider mb-2 block">
                   Brokerage
                 </label>
                 <input
@@ -469,13 +470,13 @@ export default function AddPropertyForm({
         )}
 
         {currentStep === 2 && (
-          <div className="space-y-6 bg-white/30 p-6 md:p-8 rounded-3xl border border-white/50 shadow-inner animate-in fade-in slide-in-from-bottom-4 duration-500">
-            <h3 className="text-xl font-black border-b-2 border-black/10 pb-2">
+          <div className="space-y-6 bg-white border border-gray-100 p-6 md:p-8 rounded-2xl shadow-sm animate-in fade-in slide-in-from-bottom-4 duration-500">
+            <h3 className="text-xl font-bold text-[#1a1a1a] border-b border-gray-100 pb-4 mb-6">
               Property Features
             </h3>
             <section className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
               <div>
-                <label className="text-xs font-bold mb-1 block">
+                <label className="text-xs font-bold text-gray-500 uppercase tracking-wider mb-2 block">
                   Property Type
                 </label>
                 <select
@@ -491,7 +492,7 @@ export default function AddPropertyForm({
                 </select>
               </div>
               <div>
-                <label className="text-xs font-bold mb-1 block">
+                <label className="text-xs font-bold text-gray-500 uppercase tracking-wider mb-2 block">
                   Furnishing
                 </label>
                 <select
@@ -507,7 +508,7 @@ export default function AddPropertyForm({
                 </select>
               </div>
               <div>
-                <label className="text-xs font-bold mb-1 block">
+                <label className="text-xs font-bold text-gray-500 uppercase tracking-wider mb-2 block">
                   Preferred Tenant
                 </label>
                 <select
@@ -525,7 +526,9 @@ export default function AddPropertyForm({
                 </select>
               </div>
               <div>
-                <label className="text-xs font-bold mb-1 block">Parking</label>
+                <label className="text-xs font-bold text-gray-500 uppercase tracking-wider mb-2 block">
+                  Parking
+                </label>
                 <select
                   value={formValues.parking}
                   onChange={(e) => setField("parking", e.target.value)}
@@ -540,7 +543,9 @@ export default function AddPropertyForm({
               </div>
 
               <div>
-                <label className="text-xs font-bold mb-1 block">Bedrooms</label>
+                <label className="text-xs font-bold text-gray-500 uppercase tracking-wider mb-2 block">
+                  Bedrooms
+                </label>
                 <input
                   required
                   type="number"
@@ -552,7 +557,7 @@ export default function AddPropertyForm({
                 />
               </div>
               <div>
-                <label className="text-xs font-bold mb-1 block">
+                <label className="text-xs font-bold text-gray-500 uppercase tracking-wider mb-2 block">
                   Bathrooms
                 </label>
                 <input
@@ -566,7 +571,7 @@ export default function AddPropertyForm({
                 />
               </div>
               <div>
-                <label className="text-xs font-bold mb-1 block">
+                <label className="text-xs font-bold text-gray-500 uppercase tracking-wider mb-2 block">
                   Balconies
                 </label>
                 <input
@@ -579,7 +584,7 @@ export default function AddPropertyForm({
                 />
               </div>
               <div>
-                <label className="text-xs font-bold mb-1 block">
+                <label className="text-xs font-bold text-gray-500 uppercase tracking-wider mb-2 block">
                   Area (sqft)
                 </label>
                 <input
@@ -594,7 +599,7 @@ export default function AddPropertyForm({
               </div>
 
               <div>
-                <label className="text-xs font-bold mb-1 block">
+                <label className="text-xs font-bold text-gray-500 uppercase tracking-wider mb-2 block">
                   Floor Number
                 </label>
                 <input
@@ -607,7 +612,7 @@ export default function AddPropertyForm({
                 />
               </div>
               <div>
-                <label className="text-xs font-bold mb-1 block">
+                <label className="text-xs font-bold text-gray-500 uppercase tracking-wider mb-2 block">
                   Total Floors
                 </label>
                 <input
@@ -620,7 +625,7 @@ export default function AddPropertyForm({
                 />
               </div>
               <div>
-                <label className="text-xs font-bold mb-1 block">
+                <label className="text-xs font-bold text-gray-500 uppercase tracking-wider mb-2 block">
                   Age of Property (Yrs)
                 </label>
                 <input
@@ -633,7 +638,9 @@ export default function AddPropertyForm({
                 />
               </div>
               <div>
-                <label className="text-xs font-bold mb-1 block">Facing</label>
+                <label className="text-xs font-bold text-gray-500 uppercase tracking-wider mb-2 block">
+                  Facing
+                </label>
                 <select
                   value={formValues.facing}
                   onChange={(e) => setField("facing", e.target.value)}
@@ -652,13 +659,13 @@ export default function AddPropertyForm({
         )}
 
         {currentStep === 3 && (
-          <div className="space-y-6 bg-white/30 p-6 md:p-8 rounded-3xl border border-white/50 shadow-inner animate-in fade-in slide-in-from-bottom-4 duration-500">
-            <h3 className="text-xl font-black border-b-2 border-black/10 pb-2">
+          <div className="space-y-6 bg-white border border-gray-100 p-6 md:p-8 rounded-2xl shadow-sm animate-in fade-in slide-in-from-bottom-4 duration-500">
+            <h3 className="text-xl font-bold text-[#1a1a1a] border-b border-gray-100 pb-4 mb-6">
               Listing Terms & Resources
             </h3>
             <section className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
               <div>
-                <label className="text-xs font-bold mb-1 block">
+                <label className="text-xs font-bold text-gray-500 uppercase tracking-wider mb-2 block">
                   Listed By
                 </label>
                 <select
@@ -674,7 +681,7 @@ export default function AddPropertyForm({
                 </select>
               </div>
               <div>
-                <label className="text-xs font-bold mb-1 block">
+                <label className="text-xs font-bold text-gray-500 uppercase tracking-wider mb-2 block">
                   Pet Policy
                 </label>
                 <select
@@ -690,7 +697,7 @@ export default function AddPropertyForm({
                 </select>
               </div>
               <div>
-                <label className="text-xs font-bold mb-1 block">
+                <label className="text-xs font-bold text-gray-500 uppercase tracking-wider mb-2 block">
                   Power Backup
                 </label>
                 <select
@@ -706,7 +713,7 @@ export default function AddPropertyForm({
                 </select>
               </div>
               <div>
-                <label className="text-xs font-bold mb-1 block">
+                <label className="text-xs font-bold text-gray-500 uppercase tracking-wider mb-2 block">
                   Water Supply
                 </label>
                 <select
@@ -723,7 +730,7 @@ export default function AddPropertyForm({
                 </select>
               </div>
               <div>
-                <label className="text-xs font-bold mb-1 block">
+                <label className="text-xs font-bold text-gray-500 uppercase tracking-wider mb-2 block">
                   Lease Duration (Months)
                 </label>
                 <input
@@ -738,7 +745,7 @@ export default function AddPropertyForm({
                 />
               </div>
               <div>
-                <label className="text-xs font-bold mb-1 block">
+                <label className="text-xs font-bold text-gray-500 uppercase tracking-wider mb-2 block">
                   Notice Period (Days)
                 </label>
                 <input
@@ -751,7 +758,7 @@ export default function AddPropertyForm({
                 />
               </div>
               <div>
-                <label className="text-xs font-bold mb-1 block">
+                <label className="text-xs font-bold text-gray-500 uppercase tracking-wider mb-2 block">
                   Available From
                 </label>
                 <input
@@ -762,7 +769,7 @@ export default function AddPropertyForm({
                 />
               </div>
               <div className="md:col-span-2">
-                <label className="text-xs font-bold mb-1 block">
+                <label className="text-xs font-bold text-gray-500 uppercase tracking-wider mb-2 block">
                   Video Tour URL
                 </label>
                 <input
@@ -780,19 +787,19 @@ export default function AddPropertyForm({
           <div className="space-y-10 animate-in fade-in slide-in-from-bottom-4 duration-500">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-10">
               <section className="space-y-4">
-                <p className="font-black uppercase text-lg border-b-2 border-black/10 pb-2">
+                <p className="font-bold text-[#1a1a1a] uppercase text-lg border-b border-gray-100 pb-2">
                   Amenities
                 </p>
-                <div className="flex flex-wrap gap-3">
+                <div className="flex flex-wrap gap-2">
                   {amenityOptions.map((amenity) => (
                     <button
                       type="button"
                       key={amenity}
                       onClick={() => toggleMulti("amenities", amenity)}
-                      className={`px-4 py-2 rounded-xl border-2 border-black font-bold shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] transition-all hover:translate-x-[2px] hover:translate-y-[2px] hover:shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] ${
+                      className={`px-4 py-2 rounded-xl font-bold transition-all border ${
                         formValues.amenities.includes(amenity)
-                          ? "bg-[#00e5ff] text-black"
-                          : "bg-white/40 backdrop-blur-md hover:bg-white/80"
+                          ? "bg-blue-50 border-blue-200 text-[#0a5ea8] shadow-sm transform -translate-y-[1px]"
+                          : "bg-white border-gray-200 text-gray-600 hover:bg-gray-50 hover:border-blue-200 shadow-sm"
                       }`}
                     >
                       {amenity}
@@ -802,19 +809,19 @@ export default function AddPropertyForm({
               </section>
 
               <section className="space-y-4">
-                <p className="font-black uppercase text-lg border-b-2 border-black/10 pb-2">
+                <p className="font-bold text-[#1a1a1a] uppercase text-lg border-b border-gray-100 pb-2">
                   Rules
                 </p>
-                <div className="flex flex-wrap gap-3">
+                <div className="flex flex-wrap gap-2">
                   {ruleOptions.map((rule) => (
                     <button
                       type="button"
                       key={rule}
                       onClick={() => toggleMulti("rules", rule)}
-                      className={`px-4 py-2 rounded-xl border-2 border-black font-bold shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] transition-all hover:translate-x-[2px] hover:translate-y-[2px] hover:shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] ${
+                      className={`px-4 py-2 rounded-xl font-bold transition-all border ${
                         formValues.rules.includes(rule)
-                          ? "bg-[#39ff14] text-black"
-                          : "bg-white/40 backdrop-blur-md hover:bg-white/80"
+                          ? "bg-blue-50 border-blue-200 text-[#0a5ea8] shadow-sm transform -translate-y-[1px]"
+                          : "bg-white border-gray-200 text-gray-600 hover:bg-gray-50 hover:border-blue-200 shadow-sm"
                       }`}
                     >
                       {rule}
@@ -825,8 +832,11 @@ export default function AddPropertyForm({
             </div>
 
             <section className="space-y-4">
-              <p className="font-black uppercase text-lg border-b-2 border-black/10 pb-2">
-                Nearby Landmarks (one per line)
+              <p className="font-bold text-[#1a1a1a] uppercase text-lg border-b border-gray-100 pb-2">
+                Nearby Landmarks{" "}
+                <span className="text-gray-400 text-sm normal-case">
+                  (one per line)
+                </span>
               </p>
               <textarea
                 rows={4}
@@ -837,15 +847,17 @@ export default function AddPropertyForm({
               />
             </section>
 
-            <section className="space-y-4 bg-white/30 p-6 rounded-3xl border border-white/50 shadow-inner">
-              <div className="flex flex-wrap items-center justify-between gap-4 border-b-2 border-black/10 pb-4">
-                <p className="font-black uppercase text-lg">Media</p>
+            <section className="space-y-4 bg-white border border-gray-100 p-6 rounded-2xl shadow-sm">
+              <div className="flex flex-wrap items-center justify-between gap-4 border-b border-gray-100 pb-4">
+                <p className="font-bold text-[#1a1a1a] uppercase text-lg">
+                  Media
+                </p>
                 <IKContext
                   publicKey={import.meta.env.VITE_IMAGEKIT_PUBLIC_KEY || ""}
                   urlEndpoint={import.meta.env.VITE_IMAGEKIT_URL_ENDPOINT || ""}
                   authenticator={authenticator}
                 >
-                  <label className="inline-flex items-center gap-2 px-5 py-2 border-2 border-black rounded-xl bg-[#ff00ff]/80 text-white font-black cursor-pointer shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:translate-y-[2px] hover:translate-x-[2px] hover:shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] transition-all">
+                  <label className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-blue-50 text-[#0a5ea8] border border-blue-200 font-bold cursor-pointer shadow-sm hover:bg-blue-100 transition-all">
                     <Upload size={18} />
                     {uploadingImage ? "Uploading..." : "Upload Image"}
                     <IKUpload
@@ -861,7 +873,7 @@ export default function AddPropertyForm({
               </div>
 
               {images.length === 0 ? (
-                <div className="border-2 border-dashed border-black/30 rounded-2xl bg-white/40 backdrop-blur-md p-10 text-center text-sm font-bold text-black/60">
+                <div className="border-2 border-dashed border-gray-200 rounded-2xl bg-gray-50/50 p-10 text-center text-sm font-medium text-gray-500">
                   No images uploaded yet. Adding great photos helps rent faster!
                 </div>
               ) : (
@@ -869,21 +881,21 @@ export default function AddPropertyForm({
                   {images.map((image, index) => (
                     <div
                       key={`${image.url}-${index}`}
-                      className="relative group rounded-2xl border-2 border-black bg-white/40 backdrop-blur-md overflow-hidden shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]"
+                      className="relative group rounded-2xl border border-gray-100 bg-white overflow-hidden shadow-sm hover:shadow-md transition-all duration-300"
                     >
                       <img
                         src={image.url}
                         alt={`Listing media ${index + 1}`}
-                        className="w-full h-48 md:h-56 object-cover transition-transform duration-300 group-hover:scale-105"
+                        className="w-full h-48 md:h-56 object-cover transition-transform duration-500 group-hover:scale-105"
                       />
                       <button
                         type="button"
                         onClick={() => removeImage(index)}
-                        className="absolute top-3 right-3 p-2 rounded-xl border-2 border-black bg-white/80 backdrop-blur-md font-black shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] hover:bg-[#ff00ff] hover:text-white transition-all"
+                        className="absolute top-3 right-3 p-2 rounded-xl bg-white border border-gray-200 text-gray-500 shadow-sm hover:bg-red-50 hover:text-red-600 hover:border-red-200 transition-all opacity-0 group-hover:opacity-100"
                         aria-label={`Remove image ${index + 1}`}
                         title="Remove image"
                       >
-                        <X size={16} />
+                        <X size={16} strokeWidth={2.5} />
                       </button>
                     </div>
                   ))}
@@ -894,7 +906,7 @@ export default function AddPropertyForm({
         )}
 
         {/* Action Buttons Section */}
-        <div className="flex flex-wrap gap-4 pt-8 border-t-4 border-black/10 justify-between items-center">
+        <div className="flex flex-wrap gap-4 pt-8 border-t border-gray-100 justify-between items-center">
           <div className="flex gap-4">
             <button
               type="button"
@@ -902,8 +914,8 @@ export default function AddPropertyForm({
               onClick={() => setCurrentStep((p) => Math.max(0, p - 1))}
               className={`${btnClass} ${
                 currentStep === 0
-                  ? "opacity-50 cursor-not-allowed bg-black/5"
-                  : "bg-white/60 backdrop-blur-md hover:bg-white"
+                  ? "opacity-50 cursor-not-allowed bg-gray-50 text-gray-400 border border-transparent"
+                  : "bg-white text-gray-700 border border-gray-200 hover:bg-gray-50 hover:border-gray-300"
               }`}
             >
               Previous
@@ -911,7 +923,7 @@ export default function AddPropertyForm({
             <button
               type="button"
               onClick={onCancel}
-              className={`${btnClass} bg-white/40 backdrop-blur-md hover:bg-white`}
+              className={`${btnClass} bg-white text-gray-700 border border-gray-200 hover:bg-gray-50 hover:border-gray-300`}
             >
               Cancel
             </button>
@@ -923,7 +935,7 @@ export default function AddPropertyForm({
                 type="button"
                 disabled={statusLoading}
                 onClick={() => void changeStatus("REVIEW")}
-                className={`${btnClass} bg-[#00e5ff]/80 text-black hover:bg-[#00e5ff]`}
+                className={`${btnClass} bg-blue-50 text-[#0a5ea8] border border-blue-200 hover:bg-blue-100`}
               >
                 Submit For Review
               </button>
@@ -933,7 +945,7 @@ export default function AddPropertyForm({
                 type="button"
                 disabled={statusLoading}
                 onClick={() => void changeStatus("PUBLISHED")}
-                className={`${btnClass} bg-[#39ff14]/80 text-black hover:bg-[#39ff14]`}
+                className={`${btnClass} bg-green-50 text-green-700 border border-green-200 hover:bg-green-100`}
               >
                 Publish
               </button>
@@ -943,7 +955,7 @@ export default function AddPropertyForm({
                 type="button"
                 disabled={statusLoading}
                 onClick={() => void changeStatus("ARCHIVED")}
-                className={`${btnClass} bg-[#ff00ff]/80 text-white hover:bg-[#ff00ff]`}
+                className={`${btnClass} bg-gray-800 text-white hover:bg-gray-900 border border-transparent`}
               >
                 Archive
               </button>
@@ -951,7 +963,7 @@ export default function AddPropertyForm({
             {isEdit ? (
               <Link
                 to="/dashboard/listings"
-                className={`${btnClass} bg-white/60 backdrop-blur-md hover:bg-white hidden sm:block`}
+                className={`${btnClass} bg-white text-gray-700 border border-gray-200 hover:bg-gray-50 hover:border-gray-300 hidden sm:block`}
               >
                 Back To Listings
               </Link>
@@ -963,7 +975,7 @@ export default function AddPropertyForm({
                 onClick={() =>
                   setCurrentStep((p) => Math.min(steps.length - 1, p + 1))
                 }
-                className={`${btnClass} bg-[#00e5ff]/90 text-black hover:bg-[#00e5ff]`}
+                className={`${btnClass} bg-blue-50 text-[#0a5ea8] border border-blue-200 hover:bg-blue-100`}
               >
                 Next Step
               </button>
@@ -971,7 +983,7 @@ export default function AddPropertyForm({
               <button
                 type="submit"
                 disabled={submitting || uploadingImage}
-                className={`${btnClass} bg-black text-white hover:bg-black/80`}
+                className={`${btnClass} bg-[#0a5ea8] text-white hover:bg-[#084d8a] disabled:opacity-50 disabled:cursor-not-allowed`}
               >
                 {submitting
                   ? "Saving..."

@@ -87,13 +87,13 @@ const Navbar = ({
             </span>
             <Link
               to={isAgent ? "/dashboard/listings" : "/dashboard"}
-              className="px-6 py-2.5 rounded-lg font-bold text-sm bg-gray-100 text-gray-900 border border-transparent hover:bg-gray-200 transition-all"
+              className="px-6 py-2.5 rounded-xl font-bold text-sm bg-gray-100 text-gray-900 border border-transparent hover:bg-gray-200 transition-all"
             >
               Dashboard
             </Link>
             <button
               onClick={onLogout}
-              className="px-6 py-2.5 rounded-lg font-bold text-sm bg-black text-white hover:bg-gray-800 transition-all"
+              className="px-6 py-2.5 rounded-xl font-bold text-sm bg-black text-white hover:bg-gray-800 transition-all"
             >
               Sign Out
             </button>
@@ -108,7 +108,7 @@ const Navbar = ({
             </Link>
             <Link
               to="/register"
-              className="px-8 py-2.5 bg-[#28a745] text-white font-bold rounded-lg hover:bg-[#218838] transition-all shadow-md"
+              className="px-8 py-2.5 bg-[#28a745] text-white font-bold rounded-xl hover:bg-[#218838] transition-all shadow-md hover:shadow-lg hover:-translate-y-0.5"
             >
               Sign Up
             </Link>

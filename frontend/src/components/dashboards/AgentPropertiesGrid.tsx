@@ -69,7 +69,7 @@ export default function AgentPropertiesGrid({
   if (loading) {
     return (
       <div className="flex flex-col items-center justify-center p-24 min-h-[400px]">
-        <div className="text-3xl font-black animate-pulse bg-gradient-to-r from-[#ff00ff] to-[#00e5ff] text-transparent bg-clip-text">
+        <div className="text-xl font-bold text-[#0a5ea8] animate-pulse">
           Syncing your inventory...
         </div>
       </div>
@@ -78,12 +78,14 @@ export default function AgentPropertiesGrid({
 
   if (error) {
     return (
-      <div className="p-10 bg-[#ff00ff]/90 backdrop-blur-md border-4 border-black rounded-[2rem] text-white text-center shadow-[8px_8px_0px_0px_rgba(0,0,0,1)]">
-        <h3 className="text-2xl font-black mb-4">Something went wrong</h3>
-        <p className="font-bold text-lg mb-6">{error}</p>
+      <div className="glass p-10 border border-gray-100 rounded-[2rem] text-center shadow-sm">
+        <h3 className="text-2xl font-bold mb-4 text-[#1a1a1a]">
+          Something went wrong
+        </h3>
+        <p className="font-medium text-lg mb-6 text-gray-500">{error}</p>
         <button
           onClick={() => void loadListings()}
-          className="px-8 py-3 bg-black text-white font-black rounded-xl border-2 border-white/20 hover:bg-white hover:text-black transition-all shadow-[4px_4px_0px_0px_rgba(255,255,255,0.3)]"
+          className="px-8 py-3 bg-[#0a5ea8] text-white font-bold rounded-xl shadow-sm hover:bg-[#084d8a] transition-all"
         >
           Try Again
         </button>
@@ -94,9 +96,9 @@ export default function AgentPropertiesGrid({
   return (
     <div className="space-y-10">
       {/* Header & Filters */}
-      <div className="bg-white/60 backdrop-blur-xl border-2 border-black/10 p-6 md:p-8 rounded-[2rem] shadow-[8px_8px_0px_0px_rgba(0,0,0,0.05)] flex flex-col lg:flex-row lg:items-center justify-between gap-6">
+      <div className="glass border border-gray-100 p-6 md:p-8 rounded-[2rem] shadow-sm flex flex-col lg:flex-row lg:items-center justify-between gap-6">
         <div className="flex flex-wrap items-center gap-3">
-          <div className="flex items-center gap-2 mr-2 text-black/40">
+          <div className="flex items-center gap-2 mr-2 text-gray-400">
             <Filter size={18} className="shrink-0" />
             <span className="text-xs font-black uppercase tracking-widest">
               Filter:
@@ -107,10 +109,10 @@ export default function AgentPropertiesGrid({
               key={status}
               type="button"
               onClick={() => changeStatusFilter(status)}
-              className={`px-5 py-2.5 rounded-xl border-2 font-black text-xs uppercase tracking-wider transition-all shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:translate-x-[1px] hover:translate-y-[1px] hover:shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] ${
+              className={`px-5 py-2.5 rounded-xl font-bold text-sm transition-all shadow-sm border ${
                 activeStatus === status
-                  ? "bg-black text-white border-black"
-                  : "bg-white text-black border-black hover:bg-black/5"
+                  ? "bg-[#0a5ea8] text-white border-transparent"
+                  : "bg-white text-gray-600 border-gray-200 hover:border-blue-200 hover:bg-blue-50/50"
               }`}
             >
               {status}
@@ -120,7 +122,7 @@ export default function AgentPropertiesGrid({
 
         <Link
           to="/dashboard/listings/new"
-          className="h-14 px-8 bg-[#39ff14] text-black border-2 border-black rounded-2xl font-black flex items-center justify-center gap-3 shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:translate-x-[2px] hover:translate-y-[2px] hover:shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] transition-all group"
+          className="h-14 px-8 bg-[#28a745] text-white rounded-xl font-bold flex items-center justify-center gap-3 shadow-md hover:bg-[#218838] transition-all group"
         >
           <Plus
             size={20}
@@ -132,79 +134,81 @@ export default function AgentPropertiesGrid({
       </div>
 
       {listings.length === 0 ? (
-        <div className="py-24 px-10 bg-white/40 backdrop-blur-md border-4 border-black border-dashed rounded-[3rem] text-center">
-          <div className="w-20 h-20 bg-black/5 rounded-3xl border-2 border-black/20 flex items-center justify-center mx-auto mb-6">
-            <Search size={40} className="text-black/20" />
+        <div className="py-24 px-10 glass border border-gray-100 border-dashed rounded-[3rem] text-center shadow-sm">
+          <div className="w-20 h-20 bg-gray-50 rounded-3xl border border-gray-100 flex items-center justify-center mx-auto mb-6 shadow-sm">
+            <Search size={32} className="text-gray-400" />
           </div>
-          <h3 className="text-3xl font-black text-black/60 uppercase tracking-tighter">
+          <h3 className="text-2xl font-black text-[#1a1a1a]">
             No Listings Found
           </h3>
-          <p className="mt-4 text-black/40 font-bold text-xl max-w-md mx-auto">
+          <p className="mt-2 text-gray-500 font-medium text-lg max-w-md mx-auto">
             You don't have any properties in the{" "}
-            <span className="text-black">"{activeStatus}"</span> state yet.
+            <span className="text-[#1a1a1a] font-bold">"{activeStatus}"</span>{" "}
+            state yet.
           </p>
         </div>
       ) : (
-        <div className="grid gap-10 md:grid-cols-2 xl:grid-cols-3">
+        <div className="grid gap-8 md:grid-cols-2 xl:grid-cols-3">
           {listings.map((item) => (
             <div
               key={item.id}
-              className="group bg-white/60 backdrop-blur-xl border-2 border-black/10 rounded-[2.5rem] flex flex-col p-4 shadow-[8px_8px_0px_0px_rgba(0,0,0,0.1)] hover:shadow-[12px_12px_0px_0px_rgba(0,0,0,0.15)] transition-all duration-500 hover:-translate-y-2"
+              className="group bg-white border border-gray-100 rounded-[2rem] flex flex-col p-4 shadow-sm hover:shadow-md transition-all duration-300 hover:-translate-y-1"
             >
-              <div className="h-56 bg-black relative rounded-[1.8rem] border-2 border-black shadow-inner overflow-hidden mb-6">
+              <div className="h-56 bg-gray-100 relative rounded-2xl overflow-hidden mb-5 shadow-inner">
                 {item.images.length > 0 ? (
                   <img
                     src={item.images[0].url}
                     alt={item.title}
-                    className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
+                    className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
                   />
                 ) : (
-                  <div className="w-full h-full flex items-center justify-center bg-black/5 text-black/20 font-black uppercase tracking-tighter text-3xl italic">
+                  <div className="w-full h-full flex items-center justify-center bg-gray-50 text-gray-300 font-black uppercase tracking-wider text-xl">
                     Ready2Move
                   </div>
                 )}
 
                 <div
-                  className={`absolute top-4 left-4 border-2 border-black rounded-full px-4 py-1.5 text-[10px] font-black uppercase tracking-widest shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] ${
+                  className={`absolute top-4 left-4 rounded-full px-4 py-1.5 text-xs font-bold shadow-sm backdrop-blur-md border ${
                     item.status === "PUBLISHED"
-                      ? "bg-[#39ff14] text-black"
+                      ? "bg-green-100/90 text-green-700 border-green-200"
                       : item.status === "REVIEW"
-                        ? "bg-[#00e5ff] text-black"
+                        ? "bg-blue-100/90 text-blue-700 border-blue-200"
                         : item.status === "DRAFT"
-                          ? "bg-white text-black"
-                          : "bg-black text-white"
+                          ? "bg-white/90 text-gray-700 border-gray-200"
+                          : "bg-gray-800/90 text-white border-gray-700"
                   }`}
                 >
                   {formatStatus(item.status)}
                 </div>
               </div>
 
-              <div className="flex-1 flex flex-col px-2 pb-2">
-                <h3 className="text-2xl font-black text-black leading-tight mb-2 group-hover:text-[#ff00ff] transition-colors truncate">
+              <div className="flex-1 flex flex-col px-1 pb-1">
+                <h3 className="text-2xl font-bold text-[#1a1a1a] leading-tight mb-1 group-hover:text-[#0a5ea8] transition-colors truncate">
                   {item.title}
                 </h3>
-                <p className="text-black/50 font-bold text-sm truncate mb-8">
+                <p className="text-gray-500 font-medium text-sm truncate mb-6">
                   {item.address}, {item.city}
                 </p>
 
                 <div className="mt-auto">
-                  <div className="flex items-center justify-between mb-6">
-                    <p className="text-3xl font-black text-black drop-shadow-sm">
+                  <div className="flex items-center justify-between mb-5">
+                    <p className="text-2xl font-black text-[#1a1a1a]">
                       ₹{item.rentAmount.toLocaleString()}
-                      <span className="text-sm text-black/40 ml-1">/mo</span>
+                      <span className="text-sm font-medium text-gray-400 ml-1">
+                        /mo
+                      </span>
                     </p>
                   </div>
 
-                  <div className="flex items-center gap-3">
+                  <div className="flex items-center gap-2">
                     <button
                       onClick={() => navigator.clipboard.writeText(item.id)}
-                      className="h-12 px-4 flex items-center justify-center bg-white border-2 border-black rounded-xl shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:translate-x-[2px] hover:translate-y-[2px] hover:shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] transition-all group/copy"
+                      className="h-12 w-12 flex items-center justify-center bg-white border border-gray-200 rounded-xl shadow-sm hover:border-gray-300 hover:bg-gray-50 text-gray-600 transition-all group/copy"
                       title="Copy ID"
                     >
                       <Copy
                         size={18}
-                        strokeWidth={3}
-                        className="text-black group-hover/copy:scale-110 transition-transform"
+                        className="group-hover/copy:scale-110 transition-transform text-gray-500"
                       />
                     </button>
 
@@ -212,23 +216,22 @@ export default function AgentPropertiesGrid({
                       <button
                         type="button"
                         onClick={() => void moveListing(item.id, "REVIEW")}
-                        className="h-12 px-4 flex items-center justify-center bg-[#00e5ff] border-2 border-black rounded-xl shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:translate-x-[2px] hover:translate-y-[2px] hover:shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] transition-all group/send"
+                        className="h-12 w-12 flex items-center justify-center bg-blue-50 border border-blue-200 text-[#0a5ea8] rounded-xl hover:bg-blue-100 transition-all group/send"
                         title="Submit for review"
                       >
                         <Send
                           size={18}
-                          strokeWidth={3}
-                          className="text-black group-send/send:translate-x-0.5 group-hover/send:-translate-y-0.5 transition-transform"
+                          className="group-hover/send:-translate-y-0.5 group-hover/send:translate-x-0.5 transition-transform"
                         />
                       </button>
                     )}
 
                     <Link
                       to={`/dashboard/listings/${item.id}/edit`}
-                      className="flex-1 h-12 flex items-center justify-center gap-3 bg-black text-white border-2 border-black rounded-xl shadow-[4px_4px_0px_0px_rgba(0,229,255,0.3)] hover:bg-[#00e5ff] hover:text-black hover:shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] transition-all font-black uppercase text-xs tracking-widest px-4"
+                      className="flex-1 h-12 flex items-center justify-center gap-2 bg-[#1a1a1a] text-white rounded-xl shadow-sm hover:bg-gray-800 transition-all font-bold uppercase text-xs tracking-wider px-4"
                     >
                       <span>Manage</span>
-                      <ExternalLink size={14} strokeWidth={3} />
+                      <ExternalLink size={14} />
                     </Link>
                   </div>
                 </div>

@@ -117,15 +117,15 @@ export default function VisitTrackerPage({
     return <div className="p-10 text-center font-black">Loading Visits...</div>;
 
   return (
-    <div className="max-w-6xl mx-auto px-6 pt-36 pb-20">
-      <h1 className="text-4xl font-black mb-8 uppercase border-b-4 border-black pb-4">
+    <div className="max-w-6xl mx-auto px-6 pt-36 pb-20 relative">
+      <h1 className="text-4xl font-black mb-10 text-[#1a1a1a]">
         {isAgent ? "Visit Management (Hub)" : "My Property Visits"}
       </h1>
 
       <div className="grid gap-6">
         {visits.length === 0 && (
-          <div className="bg-white border-4 border-black p-10 text-center rounded-2xl shadow-brutal">
-            <p className="text-xl font-bold italic">
+          <div className="glass flex flex-col items-center justify-center p-16 text-center rounded-[2.5rem] shadow-sm border border-gray-100">
+            <p className="text-xl font-bold text-gray-500">
               No visits found matching your account.
             </p>
           </div>
@@ -134,55 +134,122 @@ export default function VisitTrackerPage({
         {visits.map((visit) => (
           <div
             key={visit.id}
-            className="bg-white border-4 border-black rounded-2xl p-6 shadow-brutal flex flex-col md:flex-row gap-6 hover:-translate-y-1 transition-transform"
+            className="bg-white border border-gray-100 rounded-[2rem] p-6 shadow-sm flex flex-col md:flex-row gap-6 hover:shadow-md hover:-translate-y-0.5 transition-all"
           >
             <div className="flex-1">
-              <div className="flex justify-between items-start mb-4">
+              <div className="flex justify-between items-start mb-6">
                 <div>
-                  <h3 className="text-2xl font-black">{visit.listing.title}</h3>
-                  <p className="text-text-muted font-bold italic">
+                  <h3 className="text-2xl font-black text-[#1a1a1a]">
+                    {visit.listing.title}
+                  </h3>
+                  <p className="text-gray-500 font-medium mt-1">
                     {visit.listing.address}, {visit.listing.city}
                   </p>
                 </div>
                 <span
-                  className={`px-4 py-1 border-2 border-black font-black uppercase text-sm shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] ${
+                  className={`px-4 py-1.5 rounded-full font-bold text-sm shadow-sm ${
                     visit.status === VisitStatus.REQUESTED
-                      ? "bg-yellow-300"
+                      ? "bg-yellow-50 text-yellow-700 border border-yellow-200"
                       : visit.status === VisitStatus.SCHEDULED
-                        ? "bg-blue-300"
+                        ? "bg-blue-50 text-blue-700 border border-blue-200"
                         : visit.status === VisitStatus.VISITED
-                          ? "bg-green-300"
-                          : "bg-red-300"
+                          ? "bg-green-50 text-green-700 border border-green-200"
+                          : "bg-red-50 text-red-700 border border-red-200"
                   }`}
                 >
                   {visit.status}
                 </span>
               </div>
 
-              <div className="space-y-2 mb-6">
-                <p className="font-bold border-l-4 border-black pl-3">
-                  <span className="uppercase text-xs opacity-60 block">
-                    Proposed By Tenant
-                  </span>
-                  {format(new Date(visit.proposedAt), "PPP p")}
-                </p>
-                {visit.scheduledAt && (
-                  <p className="font-bold border-l-4 border-black pl-3 text-blue-600">
-                    <span className="uppercase text-xs opacity-60 block">
-                      Confirmed Schedule
+              <div className="space-y-4 mb-8">
+                <div className="bg-gray-50 rounded-xl p-4 border border-gray-100 flex items-start gap-3">
+                  <div className="bg-white p-2 text-gray-400 rounded-lg shadow-sm">
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      width="20"
+                      height="20"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="currentColor"
+                      strokeWidth="2"
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                    >
+                      <circle cx="12" cy="12" r="10" />
+                      <polyline points="12 6 12 12 16 14" />
+                    </svg>
+                  </div>
+                  <div>
+                    <span className="uppercase text-xs font-bold text-gray-400 tracking-wider block mb-1">
+                      Proposed By Tenant
                     </span>
-                    {format(new Date(visit.scheduledAt), "PPP p")}
-                  </p>
+                    <p className="font-bold text-[#1a1a1a]">
+                      {format(new Date(visit.proposedAt), "PPP p")}
+                    </p>
+                  </div>
+                </div>
+
+                {visit.scheduledAt && (
+                  <div className="bg-blue-50/50 rounded-xl p-4 border border-blue-100 flex items-start gap-3">
+                    <div className="bg-white p-2 text-[#0a5ea8] rounded-lg shadow-sm border border-blue-100">
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        width="20"
+                        height="20"
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="currentColor"
+                        strokeWidth="2"
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                      >
+                        <rect
+                          width="18"
+                          height="18"
+                          x="3"
+                          y="4"
+                          rx="2"
+                          ry="2"
+                        />
+                        <line x1="16" x2="16" y1="2" y2="6" />
+                        <line x1="8" x2="8" y1="2" y2="6" />
+                        <line x1="3" x2="21" y1="10" y2="10" />
+                        <path d="m9 16 2 2 4-4" />
+                      </svg>
+                    </div>
+                    <div>
+                      <span className="uppercase text-xs font-bold text-blue-500 tracking-wider block mb-1">
+                        Confirmed Schedule
+                      </span>
+                      <p className="font-bold text-[#0a5ea8]">
+                        {format(new Date(visit.scheduledAt), "PPP p")}
+                      </p>
+                    </div>
+                  </div>
                 )}
+
                 {visit.notes && (
-                  <p className="italic bg-gray-100 p-2 rounded border-2 border-dashed border-black">
+                  <p className="bg-gray-50 p-4 rounded-xl border border-gray-100 text-gray-600 font-medium italic">
                     "{visit.notes}"
                   </p>
                 )}
                 {isAgent && visit.tenant && (
-                  <p className="font-black mt-4">
-                    Requester: {visit.tenant.name} ({visit.tenant.email})
-                  </p>
+                  <div className="flex items-center gap-3 mt-4 pt-4 border-t border-gray-100">
+                    <div className="w-10 h-10 rounded-full bg-blue-100 text-[#0a5ea8] flex items-center justify-center font-black">
+                      {visit.tenant.name.charAt(0)}
+                    </div>
+                    <div>
+                      <p className="text-sm font-bold text-gray-400 uppercase tracking-widest">
+                        Requester
+                      </p>
+                      <p className="font-bold text-[#1a1a1a]">
+                        {visit.tenant.name}{" "}
+                        <span className="font-medium text-gray-500">
+                          ({visit.tenant.email})
+                        </span>
+                      </p>
+                    </div>
+                  </div>
                 )}
               </div>
 
@@ -191,18 +258,18 @@ export default function VisitTrackerPage({
                 {!isAgent && visit.status === VisitStatus.REQUESTED && (
                   <button
                     onClick={() => handleCancel(visit.id)}
-                    className="bg-red-500 text-white font-black px-6 py-2 border-2 border-black shadow-brutal"
+                    className="bg-red-50 hover:bg-red-100 text-red-600 font-bold px-6 py-2.5 rounded-xl border border-red-200 transition-colors"
                   >
                     Cancel Request
                   </button>
                 )}
                 {!isAgent && visit.status === VisitStatus.VISITED && (
-                  <div className="flex gap-2">
+                  <div className="flex flex-wrap gap-3">
                     <button
                       onClick={() =>
                         handleDecision(visit.id, VisitDecision.INTERESTED)
                       }
-                      className="bg-[#39ff14] font-black px-4 py-2 border-2 border-black shadow-brutal"
+                      className="bg-[#28a745] hover:bg-[#218838] text-white font-bold px-6 py-2.5 rounded-xl shadow-sm transition-all"
                     >
                       I'm Interested
                     </button>
@@ -210,7 +277,7 @@ export default function VisitTrackerPage({
                       onClick={() =>
                         handleDecision(visit.id, VisitDecision.APPLIED)
                       }
-                      className="bg-[#00e5ff] font-black px-4 py-2 border-2 border-black shadow-brutal"
+                      className="bg-[#0a5ea8] hover:bg-[#084d8a] text-white font-bold px-6 py-2.5 rounded-xl shadow-sm transition-all"
                     >
                       Applied
                     </button>
@@ -218,7 +285,7 @@ export default function VisitTrackerPage({
                       onClick={() =>
                         handleDecision(visit.id, VisitDecision.NOT_INTERESTED)
                       }
-                      className="bg-gray-300 font-black px-4 py-2 border-2 border-black shadow-brutal"
+                      className="bg-gray-100 hover:bg-gray-200 text-gray-700 font-bold px-6 py-2.5 rounded-xl transition-colors"
                     >
                       Pass
                     </button>
@@ -227,11 +294,11 @@ export default function VisitTrackerPage({
 
                 {/* Agent Actions */}
                 {isAgent && visit.status === VisitStatus.REQUESTED && (
-                  <div className="flex gap-2 items-center">
+                  <div className="flex flex-wrap gap-3 items-center w-full">
                     <input
                       type="datetime-local"
                       id={`schedule-${visit.id}`}
-                      className="border-2 border-black p-2 font-bold"
+                      className="border border-gray-200 rounded-xl px-4 py-2.5 font-bold outline-none focus-ring text-gray-700"
                     />
                     <button
                       onClick={() => {
@@ -242,7 +309,7 @@ export default function VisitTrackerPage({
                         ).value;
                         if (val) handleScheduleRequest(visit.id, val);
                       }}
-                      className="bg-[#39ff14] font-black px-6 py-2 border-2 border-black shadow-brutal"
+                      className="bg-[#0a5ea8] hover:bg-[#084d8a] text-white font-bold px-6 py-2.5 rounded-xl shadow-sm transition-all"
                     >
                       Schedule Visit
                     </button>
@@ -251,7 +318,7 @@ export default function VisitTrackerPage({
                 {isAgent && visit.status === VisitStatus.SCHEDULED && (
                   <button
                     onClick={() => handleConfirmVisit(visit.id)}
-                    className="bg-[#ff00ff] text-white font-black px-6 py-2 border-2 border-black shadow-brutal"
+                    className="bg-[#28a745] hover:bg-[#218838] text-white font-bold px-6 py-2.5 rounded-xl shadow-sm transition-all"
                   >
                     Mark as Visited
                   </button>

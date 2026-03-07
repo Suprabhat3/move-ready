@@ -1,13 +1,5 @@
 import { useEffect, useState } from "react";
-import {
-  Send,
-  User as UserIcon,
-  Calendar,
-  MessageSquare,
-  CheckCircle,
-  XCircle,
-  Clock,
-} from "lucide-react";
+import { MessageSquare, CheckCircle, XCircle } from "lucide-react";
 import {
   fetchMyTickets,
   fetchAgentTickets,
@@ -51,7 +43,6 @@ type Ticket = {
 export default function TicketSystem({ user }: { user: SessionUser | null }) {
   const [tickets, setTickets] = useState<Ticket[]>([]);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState("");
   const [selectedTicketId, setSelectedTicketId] = useState<string | null>(null);
   const [replyContent, setReplyContent] = useState("");
   const [isReplying, setIsReplying] = useState(false);
@@ -63,7 +54,7 @@ export default function TicketSystem({ user }: { user: SessionUser | null }) {
       const data = isAgent ? await fetchAgentTickets() : await fetchMyTickets();
       setTickets(data);
     } catch (err: any) {
-      setError(err.message || "An error occurred");
+      console.error(err.message || "An error occurred");
     } finally {
       setLoading(false);
     }
@@ -121,12 +112,16 @@ export default function TicketSystem({ user }: { user: SessionUser | null }) {
   const selectedTicket = tickets.find((t) => t.id === selectedTicketId);
 
   return (
-    <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 h-[700px] border-4 border-black rounded-3xl overflow-hidden shadow-brutal bg-white">
+    <div className="grid grid-cols-1 lg:grid-cols-3 gap-0 h-[700px] border border-gray-100 rounded-[2rem] overflow-hidden shadow-premium bg-white">
       {/* Sidebar */}
-      <div className="lg:col-span-1 border-r-4 border-black flex flex-col overflow-hidden bg-gray-50">
-        <div className="p-6 border-b-4 border-black bg-[#39ff14]">
-          <h3 className="font-black text-2xl uppercase tracking-tighter flex items-center gap-2">
-            <MessageSquare strokeWidth={3} />
+      <div className="lg:col-span-1 border-r border-gray-100 flex flex-col overflow-hidden bg-gray-50/50">
+        <div className="p-6 border-b border-gray-100 bg-white">
+          <h3 className="font-black text-2xl text-[#1a1a1a] flex items-center gap-3">
+            <MessageSquare
+              size={24}
+              className="text-[#0a5ea8]"
+              strokeWidth={2.5}
+            />
             Support
           </h3>
         </div>
@@ -140,32 +135,32 @@ export default function TicketSystem({ user }: { user: SessionUser | null }) {
             <button
               key={t.id}
               onClick={() => setSelectedTicketId(t.id)}
-              className={`w-full text-left p-5 border-b-2 border-black/10 transition-all hover:bg-white ${
+              className={`w-full text-left p-5 border-b border-gray-100/50 transition-all ${
                 selectedTicketId === t.id
-                  ? "bg-white border-l-8 border-[#ff00ff]"
-                  : "border-l-8 border-transparent"
+                  ? "bg-blue-50/50 border-l-4 border-l-[#0a5ea8]"
+                  : "bg-transparent border-l-4 border-l-transparent hover:bg-white"
               }`}
             >
-              <div className="flex justify-between items-start mb-2">
+              <div className="flex justify-between items-start mb-3">
                 <span
-                  className={`text-[10px] font-black uppercase px-2 py-0.5 border-2 border-black shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] ${
+                  className={`text-xs font-bold px-3 py-1 rounded-full border shadow-sm ${
                     t.status === "OPEN"
-                      ? "bg-red-400"
+                      ? "bg-red-50 text-red-700 border-red-200"
                       : t.status === "IN_PROGRESS"
-                        ? "bg-blue-400"
-                        : "bg-green-400"
+                        ? "bg-blue-50 text-blue-700 border-blue-200"
+                        : "bg-green-50 text-green-700 border-green-200"
                   }`}
                 >
                   {t.status}
                 </span>
-                <span className="text-[10px] font-bold opacity-40 uppercase tracking-widest">
+                <span className="text-xs font-medium text-gray-400">
                   {new Date(t.createdAt).toLocaleDateString()}
                 </span>
               </div>
-              <h4 className="font-black leading-tight text-lg mb-1">
+              <h4 className="font-bold text-[#1a1a1a] leading-tight text-lg mb-1 truncate">
                 {t.subject}
               </h4>
-              <p className="text-xs font-bold opacity-60 truncate">
+              <p className="text-sm font-medium text-gray-500 truncate">
                 {isAgent
                   ? `From: ${t.tenant?.name || t.tenant?.email}`
                   : `Property: ${t.listing?.title || "General"}`}
@@ -176,44 +171,52 @@ export default function TicketSystem({ user }: { user: SessionUser | null }) {
       </div>
 
       {/* Content */}
-      <div className="lg:col-span-2 flex flex-col overflow-hidden">
+      <div className="lg:col-span-2 flex flex-col overflow-hidden relative">
         {selectedTicket ? (
           <>
-            <div className="p-6 border-b-4 border-black bg-white flex justify-between items-start">
+            <div className="p-6 lg:p-8 border-b border-gray-100 bg-white flex flex-col sm:flex-row justify-between items-start gap-4">
               <div>
-                <h2 className="text-3xl font-black mb-1">
+                <h2 className="text-2xl font-black mb-2 text-[#1a1a1a]">
                   {selectedTicket.subject}
                 </h2>
-                <div className="flex gap-4 text-xs font-black uppercase tracking-widest opacity-60">
-                  <span>Priority: {selectedTicket.priority}</span>
+                <div className="flex flex-wrap gap-4 text-sm font-bold text-gray-400 uppercase tracking-wider">
+                  <span className="flex items-center gap-1.5">
+                    <span className="w-2 h-2 rounded-full bg-gray-300"></span>{" "}
+                    Priority: {selectedTicket.priority}
+                  </span>
                   {selectedTicket.listing && (
-                    <span>Property: {selectedTicket.listing.title}</span>
+                    <span className="flex items-center gap-1.5">
+                      <span className="w-2 h-2 rounded-full bg-gray-300"></span>{" "}
+                      Property: {selectedTicket.listing.title}
+                    </span>
                   )}
                 </div>
               </div>
               {isAgent && (
-                <div className="flex gap-2">
+                <div className="flex gap-2 sm:shrink-0">
                   <button
                     onClick={() =>
                       handleStatusChange(selectedTicket.id, "RESOLVED")
                     }
-                    className="p-2 border-2 border-black bg-[#39ff14] shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] hover:translate-y-0.5"
+                    className="p-2.5 rounded-xl bg-green-50 text-green-600 hover:bg-green-100 transition-colors shadow-sm"
+                    title="Mark Resolved"
                   >
-                    <CheckCircle size={20} />
+                    <CheckCircle size={22} strokeWidth={2.5} />
                   </button>
                   <button
                     onClick={() =>
                       handleStatusChange(selectedTicket.id, "CLOSED")
                     }
-                    className="p-2 border-2 border-black bg-gray-200 shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] hover:translate-y-0.5"
+                    className="p-2.5 rounded-xl bg-gray-50 text-gray-500 hover:bg-gray-100 transition-colors shadow-sm cursor-pointer"
+                    title="Close Ticket"
                   >
-                    <XCircle size={20} />
+                    <XCircle size={22} strokeWidth={2.5} />
                   </button>
                 </div>
               )}
             </div>
 
-            <div className="flex-1 overflow-y-auto p-6 space-y-6 bg-[#f0f0f0]">
+            <div className="flex-1 overflow-y-auto p-6 md:p-8 space-y-6 bg-gray-50/30">
               {selectedTicket.messages.map((m) => {
                 const isMe = m.authorId === user?.id;
                 return (
@@ -222,16 +225,24 @@ export default function TicketSystem({ user }: { user: SessionUser | null }) {
                     className={`flex ${isMe ? "justify-end" : "justify-start"}`}
                   >
                     <div
-                      className={`max-w-[85%] p-4 border-4 border-black shadow-brutal ${isMe ? "bg-[#00e5ff] rounded-2xl rounded-tr-none" : "bg-white rounded-2xl rounded-tl-none"}`}
+                      className={`max-w-[85%] p-5 shadow-sm ${isMe ? "bg-[#0a5ea8] text-white rounded-2xl rounded-tr-sm" : "bg-white border border-gray-100 rounded-2xl rounded-tl-sm"}`}
                     >
-                      <p className="font-bold whitespace-pre-wrap">
+                      <p
+                        className={`font-medium whitespace-pre-wrap leading-relaxed ${isMe ? "text-white/90" : "text-gray-700"}`}
+                      >
                         {m.content}
                       </p>
-                      <div className="mt-2 flex justify-between items-center gap-4 border-t-2 border-black/10 pt-2">
-                        <span className="text-[10px] font-black uppercase tracking-tighter truncate">
+                      <div
+                        className={`mt-3 flex justify-between items-center gap-6 pt-3 border-t max-w-full ${isMe ? "border-white/10" : "border-gray-50"}`}
+                      >
+                        <span
+                          className={`text-xs font-bold uppercase tracking-wider truncate ${isMe ? "text-blue-100" : "text-gray-500"}`}
+                        >
                           {m.author.name || m.author.role}
                         </span>
-                        <span className="text-[10px] font-bold opacity-40">
+                        <span
+                          className={`text-xs font-medium whitespace-nowrap ${isMe ? "text-blue-200" : "text-gray-400"}`}
+                        >
                           {new Date(m.createdAt).toLocaleTimeString()}
                         </span>
                       </div>
@@ -241,33 +252,36 @@ export default function TicketSystem({ user }: { user: SessionUser | null }) {
               })}
             </div>
 
-            <div className="p-6 border-t-4 border-black bg-white">
-              <form onSubmit={handleReplyRequest} className="flex gap-4">
+            <div className="p-4 md:p-6 border-t border-gray-100 bg-white">
+              <form onSubmit={handleReplyRequest} className="flex gap-3">
                 <input
                   type="text"
                   value={replyContent}
                   onChange={(e) => setReplyContent(e.target.value)}
                   placeholder="Ask a question or provide an update..."
-                  className="flex-1 border-4 border-black p-4 font-bold focus:shadow-brutal transition-all outline-none"
+                  className="flex-1 border border-gray-200 p-4 rounded-xl font-medium focus-ring bg-gray-50 outline-none transition-colors hover:bg-gray-50/80"
                 />
                 <button
                   type="submit"
                   disabled={isReplying || !replyContent.trim()}
-                  className="bg-black text-white px-8 font-black uppercase tracking-widest border-4 border-black shadow-[4px_4px_0px_0px_rgba(0,229,255,1)] hover:shadow-none hover:translate-x-1 hover:translate-y-1 transition-all"
+                  className="bg-[#0a5ea8] text-white px-6 md:px-8 font-bold rounded-xl shadow-sm hover:bg-[#084d8a] hover:-translate-y-0.5 transition-all disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:translate-y-0"
                 >
-                  {isReplying ? "..." : "Send"}
+                  {isReplying ? "Sending..." : "Send"}
                 </button>
               </form>
             </div>
           </>
         ) : (
-          <div className="flex-1 flex flex-col items-center justify-center p-12 text-center">
-            <Clock size={64} className="opacity-10 mb-6" />
-            <h2 className="text-3xl font-black mb-2 opacity-20 uppercase italic">
+          <div className="flex-1 flex flex-col items-center justify-center p-12 text-center bg-gray-50/30">
+            <div className="w-24 h-24 mb-6 rounded-full bg-white flex items-center justify-center shadow-sm border border-gray-100 text-gray-300">
+              <MessageSquare size={40} strokeWidth={1.5} />
+            </div>
+            <h2 className="text-2xl font-black mb-3 text-[#1a1a1a]">
               Select a conversation
             </h2>
-            <p className="font-bold opacity-40 max-w-xs">
-              Click on any ticket to view details and reply.
+            <p className="font-medium text-gray-500 max-w-sm">
+              Click on any ticket in the sidebar to view details and reply to
+              messages.
             </p>
           </div>
         )}

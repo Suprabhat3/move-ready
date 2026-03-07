@@ -64,46 +64,40 @@ const Properties = ({ user }: { user: SessionUser | null }) => {
   const page = response?.page ?? 1;
 
   return (
-    <div className="pt-24 pb-20 px-6 max-w-[1400px] gap-10 mx-auto w-full">
-      <div className="flex flex-col lg:flex-row lg:items-end justify-between gap-10 mb-12 bg-white/60 backdrop-blur-xl border-2 border-black/20 p-8 rounded-[2rem] shadow-[8px_8px_0px_0px_rgba(0,0,0,0.8)]">
+    <div className="pt-32 pb-20 px-6 max-w-[1400px] gap-10 mx-auto w-full">
+      <div className="flex flex-col lg:flex-row lg:items-end justify-between gap-10 mb-12 glass p-8 rounded-3xl">
         <div className="space-y-4">
-          <h1
-            className="text-4xl md:text-6xl font-black text-black tracking-tighter"
-            style={{ fontFamily: "var(--font-display)" }}
-          >
+          <h1 className="text-4xl md:text-5xl font-black text-[#1a1a1a] tracking-tight leading-tight">
             DISCOVER YOUR <br />
-            <span className="relative inline-block">
-              <span className="relative z-10 text-transparent bg-clip-text bg-gradient-to-r from-black via-black to-black/60">
-                NEXT CHAPTER
-              </span>
-              <span className="absolute bottom-2 left-0 w-full h-4 bg-[#39ff14]/70 -z-10 -rotate-1"></span>
+            <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#0a5ea8] to-[#28a745]">
+              NEXT CHAPTER
             </span>
           </h1>
-          <p className="text-black/70 text-lg font-bold max-w-xl">
+          <p className="text-gray-500 text-lg font-medium max-w-xl">
             Browse verified listings from premium agents. Luxury, comfort, and
             convenience, just a click away.
           </p>
         </div>
 
-        <div className="flex flex-wrap gap-6 items-center">
+        <div className="flex flex-wrap gap-4 items-center">
           {/* Simple Search */}
           <div className="relative group flex-1 min-w-[300px]">
-            <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-black/60 w-5 h-5 z-10" />
+            <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 w-5 h-5 z-10" />
             <input
               type="text"
               placeholder="Search city, area..."
               value={searchParams.get("search") ?? ""}
               onChange={(e) => updateFilter("search", e.target.value)}
-              className="pl-12 pr-6 py-4 bg-white/40 backdrop-blur-md border-2 border-black rounded-2xl font-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] focus:bg-white focus:translate-x-[2px] focus:translate-y-[2px] focus:shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] outline-none transition-all w-full"
+              className="pl-12 pr-6 py-3.5 bg-white border border-gray-200 rounded-2xl font-medium shadow-sm focus-ring w-full text-[#1a1a1a]"
             />
           </div>
 
           <div className="relative group">
-            <Filter className="absolute left-4 top-1/2 -translate-y-1/2 text-black/60 w-5 h-5 z-10" />
+            <Filter className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 w-5 h-5 z-10" />
             <select
               value={searchParams.get("propertyType") ?? ""}
               onChange={(e) => updateFilter("propertyType", e.target.value)}
-              className="pl-12 pr-8 py-4 bg-white/40 backdrop-blur-md border-2 border-black rounded-2xl font-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] focus:bg-white focus:translate-x-[2px] focus:translate-y-[2px] focus:shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] outline-none transition-all appearance-none cursor-pointer w-full"
+              className="pl-12 pr-10 py-3.5 bg-white border border-gray-200 rounded-2xl font-medium shadow-sm focus-ring appearance-none cursor-pointer w-full text-[#1a1a1a]"
             >
               <option value="">All Types</option>
               {propertyTypeOptions.map((option) => (
@@ -112,17 +106,35 @@ const Properties = ({ user }: { user: SessionUser | null }) => {
                 </option>
               ))}
             </select>
+            {/* Custom dropdown arrow */}
+            <div className="absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none">
+              <svg
+                width="12"
+                height="8"
+                viewBox="0 0 12 8"
+                fill="none"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <path
+                  d="M1 1.5L6 6.5L11 1.5"
+                  stroke="#9CA3AF"
+                  strokeWidth="2"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                />
+              </svg>
+            </div>
           </div>
         </div>
       </div>
 
-      <div className="grid grid-cols-2 lg:grid-cols-6 gap-6 mb-12">
+      <div className="grid grid-cols-2 lg:grid-cols-6 gap-4 mb-12">
         <div className="col-span-1 lg:col-span-1">
           <input
             value={searchParams.get("city") ?? ""}
             onChange={(e) => updateFilter("city", e.target.value)}
             placeholder="City"
-            className="w-full border-2 border-black rounded-2xl px-5 py-4 font-black bg-white/40 backdrop-blur-md shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] focus:bg-white focus:translate-x-[2px] focus:translate-y-[2px] focus:shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] transition-all outline-none"
+            className="w-full bg-white border border-gray-200 rounded-xl px-4 py-3 font-medium shadow-sm outline-none focus-ring text-[#1a1a1a]"
           />
         </div>
         <div className="col-span-1 lg:col-span-1">
@@ -132,7 +144,7 @@ const Properties = ({ user }: { user: SessionUser | null }) => {
             type="number"
             min="0"
             placeholder="Min rent"
-            className="w-full border-2 border-black rounded-2xl px-5 py-4 font-black bg-white/40 backdrop-blur-md shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] focus:bg-white focus:translate-x-[2px] focus:translate-y-[2px] focus:shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] transition-all outline-none"
+            className="w-full bg-white border border-gray-200 rounded-xl px-4 py-3 font-medium shadow-sm outline-none focus-ring text-[#1a1a1a]"
           />
         </div>
         <div className="col-span-1 lg:col-span-1">
@@ -142,14 +154,14 @@ const Properties = ({ user }: { user: SessionUser | null }) => {
             type="number"
             min="0"
             placeholder="Max rent"
-            className="w-full border-2 border-black rounded-2xl px-5 py-4 font-black bg-white/40 backdrop-blur-md shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] focus:bg-white focus:translate-x-[2px] focus:translate-y-[2px] focus:shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] transition-all outline-none"
+            className="w-full bg-white border border-gray-200 rounded-xl px-4 py-3 font-medium shadow-sm outline-none focus-ring text-[#1a1a1a]"
           />
         </div>
-        <div className="col-span-1 lg:col-span-1">
+        <div className="col-span-1 lg:col-span-1 relative">
           <select
             value={searchParams.get("furnished") ?? ""}
             onChange={(e) => updateFilter("furnished", e.target.value)}
-            className="w-full border-2 border-black rounded-2xl px-5 py-4 font-black bg-white/40 backdrop-blur-md shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] focus:bg-white focus:translate-x-[2px] focus:translate-y-[2px] focus:shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] transition-all outline-none cursor-pointer"
+            className="w-full bg-white border border-gray-200 rounded-xl px-4 py-3 pr-10 font-medium shadow-sm outline-none focus-ring cursor-pointer appearance-none text-[#1a1a1a]"
           >
             <option value="">Any furnishing</option>
             {furnishedOptions.map((option) => (
@@ -158,12 +170,30 @@ const Properties = ({ user }: { user: SessionUser | null }) => {
               </option>
             ))}
           </select>
+          {/* Custom dropdown arrow */}
+          <div className="absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none">
+            <svg
+              width="10"
+              height="6"
+              viewBox="0 0 12 8"
+              fill="none"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <path
+                d="M1 1.5L6 6.5L11 1.5"
+                stroke="#9CA3AF"
+                strokeWidth="2"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              />
+            </svg>
+          </div>
         </div>
-        <div className="col-span-1 lg:col-span-1">
+        <div className="col-span-1 lg:col-span-1 relative">
           <select
             value={searchParams.get("parking") ?? ""}
             onChange={(e) => updateFilter("parking", e.target.value)}
-            className="w-full border-2 border-black rounded-2xl px-5 py-4 font-black bg-white/40 backdrop-blur-md shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] focus:bg-white focus:translate-x-[2px] focus:translate-y-[2px] focus:shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] transition-all outline-none cursor-pointer"
+            className="w-full bg-white border border-gray-200 rounded-xl px-4 py-3 pr-10 font-medium shadow-sm outline-none focus-ring cursor-pointer appearance-none text-[#1a1a1a]"
           >
             <option value="">Any parking</option>
             {parkingOptions.map((option) => (
@@ -172,45 +202,81 @@ const Properties = ({ user }: { user: SessionUser | null }) => {
               </option>
             ))}
           </select>
+          {/* Custom dropdown arrow */}
+          <div className="absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none">
+            <svg
+              width="10"
+              height="6"
+              viewBox="0 0 12 8"
+              fill="none"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <path
+                d="M1 1.5L6 6.5L11 1.5"
+                stroke="#9CA3AF"
+                strokeWidth="2"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              />
+            </svg>
+          </div>
         </div>
-        <div className="col-span-1 lg:col-span-1">
+        <div className="col-span-1 lg:col-span-1 relative">
           <select
             value={searchParams.get("sort") ?? "newest"}
             onChange={(e) => updateFilter("sort", e.target.value)}
-            className="w-full border-2 border-black rounded-2xl px-5 py-4 font-black bg-white/40 backdrop-blur-md shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] focus:bg-white focus:translate-x-[2px] focus:translate-y-[2px] focus:shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] transition-all outline-none cursor-pointer"
+            className="w-full bg-white border border-gray-200 rounded-xl px-4 py-3 pr-10 font-medium shadow-sm outline-none focus-ring cursor-pointer appearance-none text-[#1a1a1a]"
           >
             <option value="newest">Newest First</option>
             <option value="rent-asc">Rent: Low to High</option>
             <option value="rent-desc">Rent: High to Low</option>
             <option value="available-soonest">Available Soon</option>
           </select>
+          {/* Custom dropdown arrow */}
+          <div className="absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none">
+            <svg
+              width="10"
+              height="6"
+              viewBox="0 0 12 8"
+              fill="none"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <path
+                d="M1 1.5L6 6.5L11 1.5"
+                stroke="#9CA3AF"
+                strokeWidth="2"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              />
+            </svg>
+          </div>
         </div>
       </div>
 
       {loading ? (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-10 animate-pulse">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mb-12 animate-pulse">
           {[1, 2, 3, 4, 5, 6].map((i) => (
             <div
               key={i}
-              className="h-[500px] bg-white/60 backdrop-blur-md border-2 border-black/10 rounded-[2rem] shadow-[4px_4px_0px_0px_rgba(0,0,0,0.4)]"
+              className="h-[500px] bg-white rounded-3xl border border-gray-100 shadow-sm"
             />
           ))}
         </div>
       ) : error ? (
-        <div className="border-4 border-black bg-[#ff00ff]/90 backdrop-blur-md text-white p-10 rounded-[2rem] font-black text-center shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] text-2xl">
+        <div className="bg-red-50 border border-red-200 text-red-600 p-8 rounded-2xl font-medium text-center shadow-sm">
           {error}
         </div>
       ) : items.length > 0 ? (
         <>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-10">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mb-12">
             {items.map((listing) => (
               <PropertyCard key={listing.id} listing={listing} user={user} />
             ))}
           </div>
-          <div className="mt-16 flex flex-col md:flex-row items-center justify-between gap-6 bg-white/60 backdrop-blur-xl border-2 border-black/20 p-6 rounded-[2rem] shadow-[8px_8px_0px_0px_rgba(0,0,0,0.8)]">
-            <p className="font-black text-black/60 text-lg order-2 md:order-1">
-              Page <span className="text-black">{page}</span> of{" "}
-              <span className="text-black">
+          <div className="flex flex-col md:flex-row items-center justify-between gap-6 glass p-6 rounded-3xl shadow-sm">
+            <p className="font-medium text-gray-500 order-2 md:order-1">
+              Page <span className="text-[#1a1a1a] font-bold">{page}</span> of{" "}
+              <span className="text-[#1a1a1a] font-bold">
                 {Math.max(
                   1,
                   Math.ceil(
@@ -225,7 +291,7 @@ const Properties = ({ user }: { user: SessionUser | null }) => {
                 type="button"
                 disabled={page <= 1}
                 onClick={() => goToPage(page - 1)}
-                className="px-6 py-4 border-2 border-black rounded-2xl font-black bg-white shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:translate-x-[2px] hover:translate-y-[2px] hover:shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] disabled:opacity-30 disabled:translate-x-0 disabled:translate-y-0 disabled:shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] transition-all"
+                className="px-6 py-3 border border-gray-200 rounded-xl font-bold bg-white text-gray-700 shadow-sm hover:border-gray-300 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 Previous
               </button>
@@ -233,21 +299,24 @@ const Properties = ({ user }: { user: SessionUser | null }) => {
                 type="button"
                 disabled={!response?.hasMore}
                 onClick={() => goToPage(page + 1)}
-                className="px-6 py-4 border-2 border-black rounded-full font-black bg-[#39ff14] shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:translate-x-[2px] hover:translate-y-[2px] hover:shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] disabled:opacity-30 transition-all px-10"
+                className="px-6 py-3 border border-transparent rounded-xl font-bold bg-[#0a5ea8] text-white shadow-md hover:bg-[#084d8a] disabled:opacity-50 disabled:cursor-not-allowed transition-all"
               >
-                Next Step
+                Next Page
               </button>
             </div>
           </div>
         </>
       ) : (
-        <div className="flex flex-col items-center justify-center py-24 text-center bg-white/60 backdrop-blur-xl border-2 border-black/20 rounded-[3rem] shadow-[12px_12px_0px_0px_rgba(0,0,0,0.8)]">
-          <div className="bg-[#00e5ff] p-8 rounded-3xl border-2 border-black mb-8 shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]">
-            <Home className="w-16 h-16 text-black" />
+        <div className="flex flex-col items-center justify-center py-24 text-center glass rounded-[3rem] shadow-sm mb-12">
+          <div className="bg-blue-50 p-6 rounded-3xl mb-6">
+            <Home className="w-12 h-12 text-[#0a5ea8]" />
           </div>
-          <h3 className="text-4xl font-black mb-4">A Quiet Place...</h3>
-          <p className="text-black/60 font-bold text-xl max-w-md">
-            No properties matched your filters. Time to try a broader search!
+          <h3 className="text-3xl font-black mb-4 text-[#1a1a1a]">
+            No matches found
+          </h3>
+          <p className="text-gray-500 font-medium text-lg max-w-md">
+            We couldn't find any properties matching your current filters. Try
+            adjusting your search criteria!
           </p>
         </div>
       )}

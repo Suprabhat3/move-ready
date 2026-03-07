@@ -131,47 +131,59 @@ export default function AgentTicketsView({
   const selectedTicket = tickets.find((t) => t.id === selectedTicketId);
 
   return (
-    <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 h-[700px]">
+    <div className="grid grid-cols-1 lg:grid-cols-3 gap-0 h-[700px] border border-gray-100 rounded-[2rem] overflow-hidden shadow-premium bg-white">
       {/* Sidebar: Ticket List */}
-      <div className="lg:col-span-1 border-4 border-black bg-white shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] flex flex-col overflow-hidden">
-        <div className="p-4 border-b-4 border-black bg-[#39ff14]">
-          <h3 className="font-black text-xl uppercase tracking-widest text-black flex items-center">
-            <MessageSquare className="mr-2" strokeWidth={3} />
+      <div className="lg:col-span-1 border-r border-gray-100 flex flex-col overflow-hidden bg-gray-50/50">
+        <div className="p-6 border-b border-gray-100 bg-white">
+          <h3 className="font-black text-2xl text-[#1a1a1a] flex items-center gap-3">
+            <MessageSquare
+              size={24}
+              className="text-[#0a5ea8]"
+              strokeWidth={2.5}
+            />
             Inbox
           </h3>
         </div>
 
-        <div className="flex-1 overflow-y-auto bg-[#fdfdfd]">
+        <div className="flex-1 overflow-y-auto">
           {tickets.length === 0 ? (
             <div className="p-6 text-center text-text-muted font-bold">
               No tickets found.
             </div>
           ) : (
-            <div className="divide-y-4 divide-black">
+            <div className="">
               {tickets.map((ticket) => (
                 <button
                   key={ticket.id}
                   onClick={() => setSelectedTicketId(ticket.id)}
-                  className={`w-full text-left p-4 hover:bg-[#00e5ff]/20 transition-colors ${
+                  className={`w-full text-left p-5 border-b border-gray-100/50 transition-all ${
                     selectedTicketId === ticket.id
-                      ? "bg-[#00e5ff]/30 border-l-8 border-[#00e5ff]"
-                      : "border-l-8 border-transparent"
+                      ? "bg-blue-50/50 border-l-4 border-l-[#0a5ea8]"
+                      : "bg-transparent border-l-4 border-l-transparent hover:bg-white"
                   }`}
                 >
-                  <div className="flex justify-between items-start mb-2">
-                    <span className="text-xs font-black uppercase text-white bg-black px-2 py-0.5 border-2 border-black flex items-center gap-1 shadow-[2px_2px_0px_0px_rgba(255,0,255,1)]">
+                  <div className="flex justify-between items-start mb-3">
+                    <span
+                      className={`text-xs font-bold px-3 py-1 rounded-full border shadow-sm ${
+                        ticket.status === "OPEN"
+                          ? "bg-red-50 text-red-700 border-red-200"
+                          : ticket.status === "IN_PROGRESS"
+                            ? "bg-blue-50 text-blue-700 border-blue-200"
+                            : "bg-green-50 text-green-700 border-green-200"
+                      }`}
+                    >
                       {ticket.status}
                     </span>
-                    <span className="text-xs font-bold text-gray-500 flex items-center">
-                      <Calendar size={12} className="mr-1" />
+                    <span className="text-xs font-medium text-gray-400 flex items-center">
+                      <Calendar size={14} className="mr-1.5" />
                       {new Date(ticket.createdAt).toLocaleDateString()}
                     </span>
                   </div>
-                  <h4 className="font-black text-black truncate text-lg">
+                  <h4 className="font-bold text-[#1a1a1a] truncate text-lg mb-1 leading-tight">
                     {ticket.subject}
                   </h4>
-                  <p className="text-sm font-bold text-gray-600 truncate mt-1 flex items-center">
-                    <UserIcon size={14} className="mr-1" />
+                  <p className="text-sm font-medium text-gray-500 truncate mt-2 flex items-center">
+                    <UserIcon size={14} className="mr-1.5 text-gray-400" />
                     {ticket.tenant.name || ticket.tenant.email}
                   </p>
                 </button>
@@ -182,19 +194,21 @@ export default function AgentTicketsView({
       </div>
 
       {/* Main Area: Chat/Detail View */}
-      <div className="lg:col-span-2 border-4 border-black bg-white shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] flex flex-col overflow-hidden">
+      <div className="lg:col-span-2 flex flex-col overflow-hidden relative">
         {selectedTicket ? (
           <>
             {/* Header */}
-            <div className="p-4 border-b-4 border-black bg-[#fdfdfd] shrink-0">
-              <h2 className="text-2xl font-black text-black break-words mb-2">
+            <div className="p-6 lg:p-8 border-b border-gray-100 bg-white shrink-0">
+              <h2 className="text-2xl font-black text-[#1a1a1a] break-words mb-3">
                 {selectedTicket.subject}
               </h2>
-              <div className="flex items-center gap-4 text-sm font-bold">
-                <span className="bg-[#ff00ff]/20 text-black px-3 py-1 border-2 border-black">
+              <div className="flex flex-wrap items-center gap-4 text-sm font-bold text-gray-400 uppercase tracking-wider">
+                <span className="flex items-center gap-1.5">
+                  <span className="w-2 h-2 rounded-full bg-gray-300"></span>{" "}
                   Priority: {selectedTicket.priority}
                 </span>
-                <span className="text-text-muted">
+                <span className="flex items-center gap-1.5 text-gray-500">
+                  <span className="w-2 h-2 rounded-full bg-blue-400"></span>{" "}
                   Tenant:{" "}
                   {selectedTicket.tenant.name || selectedTicket.tenant.email}
                 </span>
@@ -202,7 +216,7 @@ export default function AgentTicketsView({
             </div>
 
             {/* Messages */}
-            <div className="flex-1 overflow-y-auto p-6 space-y-6 bg-gray-50 bg-[url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSI4IiBoZWlnaHQ9IjgiPgo8cmVjdCB3aWR0aD0iOCIgaGVpZ2h0PSI4IiBmaWxsPSIjZmZmIiAvPgo8cGF0aCBkPSJNMCAwdjhIOFYwSDB6bTQgNC4xbS00IG0wIDEuNW0tMS41LTEuNW0tMS41LTEuNW0tMS41LTEuNW0tMS41LTEuNSIgc3Ryb2tlPSIjZTllOWU5IiBzdHJva2Utd2lkdGg9IjAuNSIvPgo8L3N2Zz4=')]">
+            <div className="flex-1 overflow-y-auto p-6 md:p-8 space-y-6 bg-gray-50/30">
               {selectedTicket.messages.map((msg) => {
                 const isMe = msg.authorId === currentUserId;
                 return (
@@ -212,34 +226,38 @@ export default function AgentTicketsView({
                       isMe ? "items-end" : "items-start"
                     }`}
                   >
-                    <div className="flex items-end gap-2 max-w-[80%]">
+                    <div className="flex items-end gap-3 max-w-[85%]">
                       {!isMe && (
-                        <div className="w-8 h-8 rounded-full border-2 border-black bg-[#39ff14] shrink-0 flex items-center justify-center font-black text-sm uppercase">
+                        <div className="w-8 h-8 rounded-full bg-blue-100 text-[#0a5ea8] shrink-0 flex items-center justify-center font-bold text-sm">
                           {(msg.author.name || "T")[0]}
                         </div>
                       )}
                       <div
-                        className={`p-4 border-4 border-black ${
+                        className={`p-5 shadow-sm ${
                           isMe
-                            ? "bg-[#00e5ff] rounded-tl-2xl rounded-tr-2xl rounded-bl-2xl shadow-[-4px_4px_0px_0px_rgba(0,0,0,1)] text-right"
-                            : "bg-white rounded-tl-2xl rounded-tr-2xl rounded-br-2xl shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] text-left"
+                            ? "bg-[#0a5ea8] text-white rounded-2xl rounded-tr-sm text-left"
+                            : "bg-white border border-gray-100 rounded-2xl rounded-tl-sm text-left"
                         }`}
                       >
                         {/* If this is the first message from the tenant, treat it as the issue description */}
                         {!isMe && msg.id === selectedTicket.messages[0]?.id && (
-                          <span className="text-xs uppercase font-black tracking-widest bg-[#ff00ff] text-white px-2 py-0.5 border-2 border-black inline-block mb-2">
+                          <span className="text-xs uppercase font-bold tracking-wider bg-purple-50 text-purple-700 px-3 py-1 rounded-full border border-purple-200 inline-block mb-3">
                             Original Request
                           </span>
                         )}
-                        <p className="font-bold whitespace-pre-wrap break-words text-black">
+                        <p
+                          className={`font-medium whitespace-pre-wrap break-words leading-relaxed ${isMe ? "text-white/90" : "text-gray-700"}`}
+                        >
                           {msg.content}
                         </p>
-                        <p className="text-[10px] font-bold mt-2 text-black/60 uppercase tracking-widest">
+                        <p
+                          className={`text-xs font-medium mt-3 text-right ${isMe ? "text-blue-200" : "text-gray-400"}`}
+                        >
                           {new Date(msg.createdAt).toLocaleTimeString()}
                         </p>
                       </div>
                       {isMe && (
-                        <div className="w-8 h-8 rounded-full border-2 border-black bg-black shrink-0 flex items-center justify-center font-black text-sm uppercase text-[#00e5ff]">
+                        <div className="w-8 h-8 rounded-full bg-gray-200 text-gray-600 shrink-0 flex items-center justify-center font-bold text-sm">
                           Me
                         </div>
                       )}
@@ -250,35 +268,35 @@ export default function AgentTicketsView({
             </div>
 
             {/* Input Area */}
-            <div className="p-4 border-t-4 border-black bg-white shrink-0">
-              <form onSubmit={handleReply} className="flex gap-4">
+            <div className="p-4 md:p-6 border-t border-gray-100 bg-white shrink-0">
+              <form onSubmit={handleReply} className="flex gap-3">
                 <input
                   type="text"
                   value={replyContent}
                   onChange={(e) => setReplyContent(e.target.value)}
                   placeholder="Type your reply..."
-                  className="flex-1 border-4 border-black p-4 bg-[#fdfdfd] focus:bg-[#39ff14]/10 focus:outline-none focus:shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] transition-all font-bold text-black"
+                  className="flex-1 border border-gray-200 p-4 rounded-xl font-medium focus-ring bg-gray-50 outline-none transition-colors hover:bg-gray-50/80"
                 />
                 <button
                   type="submit"
                   disabled={isReplying || !replyContent.trim()}
-                  className="px-6 border-4 border-black bg-black text-white hover:bg-[#ff00ff] hover:text-black font-black uppercase tracking-widest disabled:opacity-50 transition-colors shadow-[4px_4px_0px_0px_rgba(0,229,255,1)] hover:shadow-[-2px_2px_0px_0px_rgba(0,0,0,1)] flex items-center"
+                  className="bg-[#0a5ea8] text-white px-6 md:px-8 font-bold rounded-xl shadow-sm hover:bg-[#084d8a] hover:-translate-y-0.5 transition-all disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:translate-y-0 flex items-center gap-2"
                 >
-                  <Send className="mr-2" size={20} strokeWidth={3} />
-                  Send
+                  <Send size={18} strokeWidth={2.5} />
+                  <span>Send</span>
                 </button>
               </form>
             </div>
           </>
         ) : (
-          <div className="flex-1 flex flex-col items-center justify-center text-text-muted p-6 text-center">
-            <MessageSquare
-              size={64}
-              className="opacity-20 mb-4 text-black"
-              strokeWidth={1}
-            />
-            <h3 className="text-2xl font-black text-black">Select a Ticket</h3>
-            <p className="mt-2 font-bold max-w-sm">
+          <div className="flex-1 flex flex-col items-center justify-center text-gray-400 p-6 text-center bg-gray-50/30">
+            <div className="w-24 h-24 mb-6 rounded-full bg-white flex items-center justify-center shadow-sm border border-gray-100 text-gray-300">
+              <MessageSquare size={40} strokeWidth={1.5} />
+            </div>
+            <h3 className="text-2xl font-black text-[#1a1a1a]">
+              Select a Ticket
+            </h3>
+            <p className="mt-3 font-medium text-gray-500 max-w-sm">
               Choose a support ticket from the list on the left to view the
               conversation and reply.
             </p>

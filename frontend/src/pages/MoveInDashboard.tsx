@@ -106,55 +106,57 @@ export default function MoveInDashboard({
   if (isAgent) {
     return (
       <div className="max-w-4xl mx-auto px-6 pt-36 pb-20">
-        <h1 className="text-4xl font-black mb-8 uppercase border-b-4 border-black pb-4">
+        <h1 className="text-4xl font-black mb-10 border-b border-gray-100 pb-4 text-[#1a1a1a]">
           Move-In Management
         </h1>
-        <div className="bg-white border-4 border-black p-8 rounded-2xl shadow-brutal">
-          <h2 className="text-2xl font-black mb-6">Initialize New Move-In</h2>
-          <form onSubmit={handleCreateMoveInRequest} className="space-y-4">
+        <div className="glass border border-gray-100 p-8 md:p-10 rounded-[2.5rem] shadow-premium">
+          <h2 className="text-2xl font-black mb-8 text-[#1a1a1a]">
+            Initialize New Move-In
+          </h2>
+          <form onSubmit={handleCreateMoveInRequest} className="space-y-6">
             <div>
-              <label className="block font-black uppercase text-xs mb-1">
+              <label className="block font-bold text-gray-700 mb-2">
                 Tenant ID
               </label>
               <input
                 type="text"
                 value={adminTenantId}
                 onChange={(e) => setAdminTenantId(e.target.value)}
-                className="w-full border-4 border-black p-3 font-bold"
+                className="w-full border border-gray-200 py-3.5 px-4 rounded-xl font-medium outline-none focus-ring"
                 placeholder="Paste user uuid here"
                 required
               />
             </div>
             <div>
-              <label className="block font-black uppercase text-xs mb-1">
+              <label className="block font-bold text-gray-700 mb-2">
                 Listing ID
               </label>
               <input
                 type="text"
                 value={adminListingId}
                 onChange={(e) => setAdminListingId(e.target.value)}
-                className="w-full border-4 border-black p-3 font-bold"
+                className="w-full border border-gray-200 py-3.5 px-4 rounded-xl font-medium outline-none focus-ring"
                 placeholder="Paste listing uuid here"
                 required
               />
             </div>
             <div>
-              <label className="block font-black uppercase text-xs mb-1">
+              <label className="block font-bold text-gray-700 mb-2">
                 Planned Move-In Date
               </label>
               <input
                 type="date"
                 value={adminDate}
                 onChange={(e) => setAdminDate(e.target.value)}
-                className="w-full border-4 border-black p-3 font-bold"
+                className="w-full border border-gray-200 py-3.5 px-4 rounded-xl font-medium outline-none focus-ring"
                 required
               />
             </div>
             <button
               type="submit"
-              className="w-full bg-[#39ff14] py-4 font-black text-xl border-4 border-black shadow-brutal hover:-translate-y-1 transition-transform"
+              className="w-full bg-[#0a5ea8] py-4 rounded-xl font-bold text-lg text-white shadow-md hover:bg-[#084d8a] hover:-translate-y-0.5 transition-all mt-4"
             >
-              CREATE MOVE-IN RECORD
+              Create Move-In Record
             </button>
           </form>
         </div>
@@ -165,9 +167,11 @@ export default function MoveInDashboard({
   if (!moveIn) {
     return (
       <div className="max-w-4xl mx-auto px-6 pt-36 pb-20">
-        <div className="bg-white border-4 border-black p-10 text-center rounded-2xl shadow-brutal">
-          <h2 className="text-3xl font-black mb-4">No Active Move-In</h2>
-          <p className="font-bold text-lg italic text-text-muted">
+        <div className="glass p-16 text-center rounded-[2.5rem] shadow-sm border border-gray-100 flex flex-col items-center justify-center">
+          <h2 className="text-3xl font-black mb-4 text-[#1a1a1a]">
+            No Active Move-In
+          </h2>
+          <p className="font-medium text-lg text-gray-500 max-w-lg">
             You'll see your move-in checklist here once an agent approves your
             application.
           </p>
@@ -177,10 +181,10 @@ export default function MoveInDashboard({
   }
 
   return (
-    <div className="max-w-6xl mx-auto px-6 pt-36 pb-20">
-      <div className="flex justify-between items-center border-b-4 border-black pb-4 mb-8">
-        <h1 className="text-4xl font-black uppercase">Move-In Tracker</h1>
-        <span className="bg-[#39ff14] border-2 border-black px-4 py-1 font-black shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] uppercase">
+    <div className="max-w-6xl mx-auto px-6 pt-36 pb-20 relative">
+      <div className="flex justify-between items-center border-b border-gray-100 pb-6 mb-10">
+        <h1 className="text-4xl font-black text-[#1a1a1a]">Move-In Tracker</h1>
+        <span className="bg-blue-50 text-[#0a5ea8] px-4 py-1.5 rounded-full font-bold shadow-sm uppercase text-sm border border-blue-100">
           {moveIn.status}
         </span>
       </div>
@@ -188,14 +192,14 @@ export default function MoveInDashboard({
       <div className="grid md:grid-cols-2 gap-10">
         {/* Checklist */}
         <div className="space-y-6">
-          <h3 className="text-2xl font-black italic bg-black text-white inline-block px-4 py-1 skew-x-[-12deg]">
+          <h3 className="text-2xl font-black text-[#1a1a1a] mb-6">
             Onboarding Checklist
           </h3>
           <div className="space-y-4">
             {moveIn.checklist.map((item) => (
-              <div
+              <label
                 key={item.id}
-                className={`flex items-center gap-4 p-4 border-4 border-black rounded-xl shadow-brutal transition-colors ${item.completed ? "bg-green-50" : "bg-white"}`}
+                className={`flex items-center gap-4 p-5 border rounded-2xl transition-all cursor-pointer ${item.completed ? "bg-green-50/50 border-green-200" : "bg-white border-gray-200 hover:shadow-sm"}`}
               >
                 <input
                   type="checkbox"
@@ -203,62 +207,68 @@ export default function MoveInDashboard({
                   onChange={(e) =>
                     handleChecklistUpdate(item.id, e.target.checked)
                   }
-                  className="w-8 h-8 border-4 border-black accent-black cursor-pointer"
+                  className="w-6 h-6 border-gray-300 rounded focus-ring text-[#28a745]"
                 />
                 <div className="flex-1">
                   <p
-                    className={`font-black text-lg ${item.completed ? "line-through opacity-50" : ""}`}
+                    className={`font-bold text-lg text-[#1a1a1a] ${item.completed ? "line-through text-opacity-50" : ""}`}
                   >
                     {item.label}
                   </p>
-                  <p className="text-xs uppercase font-bold opacity-60">
+                  <p className="text-xs uppercase font-bold text-gray-400 mt-0.5">
                     {item.type.replace(/_/g, " ")}
                   </p>
                 </div>
-              </div>
+              </label>
             ))}
           </div>
         </div>
 
         {/* Inventory & Details */}
         <div className="space-y-10">
-          <div className="bg-white border-4 border-black p-6 rounded-2xl shadow-brutal">
-            <h3 className="text-xl font-black mb-4 uppercase border-b-2 border-dashed border-black pb-2">
+          <div className="glass border border-gray-100 p-8 rounded-[2rem] shadow-sm relative overflow-hidden">
+            <h3 className="text-xl font-bold mb-6 uppercase text-gray-700 tracking-wide border-b border-gray-100 pb-3">
               Property Details
             </h3>
-            <p className="text-2xl font-black">{moveIn.listing.title}</p>
-            <p className="font-bold italic text-text-muted">
+            <p className="text-2xl font-black text-[#1a1a1a]">
+              {moveIn.listing.title}
+            </p>
+            <p className="font-medium text-gray-500 mt-2">
               {moveIn.listing.address}, {moveIn.listing.city}
             </p>
-            <div className="mt-4 bg-yellow-100 border-2 border-black p-3 font-black text-center">
-              MOVE IN DATE:{" "}
+            <div className="mt-8 bg-blue-50/50 border border-blue-100 p-4 rounded-xl font-black text-[#0a5ea8] text-center flex items-center justify-center gap-2">
+              <span className="text-sm tracking-widest uppercase opacity-70">
+                MOVE IN DATE:
+              </span>{" "}
               {format(new Date(moveIn.moveInDate), "MMMM do, yyyy")}
             </div>
           </div>
 
-          <div className="space-y-4">
-            <h3 className="text-2xl font-black italic bg-black text-white inline-block px-4 py-1 skew-x-[-12deg]">
+          <div className="space-y-6">
+            <h3 className="text-2xl font-black text-[#1a1a1a] mb-6">
               Property Inventory
             </h3>
-            <div className="grid gap-3">
+            <div className="grid gap-4">
               {moveIn.inventory.length === 0 && (
-                <p className="font-bold italic opacity-40">
+                <p className="font-medium text-gray-400 italic bg-gray-50 p-6 rounded-xl text-center border border-gray-100">
                   No items listed in inventory yet.
                 </p>
               )}
               {moveIn.inventory.map((item) => (
                 <div
                   key={item.id}
-                  className="bg-white border-2 border-black p-3 rounded-lg flex justify-between items-center shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]"
+                  className="bg-white border border-gray-100 p-4 rounded-xl flex justify-between items-center shadow-sm"
                 >
-                  <div>
-                    <span className="font-black text-lg">{item.name}</span>
-                    <span className="text-xs font-black bg-black text-white px-2 ml-2 rounded">
+                  <div className="flex items-center gap-3">
+                    <span className="font-bold text-lg text-[#1a1a1a]">
+                      {item.name}
+                    </span>
+                    <span className="text-xs font-black bg-gray-100 text-gray-500 px-2 py-1 rounded">
                       x{item.quantity}
                     </span>
                   </div>
-                  <span className="text-xs font-black uppercase tracking-widest opacity-60">
-                    Status: {item.condition}
+                  <span className="text-xs font-bold uppercase tracking-widest text-[#0a5ea8]">
+                    {item.condition}
                   </span>
                 </div>
               ))}
