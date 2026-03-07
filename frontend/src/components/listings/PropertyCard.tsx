@@ -4,12 +4,10 @@ import {
   BedDouble,
   Bath,
   Square,
-  ChevronRight,
-  MessageSquare,
   Heart,
 } from "lucide-react";
 import { useState } from "react";
-import { Link, useNavigate } from "react-router";
+import { useNavigate } from "react-router";
 import ContactAgentModal from "./ContactAgentModal";
 import { toggleShortlist } from "../../lib/api";
 import { useCompare } from "./CompareContext";
@@ -41,7 +39,10 @@ const PropertyCard = ({
   };
 
   return (
-    <div className="group relative card-animated h-full flex flex-col p-4">
+    <div
+      onClick={() => navigate(`/properties/${listing.id}`)}
+      className="group relative bg-white rounded-[2rem] border-2 border-gray-100 hover:border-[#0a5ea8]/20 transition-all duration-300 h-full flex flex-col p-4 cursor-pointer shadow-sm hover:shadow-xl"
+    >
       {/* Image Section */}
       <div className="relative h-64 overflow-hidden rounded-[1.5rem] shadow-sm bg-gray-100">
         <img
@@ -108,44 +109,43 @@ const PropertyCard = ({
           </div>
         </div>
 
-        <div className="mt-auto space-y-3">
+        <div className="mt-auto">
           {/* Secondary Actions */}
           <div className="flex items-center gap-3">
             <button
               type="button"
-              onClick={handleShortlist}
-              className={`flex-1 h-12 flex items-center justify-center gap-2 rounded-xl border transition-all cursor-pointer font-bold duration-300 ${isShortlisted ? "bg-[#d81b60] border-[#d81b60] text-white shadow-md hover:bg-[#ad144b]" : "bg-gray-50 border-gray-200 text-gray-600 hover:bg-gray-100 hover:border-gray-300"}`}
+              onClick={(e) => {
+                e.stopPropagation();
+                handleShortlist();
+              }}
+              className={`flex-1 h-12 flex items-center justify-center gap-2 rounded-xl border transition-all cursor-pointer font-bold duration-300 ${
+                isShortlisted
+                  ? "bg-[#d81b60] border-[#d81b60] text-white shadow-md hover:bg-[#ad144b]"
+                  : "bg-pink-50 border-pink-100 text-[#d81b60] hover:bg-pink-100 hover:border-pink-200"
+              }`}
             >
               <Heart
                 className={`w-4 h-4 ${isShortlisted ? "fill-current" : ""}`}
               />
-              <span className="hidden sm:inline">Save</span>
+              <span>Save</span>
             </button>
             <button
               type="button"
               disabled={!isCompared(listing.id) && compareIds.length >= 3}
-              onClick={() => toggleCompare(listing.id)}
-              className={`flex-1 h-12 flex items-center justify-center gap-2 rounded-xl border transition-all cursor-pointer font-bold duration-300 ${isCompared(listing.id) ? "bg-[#0a5ea8] border-[#0a5ea8] text-white shadow-md hover:bg-[#084d8a]" : "bg-gray-50 border-gray-200 text-gray-600 hover:bg-gray-100 hover:border-gray-300"} disabled:opacity-40 disabled:cursor-not-allowed`}
+              onClick={(e) => {
+                e.stopPropagation();
+                toggleCompare(listing.id);
+              }}
+              className={`flex-1 h-12 flex items-center justify-center gap-2 rounded-xl border transition-all cursor-pointer font-bold duration-300 ${
+                isCompared(listing.id)
+                  ? "bg-[#0a5ea8] border-[#0a5ea8] text-white shadow-md hover:bg-[#084d8a]"
+                  : "bg-blue-50 border-blue-100 text-[#0a5ea8] hover:bg-blue-100 hover:border-blue-200"
+              } disabled:opacity-40 disabled:cursor-not-allowed`}
             >
               <ArrowRightLeft className="w-4 h-4" />
-              <span className="hidden sm:inline">Compare</span>
+              <span>Compare</span>
             </button>
-
-            <Link
-              to={`/properties/${listing.id}`}
-              className="h-12 w-12 flex items-center justify-center bg-white border border-gray-200 text-gray-600 rounded-xl hover:bg-gray-50 hover:border-gray-300 hover:text-[#0a5ea8] transition-all"
-            >
-              <ChevronRight className="w-5 h-5" />
-            </Link>
           </div>
-
-          <button
-            onClick={() => setIsModalOpen(true)}
-            className="w-full flex items-center justify-center gap-2 bg-[#28a745] hover:bg-[#218838] text-white font-bold py-3.5 rounded-xl shadow-md hover:shadow-lg transition-all cursor-pointer"
-          >
-            <MessageSquare className="w-5 h-5" />
-            Contact Agent
-          </button>
         </div>
       </div>
 

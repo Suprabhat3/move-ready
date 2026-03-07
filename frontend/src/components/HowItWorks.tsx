@@ -1,4 +1,4 @@
-import { CheckCircle2, UserPlus, Home, Key } from "lucide-react";
+import { Search, UserPlus, Calendar, Key } from "lucide-react";
 
 const steps = [
   {
@@ -10,19 +10,19 @@ const steps = [
     isLight: false,
   },
   {
-    icon: <Home className="w-10 h-10 text-[#0a5ea8]" strokeWidth={2} />,
+    icon: <Search className="w-10 h-10 text-white" strokeWidth={2} />,
     title: "Find Your Match",
     description:
       "Browse curated, verified listings and filter by amenities, budget, and exact location.",
-    colorClass: "bg-white border-[#0a5ea8]/10 text-[#1a1a1a]",
-    isLight: true,
+    colorClass: "bg-[#00b8d4] border-[#00b8d4] text-white",
+    isLight: false,
   },
   {
-    icon: <CheckCircle2 className="w-10 h-10 text-white" strokeWidth={2} />,
+    icon: <Calendar className="w-10 h-10 text-white" strokeWidth={2} />,
     title: "Schedule a Visit",
     description:
       "Book an guided property tour that works seamlessly with your schedule without the back-and-forth.",
-    colorClass: "bg-[#28a745] border-[#28a745] text-white",
+    colorClass: "bg-[#fb8c00] border-[#fb8c00] text-white",
     isLight: false,
   },
   {
@@ -30,7 +30,7 @@ const steps = [
     title: "Move In",
     description:
       "Sign your lease digitally and get the keys to your new home. MoveReady handles all the paperwork.",
-    colorClass: "bg-[#1a1a1a] border-[#1a1a1a] text-white",
+    colorClass: "bg-[#28a745] border-[#28a745] text-white",
     isLight: false,
   },
 ];
@@ -49,12 +49,12 @@ const HowItWorks = () => {
         <div className="flex flex-col lg:flex-row gap-16 lg:gap-24 items-center">
           {/* Left Text Column */}
           <div className="flex-1 text-center lg:text-left">
-            <h2 className="text-sm font-bold text-[#28a745] uppercase tracking-[0.2em] mb-4">
+            <h2 className="text-sm font-bold text-[#0a5ea8] uppercase tracking-[0.2em] mb-4">
               Simple Process
             </h2>
             <h2 className="text-4xl md:text-5xl lg:text-6xl font-extrabold text-[#1a1a1a] mb-6 leading-[1.1] tracking-tight">
               Four simple steps to your <br className="hidden md:block" />
-              <span className="text-[#0a5ea8]">perfect new home</span>
+              <span className="text-[#28a745]">perfect new home</span>
             </h2>
             <p className="text-xl text-gray-500 font-medium leading-relaxed max-w-[600px] mx-auto lg:mx-0 mb-10">
               We have completely streamlined the rental journey so you can focus

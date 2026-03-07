@@ -1,5 +1,4 @@
 import { Link } from "react-router";
-import { Search, Calendar, FileCheck, ChevronRight } from "lucide-react";
 import heroImage from "../assets/hero.webp";
 
 const Hero = () => {
@@ -46,56 +45,6 @@ const Hero = () => {
               >
                 Book a Visit Now
               </Link>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      {/* 2. Journey Steps Progress Bar */}
-      <div className="bg-white py-12 lg:py-24 border-b border-gray-100">
-        <div className="max-w-[1400px] mx-auto px-6 md:px-12">
-          <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-10 md:gap-4">
-            {/* Step 1 */}
-            <div className="flex items-center gap-5 md:gap-6">
-              <div className="w-16 h-16 md:w-20 md:h-20 rounded-full flex items-center justify-center bg-[#f0f9ff] text-[#0a5ea8] shadow-sm shrink-0">
-                <Search className="w-8 h-8 md:w-9 md:h-9" strokeWidth={2.5} />
-              </div>
-              <span className="text-2xl md:text-3xl font-black text-[#1a1a1a] tracking-tight">
-                Discovery
-              </span>
-            </div>
-
-            {/* Chevron Divider */}
-            <div className="hidden md:flex flex-1 items-center justify-center px-10 text-gray-200">
-              <ChevronRight size={48} strokeWidth={1} />
-            </div>
-
-            {/* Step 2 */}
-            <div className="flex items-center gap-5 md:gap-6">
-              <div className="w-16 h-16 md:w-20 md:h-20 rounded-full flex items-center justify-center bg-[#f0fdf4] text-[#28a745] shadow-sm shrink-0">
-                <Calendar className="w-8 h-8 md:w-9 md:h-9" strokeWidth={2.5} />
-              </div>
-              <span className="text-2xl md:text-3xl font-black text-[#1a1a1a] tracking-tight">
-                Visit
-              </span>
-            </div>
-
-            {/* Chevron Divider */}
-            <div className="hidden md:flex flex-1 items-center justify-center px-10 text-gray-200">
-              <ChevronRight size={48} strokeWidth={1} />
-            </div>
-
-            {/* Step 3 */}
-            <div className="flex items-center gap-5 md:gap-6">
-              <div className="w-16 h-16 md:w-20 md:h-20 rounded-full flex items-center justify-center bg-[#f0feff] text-[#00acc1] shadow-sm shrink-0">
-                <FileCheck
-                  className="w-8 h-8 md:w-9 md:h-9"
-                  strokeWidth={2.5}
-                />
-              </div>
-              <span className="text-2xl md:text-3xl font-black text-[#1a1a1a] tracking-tight">
-                Move-in
-              </span>
             </div>
           </div>
         </div>
