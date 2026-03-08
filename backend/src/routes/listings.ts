@@ -148,6 +148,32 @@ function parsePositiveNumber(
   return parsed;
 }
 
+function parseNumberInRange(
+  value: unknown,
+  fieldName: string,
+  options: { min: number; max: number; allowNull?: boolean },
+) {
+  if (value === undefined || value === null || value === "") {
+    if (options.allowNull) {
+      return null;
+    }
+    throw new Error(`${fieldName} is required`);
+  }
+
+  const parsed = Number(value);
+  if (Number.isNaN(parsed)) {
+    throw new Error(`${fieldName} must be a valid number`);
+  }
+
+  if (parsed < options.min || parsed > options.max) {
+    throw new Error(
+      `${fieldName} must be between ${options.min} and ${options.max}`,
+    );
+  }
+
+  return parsed;
+}
+
 function parseRequiredNumber(
   value: unknown,
   fieldName: string,
@@ -259,6 +285,18 @@ function parseOptionalUrl(value: unknown, fieldName: string) {
   }
 }
 
+function isBadRequestError(error: unknown) {
+  if (!(error instanceof Error)) {
+    return false;
+  }
+
+  return (
+    error.message.includes(" is required") ||
+    error.message.includes(" is invalid") ||
+    error.message.includes("must be")
+  );
+}
+
 function validateListingPayload(body: unknown): ListingPayload {
   if (!body || typeof body !== "object") {
     throw new Error("Listing payload is required");
@@ -297,8 +335,16 @@ function validateListingPayload(body: unknown): ListingPayload {
 
   return {
     ...normalizedStrings,
-    lat: parsePositiveNumber(payload.lat, "lat", { allowNull: true }),
-    lng: parsePositiveNumber(payload.lng, "lng", { allowNull: true }),
+    lat: parseNumberInRange(payload.lat, "lat", {
+      min: -90,
+      max: 90,
+      allowNull: true,
+    }),
+    lng: parseNumberInRange(payload.lng, "lng", {
+      min: -180,
+      max: 180,
+      allowNull: true,
+    }),
     rentAmount: parseRequiredNumber(payload.rentAmount, "rentAmount", {
       integer: true,
       min: 0,
@@ -570,6 +616,9 @@ router.get("/", async (req, res) => {
     });
   } catch (error) {
     console.error("Fetch listings error:", error);
+    if (isBadRequestError(error)) {
+      return res.status(400).json({ message: (error as Error).message });
+    }
     res.status(500).json({ message: "Internal Server Error" });
   }
 });
@@ -640,6 +689,9 @@ router.get("/my-listings", requireAgentOrAdmin, async (req: AuthedRequest, res) 
     res.status(200).json({ items });
   } catch (error) {
     console.error("Fetch my listings error:", error);
+    if (isBadRequestError(error)) {
+      return res.status(400).json({ message: (error as Error).message });
+    }
     res.status(500).json({ message: "Internal Server Error" });
   }
 });

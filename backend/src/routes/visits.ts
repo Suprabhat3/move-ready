@@ -3,12 +3,24 @@ import { VisitStatus, VisitDecision, Role } from "@prisma/client";
 import { prisma } from "../lib/prisma";
 import {
   type AuthedRequest,
-  requireAuth,
   requireTenant,
   requireAgentOrAdmin,
 } from "../lib/session";
 
 const router = express.Router();
+
+function parseDateInput(value: unknown, fieldName: string) {
+  if (!value || typeof value !== "string") {
+    throw new Error(`${fieldName} is required`);
+  }
+
+  const parsed = new Date(value);
+  if (Number.isNaN(parsed.getTime())) {
+    throw new Error(`${fieldName} must be a valid date`);
+  }
+
+  return parsed;
+}
 
 /**
  * POST /api/visits
@@ -30,11 +42,13 @@ router.post("/", requireTenant, async (req: AuthedRequest, res: Response) => {
       return res.status(404).json({ message: "Listing not found or not available" });
     }
 
+    const proposedAtDate = parseDateInput(proposedAt, "proposedAt");
+
     const visit = await prisma.visit.create({
       data: {
         listingId,
         tenantId: req.user!.id,
-        proposedAt: new Date(proposedAt),
+        proposedAt: proposedAtDate,
         notes: notes || null,
         status: VisitStatus.REQUESTED,
       },
@@ -48,6 +62,9 @@ router.post("/", requireTenant, async (req: AuthedRequest, res: Response) => {
     res.status(201).json(visit);
   } catch (error) {
     console.error("Create visit error:", error);
+    if (error instanceof Error) {
+      return res.status(400).json({ message: error.message });
+    }
     res.status(500).json({ message: "Internal Server Error" });
   }
 });
@@ -157,7 +174,15 @@ router.patch("/:id/cancel", requireTenant, async (req: AuthedRequest, res: Respo
  */
 router.get("/admin", requireAgentOrAdmin, async (req: AuthedRequest, res: Response) => {
   try {
-    const status = req.query.status as VisitStatus;
+    const statusQuery = req.query.status;
+    const status =
+      typeof statusQuery === "string" && statusQuery
+        ? (statusQuery as VisitStatus)
+        : null;
+
+    if (status && !Object.values(VisitStatus).includes(status)) {
+      return res.status(400).json({ message: "Invalid status" });
+    }
     
     const where = {
       ...(status ? { status } : {}),
@@ -195,6 +220,8 @@ router.patch("/:id/schedule", requireAgentOrAdmin, async (req: AuthedRequest, re
       return res.status(400).json({ message: "scheduledAt is required" });
     }
 
+    const scheduledAtDate = parseDateInput(scheduledAt, "scheduledAt");
+
     const visit = await prisma.visit.findUnique({
       where: { id },
       include: { listing: true },
@@ -212,7 +239,7 @@ router.patch("/:id/schedule", requireAgentOrAdmin, async (req: AuthedRequest, re
     const updated = await prisma.visit.update({
       where: { id },
       data: {
-        scheduledAt: new Date(scheduledAt),
+        scheduledAt: scheduledAtDate,
         status: VisitStatus.SCHEDULED,
       },
     });
@@ -220,6 +247,9 @@ router.patch("/:id/schedule", requireAgentOrAdmin, async (req: AuthedRequest, re
     res.status(200).json(updated);
   } catch (error) {
     console.error("Schedule visit error:", error);
+    if (error instanceof Error) {
+      return res.status(400).json({ message: error.message });
+    }
     res.status(500).json({ message: "Internal Server Error" });
   }
 });

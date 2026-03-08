@@ -167,6 +167,12 @@ export default function PropertyDetailPage({
 
   const isFurnished = listing.furnished === "FULLY_FURNISHED";
   const hasParking = listing.parking !== "NONE";
+  const formatInr = (value: number) =>
+    new Intl.NumberFormat("en-IN", {
+      style: "currency",
+      currency: "INR",
+      maximumFractionDigits: 0,
+    }).format(value);
 
   return (
     <div className="pt-24 min-h-screen bg-gray-50/50">
@@ -463,7 +469,7 @@ export default function PropertyDetailPage({
                     Security Deposit
                   </span>
                   <span className="font-semibold text-gray-900">
-                    ₹{listing.deposit.toLocaleString()}
+                    {formatInr(listing.deposit)}
                   </span>
                 </div>
                 <div className="flex justify-between items-center py-2 border-b border-gray-100">
@@ -471,14 +477,14 @@ export default function PropertyDetailPage({
                     Maint. Charge
                   </span>
                   <span className="font-semibold text-gray-900">
-                    ₹{listing.maintenanceAmount.toLocaleString()}/mo
+                    {formatInr(listing.maintenanceAmount)}/mo
                   </span>
                 </div>
                 <div className="flex justify-between items-center py-2 border-b border-gray-100">
                   <span className="text-gray-500 font-medium">Brokerage</span>
                   <span className="font-semibold text-gray-900">
                     {listing.brokerageAmount > 0
-                      ? `₹${listing.brokerageAmount.toLocaleString()}`
+                      ? formatInr(listing.brokerageAmount)
                       : "No Brokerage"}
                   </span>
                 </div>
@@ -579,7 +585,7 @@ export default function PropertyDetailPage({
             </div>
 
             {/* Property Map Location */}
-            {listing.lat && listing.lng && (
+            {listing.lat !== null && listing.lng !== null && (
               <section className="space-y-6 pt-10 border-t border-gray-100">
                 <div className="flex items-center gap-3">
                   <div className="p-2.5 bg-blue-50 text-blue-600 rounded-xl">
@@ -641,7 +647,7 @@ export default function PropertyDetailPage({
                 </span>
                 <div className="flex items-end gap-1 mb-2">
                   <span className="text-4xl font-black text-gray-900 tracking-tight">
-                    ₹{listing.rentAmount.toLocaleString()}
+                    {formatInr(listing.rentAmount)}
                   </span>
                 </div>
                 {listing.maintenanceAmount === 0 && (
@@ -653,7 +659,7 @@ export default function PropertyDetailPage({
                   <div className="flex justify-between">
                     <span>Security Deposit</span>
                     <span className="font-semibold text-gray-900">
-                      ₹{listing.deposit.toLocaleString()}
+                      {formatInr(listing.deposit)}
                     </span>
                   </div>
                   {listing.brokerageAmount === 0 && (

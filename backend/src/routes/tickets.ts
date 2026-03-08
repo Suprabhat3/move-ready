@@ -1,5 +1,5 @@
 import express from "express";
-import { Role } from "@prisma/client";
+import { Role, TicketStatus } from "@prisma/client";
 import { prisma } from "../lib/prisma";
 import {
   type AuthedRequest,
@@ -170,17 +170,33 @@ router.patch("/:id/status", requireAgentOrAdmin, async (req: AuthedRequest, res)
     const id = req.params.id as string;
     const { status } = req.body;
 
+    if (!Object.values(TicketStatus).includes(status)) {
+      return res.status(400).json({ message: "Invalid status" });
+    }
+
     const ticket = await prisma.supportTicket.findUnique({
       where: { id },
+      include: {
+        listing: {
+          select: { createdById: true },
+        },
+      },
     });
 
     if (!ticket) {
       return res.status(404).json({ message: "Ticket not found" });
     }
 
+    if (
+      req.user?.role === Role.SITE_AGENT &&
+      ticket.listing?.createdById !== req.user.id
+    ) {
+      return res.status(403).json({ message: "Forbidden" });
+    }
+
     const updated = await prisma.supportTicket.update({
       where: { id },
-      data: { status },
+      data: { status: status as TicketStatus },
     });
 
     res.status(200).json(updated);

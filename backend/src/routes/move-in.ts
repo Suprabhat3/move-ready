@@ -171,6 +171,30 @@ router.patch("/:id/checklist/:itemId", requireTenant, async (req: AuthedRequest,
 router.get("/:id/inventory", requireAuth, async (req: AuthedRequest, res: Response) => {
   try {
     const id = req.params.id as string;
+
+    const moveIn = await prisma.moveIn.findUnique({
+      where: { id },
+      include: {
+        listing: {
+          select: { createdById: true },
+        },
+      },
+    });
+
+    if (!moveIn) {
+      return res.status(404).json({ message: "Move-in not found" });
+    }
+
+    const isTenant = moveIn.tenantId === req.user!.id;
+    const isAdmin = req.user?.role === Role.ADMIN;
+    const isAgentForListing =
+      req.user?.role === Role.SITE_AGENT &&
+      moveIn.listing.createdById === req.user.id;
+
+    if (!isTenant && !isAdmin && !isAgentForListing) {
+      return res.status(403).json({ message: "Forbidden" });
+    }
+
     const inventory = await prisma.inventoryItem.findMany({
       where: { moveInId: id },
     });

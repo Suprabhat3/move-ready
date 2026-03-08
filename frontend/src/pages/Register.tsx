@@ -13,7 +13,6 @@ export default function Register({
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [role, setRole] = useState("TENANT");
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState("");
 
@@ -33,7 +32,6 @@ export default function Register({
           name,
           email,
           password,
-          role,
         }),
       });
 
@@ -69,49 +67,6 @@ export default function Register({
         </p>
 
         <form className="space-y-6 mt-8" onSubmit={handleSubmit}>
-          {/* Role Selection */}
-          <div className="space-y-2.5">
-            <label className="block text-sm font-bold text-gray-700">
-              I am a...
-            </label>
-            <div className="flex gap-4">
-              <label
-                className={`flex-1 flex items-center justify-center py-3 px-4 border rounded-xl font-bold cursor-pointer transition-all duration-200 text-sm ${
-                  role === "TENANT"
-                    ? "bg-blue-50 border-[#0a5ea8] text-[#0a5ea8] shadow-sm"
-                    : "bg-white border-gray-200 hover:bg-gray-50 text-gray-500 hover:text-gray-700"
-                }`}
-              >
-                <input
-                  type="radio"
-                  name="role"
-                  value="TENANT"
-                  checked={role === "TENANT"}
-                  onChange={(e) => setRole(e.target.value)}
-                  className="sr-only"
-                />
-                Tenant
-              </label>
-              <label
-                className={`flex-1 flex items-center justify-center py-3 px-4 border rounded-xl font-bold cursor-pointer transition-all duration-200 text-sm ${
-                  role === "SITE_AGENT"
-                    ? "bg-green-50 border-[#28a745] text-[#28a745] shadow-sm"
-                    : "bg-white border-gray-200 hover:bg-gray-50 text-gray-500 hover:text-gray-700"
-                }`}
-              >
-                <input
-                  type="radio"
-                  name="role"
-                  value="SITE_AGENT"
-                  checked={role === "SITE_AGENT"}
-                  onChange={(e) => setRole(e.target.value)}
-                  className="sr-only"
-                />
-                Site Agent
-              </label>
-            </div>
-          </div>
-
           <div>
             <label className="block text-sm font-bold text-gray-700 mb-1.5">
               Full Name

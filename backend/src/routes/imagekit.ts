@@ -1,5 +1,6 @@
 import express from "express";
 import ImageKit from "imagekit";
+import { requireAuth } from "../lib/session";
 const router = express.Router();
 
 const imagekit = new ImageKit({
@@ -8,7 +9,7 @@ const imagekit = new ImageKit({
   urlEndpoint: process.env.IMAGEKIT_URL_ENDPOINT || "",
 });
 
-router.get("/auth", (req, res) => {
+router.get("/auth", requireAuth, (req, res) => {
   try {
     const result = imagekit.getAuthenticationParameters();
     res.send(result);
