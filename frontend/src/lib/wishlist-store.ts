@@ -25,6 +25,8 @@ export const addToWishlist = (listing: ListingSummary) => {
       city: listing.city,
       state: listing.state,
       pincode: listing.pincode,
+      lat: listing.lat,
+      lng: listing.lng,
       status: listing.status,
       rentAmount: listing.rentAmount,
       deposit: listing.deposit,
