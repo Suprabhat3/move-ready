@@ -3,7 +3,6 @@ import dotenv from 'dotenv';
 import cors from 'cors';
 import helmet from 'helmet';
 import morgan from 'morgan';
-import path from 'path';
 import { fromNodeHeaders, toNodeHandler } from 'better-auth/node';
 import { prisma } from './lib/prisma';
 import { auth } from './auth';
@@ -16,19 +15,24 @@ const frontendOrigin = process.env.FRONTEND_URL || 'http://localhost:5173';
 
 app.use(
   cors({
-    origin: [
-      frontendOrigin,
-      'http://localhost:5173',
-      /\.suprabhat\.site$/, // Matches any subdomain of suprabhat.site
-    ],
+    origin: (origin, callback) => {
+      // Allow localhost and any suprabhat.site domain
+      if (
+        !origin || 
+        origin.startsWith('http://localhost') || 
+        origin.endsWith('suprabhat.site') ||
+        origin === frontendOrigin
+      ) {
+        callback(null, true);
+      } else {
+        callback(null, false);
+      }
+    },
     credentials: true,
-    methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS', 'PATCH'],
-    allowedHeaders: ['Content-Type', 'Authorization', 'Cookie'],
   }),
 );
 app.use(helmet({
   contentSecurityPolicy: false,
-  crossOriginResourcePolicy: { policy: "cross-origin" }
 }));
 app.use(morgan('dev'));
 
@@ -84,16 +88,6 @@ app.get('/api/me', async (req: Request, res: Response) => {
   }
 
   return res.status(200).json(session);
-});
-
-// Serve static files from the React app
-const frontendPath = path.join(__dirname, '../../frontend/dist');
-app.use(express.static(frontendPath));
-
-// The "catchall" handler: for any request that doesn't
-// match one above, send back React's index.html file.
-app.get('*', (req, res) => {
-  res.sendFile(path.join(frontendPath, 'index.html'));
 });
 
 app.listen(port, () => {
