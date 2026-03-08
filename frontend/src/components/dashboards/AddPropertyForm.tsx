@@ -28,6 +28,7 @@ import {
   fetchListing,
   updateListing,
   updateListingStatus,
+  API_BASE_URL,
 } from "../../lib/api";
 import {
   amenityOptions,
@@ -214,7 +215,7 @@ export default function AddPropertyForm({
 
   const isEdit = Boolean(listingId);
   const isAdmin = user?.role === "ADMIN";
-  const apiBaseUrl = import.meta.env.VITE_API_URL || "http://localhost:4000";
+  const apiBaseUrl = API_BASE_URL;
 
   useEffect(() => {
     if (!listingId) {

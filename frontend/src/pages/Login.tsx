@@ -1,7 +1,6 @@
 import React, { useState } from "react";
 import { Mail, Lock, Eye, EyeOff, ArrowRight } from "lucide-react";
-
-const API_BASE_URL = import.meta.env.VITE_API_URL || "http://localhost:4000";
+import { API_BASE_URL } from "../lib/api";
 
 export default function Login({
   onNavigate,

@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { Send, User as UserIcon, Calendar, MessageSquare } from "lucide-react";
+import { API_BASE_URL } from "../../lib/api";
 
 type Author = {
   name: string | null;
@@ -41,7 +42,7 @@ export default function AgentTicketsView({
   const [replyContent, setReplyContent] = useState("");
   const [isReplying, setIsReplying] = useState(false);
 
-  const API_URL = import.meta.env.VITE_API_URL || "http://localhost:4000";
+  const API_URL = API_BASE_URL;
 
   const fetchTickets = async () => {
     try {
