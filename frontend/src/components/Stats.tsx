@@ -30,7 +30,7 @@ const stats = [
 const Stats = () => {
   return (
     <section
-      className="py-20 bg-white border-b border-gray-100 relative z-10"
+      className="py-10 md:py-20 bg-white border-b border-gray-100 relative z-10"
       id="stats"
     >
       <div className="w-full max-w-[1400px] mx-auto px-6 md:px-12">

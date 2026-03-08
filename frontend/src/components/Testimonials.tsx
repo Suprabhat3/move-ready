@@ -33,7 +33,7 @@ const testimonials = [
 const Testimonials = () => {
   return (
     <section
-      className="py-24 bg-[#f9fafb] border-t border-gray-100"
+      className="py-12 md:py-24 bg-[#f9fafb] border-t border-gray-100"
       id="testimonials"
     >
       <div className="w-full max-w-[1400px] mx-auto px-6 md:px-12">

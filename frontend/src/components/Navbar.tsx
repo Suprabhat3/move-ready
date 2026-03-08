@@ -62,7 +62,6 @@ const Navbar = ({
     { name: "Wishlist", path: "/wishlist" },
     { name: "Visits", path: "/visits" },
     ...(user ? [{ name: "Move-In", path: "/move-in" }] : []),
-    { name: "Support", path: "/support" },
   ];
 
   return (

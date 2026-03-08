@@ -64,7 +64,7 @@ const Properties = ({ user }: { user: SessionUser | null }) => {
   const page = response?.page ?? 1;
 
   return (
-    <div className="pt-32 pb-20 px-6 max-w-[1400px] gap-10 mx-auto w-full">
+    <div className="pt-16 pb-20 px-6 max-w-[1400px] gap-10 mx-auto w-full">
       <div className="flex flex-col lg:flex-row lg:items-end justify-between gap-10 mb-12 glass p-8 rounded-3xl">
         <div className="space-y-4">
           <h1 className="text-4xl md:text-5xl font-black text-[#1a1a1a] tracking-tight leading-tight">

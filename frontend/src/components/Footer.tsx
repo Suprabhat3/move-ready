@@ -1,6 +1,6 @@
 import { Link } from "react-router";
 import logo from "../assets/logo.png";
-import { Twitter, Github, Linkedin, Mail } from "lucide-react";
+import { Twitter, Github, Linkedin} from "lucide-react";
 
 const Footer = () => {
   return (
@@ -165,9 +165,9 @@ const Footer = () => {
             &copy; {new Date().getFullYear()} MoveReady Inc. All rights
             reserved.
           </p>
-          <div className="flex items-center gap-2 font-medium">
+          {/* <div className="flex items-center gap-2 font-medium">
             <Mail size={16} /> <span>support@moveready.com</span>
-          </div>
+          </div> */}
         </div>
       </div>
     </footer>

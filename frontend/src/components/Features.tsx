@@ -55,7 +55,7 @@ const features = [
 const Features = () => {
   return (
     <section
-      className="py-24 bg-white border-t border-gray-100 relative"
+      className="py-12 md:py-24 bg-white border-t border-gray-100 relative"
       id="features"
     >
       <div className="absolute top-0 right-0 w-1/2 h-full bg-[#f0f9ff]/50 -skew-x-12 origin-top-right -z-10 hidden lg:block"></div>

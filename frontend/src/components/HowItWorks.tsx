@@ -38,7 +38,7 @@ const steps = [
 const HowItWorks = () => {
   return (
     <section
-      className="py-24 bg-white relative overflow-hidden"
+      className="py-12 md:py-24 bg-white relative overflow-hidden"
       id="how-it-works"
     >
       {/* Decorative blurred background elements */}
