@@ -3,6 +3,7 @@ import dotenv from 'dotenv';
 import cors from 'cors';
 import helmet from 'helmet';
 import morgan from 'morgan';
+import path from 'path';
 import { fromNodeHeaders, toNodeHandler } from 'better-auth/node';
 import { prisma } from './lib/prisma';
 import { auth } from './auth';
@@ -19,7 +20,9 @@ app.use(
     credentials: true,
   }),
 );
-app.use(helmet());
+app.use(helmet({
+  contentSecurityPolicy: false, // Often needed if you have external scripts/fonts and don't want to configure CSP fully yet
+}));
 app.use(morgan('dev'));
 
 // Better Auth should handle body parsing for auth endpoints.
@@ -74,6 +77,16 @@ app.get('/api/me', async (req: Request, res: Response) => {
   }
 
   return res.status(200).json(session);
+});
+
+// Serve static files from the React app
+const frontendPath = path.join(__dirname, '../../frontend/dist');
+app.use(express.static(frontendPath));
+
+// The "catchall" handler: for any request that doesn't
+// match one above, send back React's index.html file.
+app.get('*', (req, res) => {
+  res.sendFile(path.join(frontendPath, 'index.html'));
 });
 
 app.listen(port, () => {

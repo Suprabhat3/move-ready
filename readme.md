@@ -1,8 +1,8 @@
 <div align="center">
   <img src="frontend/src/assets/logo.png" alt="MoveReady Logo" width="120" />
-  <h1>🏠 MoveReady</h1>
+  <!-- <h1>🏠 MoveReady</h1> -->
   <p><strong>The new standard in rental housing management.</strong></p>
-  <p>A full-stack platform that simplifies the rental journey — from discovery to digital move-ins.</p>
+  <p>A full-stack platform that simplifies the rental journey, from discovery to digital move-ins.</p>
 
   <p>
     <a href="#features">Features</a> •
@@ -32,7 +32,7 @@ MoveReady is designed as a modern, type-safe monorepo separated into a dynamic R
 
 ### **Frontend**
 
-- **Framework:** React 19 + Vite
+- **Framework:** React + Vite
 - **Styling:** Tailwind CSS v4 + Tailwind-Vite plugin
 - **State Management:** TanStack Query (Server State), Zustand (Client State)
 - **Forms:** React Hook Form + Zod
@@ -42,11 +42,15 @@ MoveReady is designed as a modern, type-safe monorepo separated into a dynamic R
 ### **Backend**
 
 - **Framework:** Node.js + Express
-- **Database:** PostgreSQL (Hosted on Supabase)
+- **Database:** PostgreSQL (Hosted on Neon)
 - **ORM:** Prisma
 - **Authentication:** Better Auth
 - **Uploads:** Uploadthing
 - **Emails:** Resend + React Email
+
+### **Database Design**
+<img src="./frontend/public/database.svg" alt="Database Design">
+
 
 ## 🏗 Architecture
 
@@ -60,7 +64,7 @@ rental-platform/
 └── .env.example
 ```
 
-Client requests are routed through the Express REST API. The backend uses Prisma to interact securely with the Supabase Postgres Database. Better Auth sessions run entirely in the Node.js layer, backed by Prisma.
+Client requests are routed through the Express REST API. The backend uses Prisma to interact securely with the Neon Postgres Database. Better Auth sessions run entirely in the Node.js layer, backed by Prisma.
 
 ## 🚀 Getting Started
 
@@ -68,7 +72,7 @@ Client requests are routed through the Express REST API. The backend uses Prisma
 
 - Node.js (v18+)
 - pnpm (v9+)
-- A Supabase Project (for PostgreSQL Database)
+- A Neon Project (for PostgreSQL Database)
 - A Better Auth configuration secret
 
 ### Installation
@@ -92,7 +96,7 @@ Client requests are routed through the Express REST API. The backend uses Prisma
     _Server `.env` example:_
 
     ```env
-    DATABASE_URL=postgresql://postgres:[password]@db.[project].supabase.co:5432/postgres
+    DATABASE_URL=postgresql://[username]:[password]@ep-[neon-project-id].neon.tech/neondb
     BETTER_AUTH_SECRET=your-secret-32-chars-min
     BETTER_AUTH_URL=http://localhost:4000
     ```
@@ -102,8 +106,6 @@ Client requests are routed through the Express REST API. The backend uses Prisma
     ```env
     VITE_API_URL=http://localhost:4000
     ```
-
-    > ⚠️ **Note on Supabase:** Use the **Session Pooler** connection string (port `5432`, mode `session`) from the dashboard settings for Prisma migrations.
 
 4.  **Database Setup:**
 

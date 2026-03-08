@@ -59,6 +59,7 @@ const Navbar = ({
 
   const menuItems = [
     { name: "Browse", path: "/properties" },
+    { name: "Compare", path: "/compare" },
     { name: "Wishlist", path: "/wishlist" },
     { name: "Visits", path: "/visits" },
     ...(user ? [{ name: "Move-In", path: "/move-in" }] : []),

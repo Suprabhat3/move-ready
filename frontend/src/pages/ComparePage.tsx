@@ -14,6 +14,7 @@ export default function ComparePage() {
   useEffect(() => {
     if (compareIds.length < 2) {
       setItems([]);
+      setError("");
       setLoading(false);
       return;
     }
@@ -21,10 +22,12 @@ export default function ComparePage() {
     void (async () => {
       try {
         setLoading(true);
+        setError("");
         const response = await fetchCompare(compareIds);
         setItems(
           response.items.filter((item): item is ListingDetail => Boolean(item)),
         );
+        setError("");
       } catch (err) {
         setError(
           err instanceof Error ? err.message : "Unable to compare listings",

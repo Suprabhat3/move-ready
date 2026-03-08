@@ -332,6 +332,13 @@ export default function AddPropertyForm({
     try {
       setStatusLoading(true);
       setError("");
+
+      // Persist latest form edits before status transitions so review validation
+      // runs against up-to-date listing data.
+      if (nextStatus === "REVIEW") {
+        await updateListing(listingId, payload);
+      }
+
       const response = await updateListingStatus(listingId, nextStatus);
       setStatus(response.listing.status);
       setSuccess(`Listing moved to ${response.listing.status}`);
