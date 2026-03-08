@@ -4,7 +4,7 @@ import { format } from "date-fns";
 // Enums defined locally as const objects to avoid @prisma/client dependency and satisfy erasableSyntaxOnly
 export const VisitStatus = {
   REQUESTED: "REQUESTED",
-  SCHEDULED: "SCHEDULEED",
+  SCHEDULED: "SCHEDULED",
   VISITED: "VISITED",
   CANCELLED: "CANCELLED",
   DECISION: "DECISION",
@@ -25,6 +25,7 @@ import {
   cancelVisit,
   scheduleVisit,
   confirmVisit,
+  createMoveIn,
 } from "../lib/api";
 import type { SessionUser } from "../types/listings";
 
@@ -113,6 +114,25 @@ export default function VisitTrackerPage({
     }
   };
 
+  const handleApproveMoveIn = async (visit: Visit, moveInDate: string) => {
+    try {
+      if (!moveInDate) {
+        alert("Please select a move-in date.");
+        return;
+      }
+      await createMoveIn({
+        tenantId: visit.tenantId,
+        listingId: visit.listingId,
+        moveInDate,
+      });
+      alert("Application approved and Move-In started!");
+      fetchVisitsData();
+    } catch (error) {
+      console.error("Approve Move-In error:", error);
+      alert("Error approving move-in. Check console.");
+    }
+  };
+
   if (isLoading)
     return <div className="p-10 text-center font-black">Loading Visits...</div>;
 
@@ -147,17 +167,21 @@ export default function VisitTrackerPage({
                   </p>
                 </div>
                 <span
-                  className={`px-4 py-1.5 rounded-full font-bold text-sm shadow-sm ${
+                  className={`px-4 py-1.5 rounded-full font-bold text-sm shadow-sm border ${
                     visit.status === VisitStatus.REQUESTED
-                      ? "bg-yellow-50 text-yellow-700 border border-yellow-200"
+                      ? "bg-yellow-50 text-yellow-700 border-yellow-200"
                       : visit.status === VisitStatus.SCHEDULED
-                        ? "bg-blue-50 text-blue-700 border border-blue-200"
+                        ? "bg-blue-50 text-blue-700 border-blue-200"
                         : visit.status === VisitStatus.VISITED
-                          ? "bg-green-50 text-green-700 border border-green-200"
-                          : "bg-red-50 text-red-700 border border-red-200"
+                          ? "bg-purple-50 text-purple-700 border-purple-200"
+                          : visit.status === VisitStatus.DECISION
+                            ? "bg-green-50 text-green-700 border-green-200"
+                            : "bg-red-50 text-red-700 border-red-200"
                   }`}
                 >
-                  {visit.status}
+                  {visit.status === VisitStatus.DECISION
+                    ? `DECISION: ${visit.decision}`
+                    : visit.status}
                 </span>
               </div>
 
@@ -263,34 +287,64 @@ export default function VisitTrackerPage({
                     Cancel Request
                   </button>
                 )}
-                {!isAgent && visit.status === VisitStatus.VISITED && (
-                  <div className="flex flex-wrap gap-3">
-                    <button
-                      onClick={() =>
-                        handleDecision(visit.id, VisitDecision.INTERESTED)
-                      }
-                      className="bg-[#28a745] hover:bg-[#218838] text-white font-bold px-6 py-2.5 rounded-xl shadow-sm transition-all"
-                    >
-                      I'm Interested
-                    </button>
-                    <button
-                      onClick={() =>
-                        handleDecision(visit.id, VisitDecision.APPLIED)
-                      }
-                      className="bg-[#0a5ea8] hover:bg-[#084d8a] text-white font-bold px-6 py-2.5 rounded-xl shadow-sm transition-all"
-                    >
-                      Applied
-                    </button>
-                    <button
-                      onClick={() =>
-                        handleDecision(visit.id, VisitDecision.NOT_INTERESTED)
-                      }
-                      className="bg-gray-100 hover:bg-gray-200 text-gray-700 font-bold px-6 py-2.5 rounded-xl transition-colors"
-                    >
-                      Pass
-                    </button>
-                  </div>
-                )}
+                {!isAgent &&
+                  (visit.status === VisitStatus.VISITED ||
+                    (visit.status === VisitStatus.DECISION &&
+                      visit.decision === VisitDecision.INTERESTED)) && (
+                    <div className="flex flex-col w-full gap-4 pt-4 border-t border-gray-50">
+                      <p className="text-xs font-black text-gray-400 uppercase tracking-widest">
+                        Your Next Step
+                      </p>
+                      <div className="flex flex-wrap gap-3">
+                        {/* Only show 'Interested' if not already interested */}
+                        {visit.decision !== VisitDecision.INTERESTED && (
+                          <button
+                            onClick={() =>
+                              handleDecision(visit.id, VisitDecision.INTERESTED)
+                            }
+                            className="bg-[#28a745] hover:bg-[#218838] text-white font-bold px-6 py-2.5 rounded-xl shadow-sm transition-all"
+                          >
+                            I'm Interested
+                          </button>
+                        )}
+
+                        <button
+                          onClick={() =>
+                            handleDecision(visit.id, VisitDecision.APPLIED)
+                          }
+                          className="bg-[#0a5ea8] hover:bg-[#084d8a] text-white font-bold px-8 py-2.5 rounded-xl shadow-lg hover:-translate-y-0.5 transition-all flex items-center gap-2"
+                        >
+                          Apply for Move-In
+                          <svg
+                            xmlns="http://www.w3.org/2000/svg"
+                            width="18"
+                            height="18"
+                            viewBox="0 0 24 24"
+                            fill="none"
+                            stroke="currentColor"
+                            strokeWidth="3"
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                          >
+                            <path d="M5 12h14" />
+                            <path d="m12 5 7 7-7 7" />
+                          </svg>
+                        </button>
+
+                        <button
+                          onClick={() =>
+                            handleDecision(
+                              visit.id,
+                              VisitDecision.NOT_INTERESTED,
+                            )
+                          }
+                          className="bg-gray-100 hover:bg-gray-200 text-gray-700 font-bold px-6 py-2.5 rounded-xl transition-colors"
+                        >
+                          Pass
+                        </button>
+                      </div>
+                    </div>
+                  )}
 
                 {/* Agent Actions */}
                 {isAgent && visit.status === VisitStatus.REQUESTED && (
@@ -318,11 +372,49 @@ export default function VisitTrackerPage({
                 {isAgent && visit.status === VisitStatus.SCHEDULED && (
                   <button
                     onClick={() => handleConfirmVisit(visit.id)}
-                    className="bg-[#28a745] hover:bg-[#218838] text-white font-bold px-6 py-2.5 rounded-xl shadow-sm transition-all"
+                    className="bg-purple-600 hover:bg-purple-700 text-white font-bold px-6 py-2.5 rounded-xl shadow-sm transition-all"
                   >
                     Mark as Visited
                   </button>
                 )}
+                {isAgent &&
+                  visit.status === VisitStatus.DECISION &&
+                  visit.decision === VisitDecision.APPLIED && (
+                    <div className="flex flex-wrap gap-3 items-center w-full pt-4 border-t border-gray-50">
+                      <div className="flex-1">
+                        <p className="text-xs font-black text-gray-400 uppercase tracking-widest mb-2">
+                          Planned Move-In Date
+                        </p>
+                        <input
+                          type="date"
+                          id={`approve-date-${visit.id}`}
+                          className="w-full border border-gray-200 rounded-xl px-4 py-2.5 font-bold outline-none focus-ring text-gray-700"
+                          defaultValue={new Date().toISOString().split("T")[0]}
+                        />
+                      </div>
+                      <button
+                        onClick={() => {
+                          const val = (
+                            document.getElementById(
+                              `approve-date-${visit.id}`,
+                            ) as HTMLInputElement
+                          ).value;
+                          handleApproveMoveIn(visit, val);
+                        }}
+                        className="bg-[#28a745] hover:bg-[#218838] text-white font-black px-8 py-3 rounded-xl shadow-lg hover:-translate-y-0.5 transition-all mt-auto"
+                      >
+                        Approve & Start Move-In
+                      </button>
+                    </div>
+                  )}
+                {isAgent &&
+                  visit.status === VisitStatus.DECISION &&
+                  visit.decision === VisitDecision.INTERESTED && (
+                    <p className="text-sm font-bold text-gray-400 italic">
+                      Tenant is interested. Waiting for them to Apply or for you
+                      to initialize Move-In manually.
+                    </p>
+                  )}
               </div>
             </div>
           </div>

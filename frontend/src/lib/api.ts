@@ -175,6 +175,10 @@ export async function fetchMyMoveIn() {
   return apiFetch<any>("/api/move-in/me");
 }
 
+export async function fetchAdminMoveIns() {
+  return apiFetch<any[]>("/api/move-in/admin");
+}
+
 export async function createMoveIn(payload: any) {
   return apiFetch("/api/move-in", {
     method: "POST",

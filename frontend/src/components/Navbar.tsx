@@ -60,9 +60,8 @@ const Navbar = ({
   const menuItems = [
     { name: "Browse", path: "/properties" },
     { name: "Wishlist", path: "/wishlist" },
-    { name: "Features", path: "/features" },
     { name: "Visits", path: "/visits" },
-    ...(!isAgent && user ? [{ name: "Move-In", path: "/move-in" }] : []),
+    ...(user ? [{ name: "Move-In", path: "/move-in" }] : []),
     { name: "Support", path: "/support" },
   ];
 

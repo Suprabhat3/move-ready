@@ -1,0 +1,382 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+// ─── Enums ────────────────────────────────────────────────────────────────────
+
+enum Role {
+  TENANT
+  SITE_AGENT
+  ADMIN
+}
+
+enum ListingStatus {
+  DRAFT
+  REVIEW
+  PUBLISHED
+  ARCHIVED
+}
+
+enum FurnishedType {
+  UNFURNISHED
+  SEMI_FURNISHED
+  FULLY_FURNISHED
+}
+
+enum PropertyType {
+  APARTMENT
+  INDEPENDENT_HOUSE
+  VILLA
+  STUDIO
+  PENTHOUSE
+  PG
+}
+
+enum PreferredTenantType {
+  ANY
+  FAMILY
+  BACHELORS
+  FEMALE_ONLY
+  MALE_ONLY
+  STUDENTS
+}
+
+enum ParkingType {
+  NONE
+  BIKE
+  CAR
+  BOTH
+}
+
+enum FacingType {
+  NORTH
+  SOUTH
+  EAST
+  WEST
+  NORTH_EAST
+  NORTH_WEST
+  SOUTH_EAST
+  SOUTH_WEST
+}
+
+enum ListedByType {
+  OWNER
+  AGENT
+  BUILDER
+}
+
+enum AvailableForType {
+  RENT
+  LEASE
+}
+
+enum PetPolicyType {
+  ALLOWED
+  NEGOTIABLE
+  NOT_ALLOWED
+}
+
+enum WaterSupplyType {
+  CORPORATION
+  BOREWELL
+  BOTH
+  TANKER
+}
+
+enum PowerBackupType {
+  NONE
+  PARTIAL
+  FULL
+}
+
+enum VisitStatus {
+  REQUESTED
+  SCHEDULED
+  VISITED
+  DECISION
+  CANCELLED
+}
+
+enum VisitDecision {
+  INTERESTED
+  NOT_INTERESTED
+  APPLIED
+}
+
+enum MoveInStatus {
+  IN_PROGRESS
+  COMPLETED
+  CANCELLED
+}
+
+enum ChecklistType {
+  DOCUMENT_UPLOAD
+  AGREEMENT_CONFIRMATION
+  INVENTORY_REVIEW
+  PAYMENT
+  OTHER
+}
+
+enum ExtensionStatus {
+  PENDING
+  APPROVED
+  REJECTED
+}
+
+enum TicketStatus {
+  OPEN
+  IN_PROGRESS
+  RESOLVED
+  CLOSED
+}
+
+enum Priority {
+  LOW
+  MEDIUM
+  HIGH
+  URGENT
+}
+
+// ─── Models ───────────────────────────────────────────────────────────────────
+
+model User {
+  id            String   @id @default(cuid())
+  email         String   @unique
+  name          String?
+  emailVerified Boolean  @default(false)
+  image         String?
+  role          Role     @default(TENANT)
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  // Better Auth relations
+  sessions Session[]
+  accounts Account[]
+
+  // Tenant relations
+  visits         Visit[]
+  shortlists     Shortlist[]
+  tickets        SupportTicket[]
+  ticketMessages TicketMessage[]
+  moveIns        MoveIn[]
+  extensionReqs  ExtensionRequest[]
+
+  // Agent/Admin relations
+  createdListings  Listing[] @relation("CreatedBy")
+  reviewedListings Listing[] @relation("ReviewedBy")
+}
+
+model Session {
+  id        String   @id
+  userId    String
+  expiresAt DateTime
+  token     String   @unique
+  ipAddress String?
+  userAgent String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model Account {
+  id                    String    @id @default(cuid())
+  createdAt             DateTime  @default(now())
+  updatedAt             DateTime  @updatedAt
+  userId                String
+  providerId            String
+  accountId             String
+  accessToken           String?
+  refreshToken          String?
+  idToken               String?
+  accessTokenExpiresAt  DateTime?
+  refreshTokenExpiresAt DateTime?
+  scope                 String?
+  password              String?
+  user                  User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([providerId, accountId])
+}
+
+model Verification {
+  id         String   @id @default(cuid())
+  identifier String
+  value      String
+  expiresAt  DateTime
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+}
+
+model Listing {
+  id          String        @id @default(cuid())
+  title       String
+  description String
+  status      ListingStatus @default(DRAFT)
+
+  // Location
+  address String
+  city    String
+  state   String
+  pincode String
+
+  // Pricing (stored in paise for accuracy if Indian currency or cents, typically represented as integers)
+  rentAmount Int
+  deposit    Int
+
+  // Details
+  bedrooms      Int
+  bathrooms     Int
+  area          Float
+  furnished     FurnishedType @default(UNFURNISHED)
+  propertyType  PropertyType  @default(APARTMENT)
+  preferredTenantType PreferredTenantType @default(ANY)
+  parking       ParkingType   @default(NONE)
+  balconies     Int           @default(0)
+  floorNumber   Int?
+  totalFloors   Int?
+  facing        FacingType?
+  listedBy      ListedByType  @default(AGENT)
+  availableFor  AvailableForType @default(RENT)
+  leaseDurationMonths Int?
+  noticePeriodDays Int?
+  petPolicy     PetPolicyType @default(NOT_ALLOWED)
+  waterSupply   WaterSupplyType?
+  powerBackup   PowerBackupType @default(NONE)
+  maintenanceAmount Int       @default(0)
+  brokerageAmount   Int       @default(0)
+  ageOfProperty Int?
+  availableFrom DateTime
+  videoTourUrl  String?
+
+  // JSON arrays
+  amenities       String[]
+  rules           String[]
+  nearbyLandmarks String[]
+
+  images     ListingImage[]
+  visits     Visit[]
+  shortlists Shortlist[]
+  moveIns    MoveIn[]
+  tickets    SupportTicket[] @relation("ListingTickets")
+
+  createdById String
+  createdBy   User      @relation("CreatedBy", fields: [createdById], references: [id])
+  reviewedById String?
+  reviewedBy   User?     @relation("ReviewedBy", fields: [reviewedById], references: [id])
+  publishedAt  DateTime?
+  createdAt    DateTime  @default(now())
+  updatedAt    DateTime  @updatedAt
+}
+
+model ListingImage {
+  id        String  @id @default(cuid())
+  listingId String
+  url       String
+  caption   String?
+  order     Int     @default(0)
+  listing   Listing @relation(fields: [listingId], references: [id], onDelete: Cascade)
+}
+
+model Visit {
+  id          String         @id @default(cuid())
+  listingId   String
+  tenantId    String
+  status      VisitStatus    @default(REQUESTED)
+  proposedAt  DateTime
+  scheduledAt DateTime?
+  visitedAt   DateTime?
+  decision    VisitDecision?
+  notes       String?
+  listing     Listing        @relation(fields: [listingId], references: [id])
+  tenant      User           @relation(fields: [tenantId], references: [id])
+  createdAt   DateTime       @default(now())
+  updatedAt   DateTime       @updatedAt
+}
+
+model Shortlist {
+  id        String   @id @default(cuid())
+  tenantId  String
+  listingId String
+  createdAt DateTime @default(now())
+  tenant    User     @relation(fields: [tenantId], references: [id])
+  listing   Listing  @relation(fields: [listingId], references: [id])
+
+  @@unique([tenantId, listingId])
+}
+
+model MoveIn {
+  id                String                @id @default(cuid())
+  tenantId          String
+  listingId         String
+  status            MoveInStatus          @default(IN_PROGRESS)
+  moveInDate        DateTime
+  checklist         MoveInChecklistItem[]
+  inventory         InventoryItem[]
+  extensionRequests ExtensionRequest[]
+  tenant            User                  @relation(fields: [tenantId], references: [id])
+  listing           Listing               @relation(fields: [listingId], references: [id])
+  createdAt         DateTime              @default(now())
+  updatedAt         DateTime              @updatedAt
+}
+
+model MoveInChecklistItem {
+  id          String        @id @default(cuid())
+  moveInId    String
+  type        ChecklistType
+  label       String
+  completed   Boolean       @default(false)
+  fileUrl     String?
+  completedAt DateTime?
+  moveIn      MoveIn        @relation(fields: [moveInId], references: [id], onDelete: Cascade)
+}
+
+model InventoryItem {
+  id        String  @id @default(cuid())
+  moveInId  String
+  name      String
+  condition String?
+  quantity  Int     @default(1)
+  notes     String?
+  moveIn    MoveIn  @relation(fields: [moveInId], references: [id], onDelete: Cascade)
+}
+
+model ExtensionRequest {
+  id            String          @id @default(cuid())
+  moveInId      String
+  tenantId      String
+  requestedTill DateTime
+  reason        String
+  status        ExtensionStatus @default(PENDING)
+  moveIn        MoveIn          @relation(fields: [moveInId], references: [id])
+  tenant        User            @relation(fields: [tenantId], references: [id])
+  createdAt     DateTime        @default(now())
+  updatedAt     DateTime        @updatedAt
+}
+
+model SupportTicket {
+  id        String          @id @default(cuid())
+  tenantId  String
+  listingId String?
+  subject   String
+  status    TicketStatus    @default(OPEN)
+  priority  Priority        @default(MEDIUM)
+  messages  TicketMessage[]
+  tenant    User            @relation(fields: [tenantId], references: [id])
+  listing   Listing?        @relation("ListingTickets", fields: [listingId], references: [id])
+  createdAt DateTime        @default(now())
+  updatedAt DateTime        @updatedAt
+}
+
+model TicketMessage {
+  id        String        @id @default(cuid())
+  ticketId  String
+  authorId  String
+  content   String
+  fileUrl   String?
+  ticket    SupportTicket @relation(fields: [ticketId], references: [id], onDelete: Cascade)
+  author    User          @relation(fields: [authorId], references: [id])
+  createdAt DateTime      @default(now())
+}

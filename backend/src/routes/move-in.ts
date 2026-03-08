@@ -59,6 +59,34 @@ router.post("/", requireAgentOrAdmin, async (req: AuthedRequest, res: Response) 
 });
 
 /**
+ * GET /api/move-in/admin
+ * Get all move-ins (Admin/Agent)
+ */
+router.get("/admin", requireAgentOrAdmin, async (req: AuthedRequest, res: Response) => {
+  try {
+    const where = {
+      ...(req.user?.role === Role.SITE_AGENT 
+        ? { listing: { createdById: req.user.id } } 
+        : {}),
+    };
+
+    const moveIns = await prisma.moveIn.findMany({
+      where,
+      include: {
+        tenant: { select: { name: true, email: true } },
+        listing: { select: { title: true, address: true, city: true } },
+      },
+      orderBy: { createdAt: "desc" },
+    });
+
+    res.status(200).json(moveIns);
+  } catch (error) {
+    console.error("Fetch admin move-ins error:", error);
+    res.status(500).json({ message: "Internal Server Error" });
+  }
+});
+
+/**
  * GET /api/move-in/me
  * Get active move-in for current tenant
  */

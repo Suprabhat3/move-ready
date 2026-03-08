@@ -1,9 +1,18 @@
+# Dependencies
+node_modules/
+
+# Build output
+dist/
+
+# Environment variables
 .env
-node_modules
-pnpm-lock.yaml
-prisma
-prisma/client
-prisma/migrations
-prisma/seed.ts
-prisma/seed.ts
-schema.prisma
+
+# Logs
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# OS files
+.DS_Store
+Thumbs.db

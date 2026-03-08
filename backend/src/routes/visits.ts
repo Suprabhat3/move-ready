@@ -96,8 +96,12 @@ router.patch("/:id/decision", requireTenant, async (req: AuthedRequest, res: Res
       return res.status(404).json({ message: "Visit not found" });
     }
 
-    if (visit.status !== VisitStatus.VISITED) {
-      return res.status(400).json({ message: "Can only set decision after visit" });
+    const canSetDecision = 
+      visit.status === VisitStatus.VISITED || 
+      (visit.status === VisitStatus.DECISION && visit.decision === VisitDecision.INTERESTED);
+
+    if (!canSetDecision) {
+      return res.status(400).json({ message: "Cannot change decision at this stage" });
     }
 
     const updated = await prisma.visit.update({
