@@ -221,35 +221,37 @@ model Listing {
   city    String
   state   String
   pincode String
+  lat     Float?
+  lng     Float?
 
   // Pricing (stored in paise for accuracy if Indian currency or cents, typically represented as integers)
   rentAmount Int
   deposit    Int
 
   // Details
-  bedrooms      Int
-  bathrooms     Int
-  area          Float
-  furnished     FurnishedType @default(UNFURNISHED)
-  propertyType  PropertyType  @default(APARTMENT)
+  bedrooms            Int
+  bathrooms           Int
+  area                Float
+  furnished           FurnishedType       @default(UNFURNISHED)
+  propertyType        PropertyType        @default(APARTMENT)
   preferredTenantType PreferredTenantType @default(ANY)
-  parking       ParkingType   @default(NONE)
-  balconies     Int           @default(0)
-  floorNumber   Int?
-  totalFloors   Int?
-  facing        FacingType?
-  listedBy      ListedByType  @default(AGENT)
-  availableFor  AvailableForType @default(RENT)
+  parking             ParkingType         @default(NONE)
+  balconies           Int                 @default(0)
+  floorNumber         Int?
+  totalFloors         Int?
+  facing              FacingType?
+  listedBy            ListedByType        @default(AGENT)
+  availableFor        AvailableForType    @default(RENT)
   leaseDurationMonths Int?
-  noticePeriodDays Int?
-  petPolicy     PetPolicyType @default(NOT_ALLOWED)
-  waterSupply   WaterSupplyType?
-  powerBackup   PowerBackupType @default(NONE)
-  maintenanceAmount Int       @default(0)
-  brokerageAmount   Int       @default(0)
-  ageOfProperty Int?
-  availableFrom DateTime
-  videoTourUrl  String?
+  noticePeriodDays    Int?
+  petPolicy           PetPolicyType       @default(NOT_ALLOWED)
+  waterSupply         WaterSupplyType?
+  powerBackup         PowerBackupType     @default(NONE)
+  maintenanceAmount   Int                 @default(0)
+  brokerageAmount     Int                 @default(0)
+  ageOfProperty       Int?
+  availableFrom       DateTime
+  videoTourUrl        String?
 
   // JSON arrays
   amenities       String[]
@@ -262,8 +264,8 @@ model Listing {
   moveIns    MoveIn[]
   tickets    SupportTicket[] @relation("ListingTickets")
 
-  createdById String
-  createdBy   User      @relation("CreatedBy", fields: [createdById], references: [id])
+  createdById  String
+  createdBy    User      @relation("CreatedBy", fields: [createdById], references: [id])
   reviewedById String?
   reviewedBy   User?     @relation("ReviewedBy", fields: [reviewedById], references: [id])
   publishedAt  DateTime?

@@ -1,6 +1,6 @@
 import { Link } from "react-router";
 import logo from "../assets/logo.png";
-import { Twitter, Instagram, Linkedin, Mail } from "lucide-react";
+import { Twitter, Github, Linkedin, Mail } from "lucide-react";
 
 const Footer = () => {
   return (
@@ -17,21 +17,24 @@ const Footer = () => {
             </p>
             <div className="flex gap-4">
               <a
-                href="#"
+                href="https://twitter.com/suprabhat_3"
+                target="_blank"
                 aria-label="Twitter"
                 className="flex items-center justify-center w-10 h-10 rounded-full bg-bg-base text-text-muted border border-border-light transition-all duration-300 hover:bg-primary-green hover:text-white hover:border-primary-green hover:-translate-y-0.5"
               >
                 <Twitter size={20} />
               </a>
               <a
-                href="#"
-                aria-label="Instagram"
+                href="https://github.com/suprabhat3"
+                target="_blank"
+                aria-label="Github"
                 className="flex items-center justify-center w-10 h-10 rounded-full bg-bg-base text-text-muted border border-border-light transition-all duration-300 hover:bg-primary-green hover:text-white hover:border-primary-green hover:-translate-y-0.5"
               >
-                <Instagram size={20} />
+                <Github size={20} />
               </a>
               <a
-                href="#"
+                href="https://www.linkedin.com/in/suprabhatt"
+                target="_blank"
                 aria-label="LinkedIn"
                 className="flex items-center justify-center w-10 h-10 rounded-full bg-bg-base text-text-muted border border-border-light transition-all duration-300 hover:bg-primary-green hover:text-white hover:border-primary-green hover:-translate-y-0.5"
               >

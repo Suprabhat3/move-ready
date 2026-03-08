@@ -86,6 +86,8 @@ type ListingPayload = {
   city: string;
   state: string;
   pincode: string;
+  lat: number | null;
+  lng: number | null;
   rentAmount: number;
   deposit: number;
   maintenanceAmount: number;
@@ -295,6 +297,8 @@ function validateListingPayload(body: unknown): ListingPayload {
 
   return {
     ...normalizedStrings,
+    lat: parsePositiveNumber(payload.lat, "lat", { allowNull: true }),
+    lng: parsePositiveNumber(payload.lng, "lng", { allowNull: true }),
     rentAmount: parseRequiredNumber(payload.rentAmount, "rentAmount", {
       integer: true,
       min: 0,
@@ -756,6 +760,8 @@ router.patch("/:id/status", requireAgentOrAdmin, async (req: AuthedRequest, res)
       city: listing.city,
       state: listing.state,
       pincode: listing.pincode,
+      lat: listing.lat,
+      lng: listing.lng,
       rentAmount: listing.rentAmount,
       deposit: listing.deposit,
       maintenanceAmount: listing.maintenanceAmount,

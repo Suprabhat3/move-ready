@@ -63,6 +63,8 @@ export type ListingSummary = {
   city: string;
   state: string;
   pincode: string;
+  lat: number | null;
+  lng: number | null;
   status: ListingStatus;
   rentAmount: number;
   deposit: number;
@@ -144,6 +146,8 @@ export type ListingFormValues = {
   city: string;
   state: string;
   pincode: string;
+  lat: string;
+  lng: string;
   rentAmount: string;
   deposit: string;
   maintenanceAmount: string;

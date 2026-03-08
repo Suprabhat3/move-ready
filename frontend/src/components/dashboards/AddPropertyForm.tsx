@@ -1,7 +1,28 @@
 import { useEffect, useMemo, useState } from "react";
 import { Link } from "react-router";
 import { IKContext, IKUpload } from "imagekitio-react";
-import { Upload, X } from "lucide-react";
+import { Upload, X, MapPin, Navigation } from "lucide-react";
+import {
+  MapContainer,
+  TileLayer,
+  Marker,
+  useMapEvents,
+  useMap,
+} from "react-leaflet";
+import L from "leaflet";
+import "leaflet/dist/leaflet.css";
+
+// Fix Leaflet marker icon issue
+import markerIcon from "leaflet/dist/images/marker-icon.png";
+import markerShadow from "leaflet/dist/images/marker-shadow.png";
+
+const DefaultIcon = L.icon({
+  iconUrl: markerIcon,
+  shadowUrl: markerShadow,
+  iconSize: [25, 41],
+  iconAnchor: [12, 41],
+});
+L.Marker.prototype.options.icon = DefaultIcon;
 import {
   createListing,
   fetchListing,
@@ -44,6 +65,8 @@ const emptyForm: ListingFormValues = {
   city: "",
   state: "",
   pincode: "",
+  lat: "",
+  lng: "",
   rentAmount: "",
   deposit: "",
   maintenanceAmount: "0",
@@ -89,6 +112,8 @@ function toFormValues(listing: ListingDetail): ListingFormValues {
     city: listing.city,
     state: listing.state,
     pincode: listing.pincode,
+    lat: listing.lat === null ? "" : String(listing.lat),
+    lng: listing.lng === null ? "" : String(listing.lng),
     rentAmount: String(listing.rentAmount),
     deposit: String(listing.deposit),
     maintenanceAmount: String(listing.maintenanceAmount),
@@ -144,6 +169,40 @@ export default function AddPropertyForm({
   const [statusLoading, setStatusLoading] = useState(false);
   const [status, setStatus] = useState<string>("DRAFT");
   const [currentStep, setCurrentStep] = useState(0);
+
+  // Map helper to sync view
+  const ChangeView = ({ center }: { center: [number, number] }) => {
+    const map = useMap();
+    map.setView(center, 13);
+    return null;
+  };
+
+  const MapEvents = () => {
+    useMapEvents({
+      click(e) {
+        setField("lat", String(e.latlng.lat));
+        setField("lng", String(e.latlng.lng));
+      },
+    });
+    return null;
+  };
+
+  const handleGetCurrentLocation = () => {
+    if (!navigator.geolocation) {
+      setError("Geolocation is not supported by your browser");
+      return;
+    }
+
+    navigator.geolocation.getCurrentPosition(
+      (position) => {
+        setField("lat", String(position.coords.latitude));
+        setField("lng", String(position.coords.longitude));
+      },
+      () => {
+        setError("Unable to retrieve your location");
+      },
+    );
+  };
 
   const steps = [
     "Basic Details",
@@ -398,6 +457,79 @@ export default function AddPropertyForm({
                   placeholder="Pincode"
                   className={inputClass}
                 />
+              </div>
+
+              <div className="md:col-span-2 space-y-4">
+                <div className="flex items-center justify-between">
+                  <label className="text-sm font-bold text-gray-700 flex items-center gap-2">
+                    <MapPin className="w-4 h-4 text-blue-600" />
+                    Property Location (Latitude & Longitude)
+                  </label>
+                  <button
+                    type="button"
+                    onClick={handleGetCurrentLocation}
+                    className="flex items-center gap-2 text-xs font-bold text-white bg-blue-600 hover:bg-blue-700 px-3 py-1.5 rounded-lg transition-all"
+                  >
+                    <Navigation className="w-3 h-3" />
+                    Use Current Location
+                  </button>
+                </div>
+
+                <div className="grid grid-cols-2 gap-4">
+                  <input
+                    type="number"
+                    step="any"
+                    value={formValues.lat}
+                    onChange={(e) => setField("lat", e.target.value)}
+                    placeholder="Latitude (e.g. 12.9716)"
+                    className={inputClass}
+                  />
+                  <input
+                    type="number"
+                    step="any"
+                    value={formValues.lng}
+                    onChange={(e) => setField("lng", e.target.value)}
+                    placeholder="Longitude (e.g. 77.5946)"
+                    className={inputClass}
+                  />
+                </div>
+
+                <div className="h-72 w-full rounded-2xl overflow-hidden border border-gray-200 shadow-inner z-[1]">
+                  <MapContainer
+                    center={
+                      formValues.lat && formValues.lng
+                        ? [Number(formValues.lat), Number(formValues.lng)]
+                        : [20.5937, 78.9629] // Default to center of India
+                    }
+                    zoom={formValues.lat ? 13 : 5}
+                    style={{ height: "100%", width: "100%" }}
+                  >
+                    <TileLayer
+                      url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+                      attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+                    />
+                    {formValues.lat && formValues.lng && (
+                      <>
+                        <ChangeView
+                          center={[
+                            Number(formValues.lat),
+                            Number(formValues.lng),
+                          ]}
+                        />
+                        <Marker
+                          position={[
+                            Number(formValues.lat),
+                            Number(formValues.lng),
+                          ]}
+                        />
+                      </>
+                    )}
+                    <MapEvents />
+                  </MapContainer>
+                </div>
+                <p className="text-xs text-gray-500 font-medium">
+                  Click on the map to set the exact property location.
+                </p>
               </div>
             </section>
           </div>
