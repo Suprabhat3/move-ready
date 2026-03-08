@@ -16,12 +16,19 @@ const frontendOrigin = process.env.FRONTEND_URL || 'http://localhost:5173';
 
 app.use(
   cors({
-    origin: frontendOrigin,
+    origin: [
+      frontendOrigin,
+      'http://localhost:5173',
+      /\.suprabhat\.site$/, // Matches any subdomain of suprabhat.site
+    ],
     credentials: true,
+    methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS', 'PATCH'],
+    allowedHeaders: ['Content-Type', 'Authorization', 'Cookie'],
   }),
 );
 app.use(helmet({
-  contentSecurityPolicy: false, // Often needed if you have external scripts/fonts and don't want to configure CSP fully yet
+  contentSecurityPolicy: false,
+  crossOriginResourcePolicy: { policy: "cross-origin" }
 }));
 app.use(morgan('dev'));
 

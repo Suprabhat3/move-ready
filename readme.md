@@ -49,8 +49,8 @@ MoveReady is designed as a modern, type-safe monorepo separated into a dynamic R
 - **Emails:** Resend + React Email
 
 ### **Database Design**
-<img src="./frontend/public/database.svg" alt="Database Design">
 
+<img src="./frontend/public/database.svg" alt="Database Design">
 
 ## 🏗 Architecture
 
