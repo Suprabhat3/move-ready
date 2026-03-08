@@ -61,8 +61,6 @@ const Navbar = ({
     { name: "Browse", path: "/properties" },
     { name: "Wishlist", path: "/wishlist" },
     { name: "Features", path: "/features" },
-    { name: "Landlords", path: "/landlords" },
-    { name: "Blog", path: "/blog" },
     { name: "Visits", path: "/visits" },
     ...(!isAgent && user ? [{ name: "Move-In", path: "/move-in" }] : []),
     { name: "Support", path: "/support" },

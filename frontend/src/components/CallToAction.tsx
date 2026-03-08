@@ -54,7 +54,7 @@ const CallToAction = () => {
                     </div>
                   </div>
                 </div>
-              </div>
+              </div>  
             </div>
 
             <div className="flex-shrink-0 flex flex-col items-center gap-6 w-full sm:w-auto mt-12 xl:mt-0">

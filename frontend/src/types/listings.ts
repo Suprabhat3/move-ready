@@ -43,6 +43,9 @@ export type SessionUser = {
   email?: string | null;
   image?: string | null;
   role?: string | null;
+  emailVerified?: boolean;
+  createdAt?: string;
+  updatedAt?: string;
 };
 
 export type ListingImage = {

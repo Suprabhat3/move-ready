@@ -143,8 +143,12 @@ router.get("/me", requireTenant, async (req: AuthedRequest, res) => {
           select: { id: true, title: true },
         },
         messages: {
-          orderBy: { createdAt: "desc" },
-          take: 1,
+          orderBy: { createdAt: "asc" },
+          include: {
+            author: {
+              select: { name: true, role: true, image: true },
+            },
+          },
         },
       },
       orderBy: { updatedAt: "desc" },

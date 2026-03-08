@@ -9,6 +9,9 @@ export type SessionUser = {
   name?: string | null;
   image?: string | null;
   role: Role;
+  emailVerified: boolean;
+  createdAt: Date;
+  updatedAt: Date;
 };
 
 export type AuthedRequest = Request & {
@@ -32,6 +35,9 @@ export async function getSessionUser(
     name: session.user.name,
     image: session.user.image,
     role: session.user.role as Role,
+    emailVerified: session.user.emailVerified,
+    createdAt: session.user.createdAt,
+    updatedAt: session.user.updatedAt,
   };
 }
 
