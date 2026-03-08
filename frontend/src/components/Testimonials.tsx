@@ -1,28 +1,31 @@
 import { Star } from "lucide-react";
+import arjunImg from "../assets/arjun.png";
+import priyaImg from "../assets/priya.png";
+import vikramImg from "../assets/vikram.png";
 
 const testimonials = [
   {
-    author: "Sarah Jenkins",
-    role: "Relocated to Seattle",
-    image: "https://i.pravatar.cc/150?u=sarah",
+    author: "Arjun Sharma",
+    role: "Relocated from Delhi to Bangalore",
+    image: arjunImg,
     content:
-      "MoveReady made my cross-country move completely stress-free. I toured apartments virtually, signed my lease digitally, and everything was ready when I arrived.",
+      "MoveReady made my relocation from Delhi to Bangalore incredibly smooth. Finding a house without high brokerage and dealing with everything online saved me so much time and money.",
     rating: 5,
   },
   {
-    author: "Michael Chen",
-    role: "Student in Austin",
-    image: "https://i.pravatar.cc/150?u=michael",
+    author: "Priya Iyer",
+    role: "Software Engineer, Mumbai",
+    image: priyaImg,
     content:
-      "The verified listings give you such peace of mind. No scams, no bait-and-switch. Just real properties with actual landlords who respond quickly.",
+      "The verified listings in Mumbai are a lifesaver. No more fake photos or bait-and-switch. What I saw on the app was exactly what I got. Highly recommended for busy professionals!",
     rating: 5,
   },
   {
-    author: "Elena Rodriguez",
-    role: "Young Professional",
-    image: "https://i.pravatar.cc/150?u=elena",
+    author: "Vikram Malhotra",
+    role: "Tech Lead, Pune",
+    image: vikramImg,
     content:
-      "I love the support ticket feature! In my old place, getting maintenance was a nightmare. Here, it is completely tracked and resolved fast.",
+      "I love the support ticket feature! Getting maintenance in my previous Gurgaon flat was a nightmare. Here, every request is tracked and resolved within 24 hours. Truly professional.",
     rating: 5,
   },
 ];

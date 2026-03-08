@@ -1,3 +1,4 @@
+import { Link } from "react-router";
 import logo from "../assets/logo.png";
 import { Twitter, Instagram, Linkedin, Mail } from "lucide-react";
 
@@ -45,20 +46,20 @@ const Footer = () => {
             </h4>
             <ul className="flex flex-col gap-4">
               <li>
-                <a
-                  href="#"
+                <Link
+                  to="/properties"
                   className="text-text-muted font-medium hover:text-primary-blue transition-colors text-sm"
                 >
                   Browse Listings
-                </a>
+                </Link>
               </li>
               <li>
-                <a
-                  href="#"
+                <Link
+                  to="/#how-it-works"
                   className="text-text-muted font-medium hover:text-primary-blue transition-colors text-sm"
                 >
                   How it Works
-                </a>
+                </Link>
               </li>
               <li>
                 <a
@@ -99,12 +100,12 @@ const Footer = () => {
                 </a>
               </li>
               <li>
-                <a
-                  href="#"
+                <Link
+                  to="/blog"
                   className="text-text-muted font-medium hover:text-primary-blue transition-colors text-sm"
                 >
                   Blog
-                </a>
+                </Link>
               </li>
               <li>
                 <a
@@ -121,36 +122,36 @@ const Footer = () => {
             <h4 className="text-base font-bold text-text-main mb-6">Support</h4>
             <ul className="flex flex-col gap-4">
               <li>
-                <a
-                  href="#"
+                <Link
+                  to="/help-center"
                   className="text-text-muted font-medium hover:text-primary-blue transition-colors text-sm"
                 >
                   Help Center
-                </a>
+                </Link>
               </li>
               <li>
-                <a
-                  href="#"
+                <Link
+                  to="/tenant-rights"
                   className="text-text-muted font-medium hover:text-primary-blue transition-colors text-sm"
                 >
                   Tenant Rights
-                </a>
+                </Link>
               </li>
               <li>
-                <a
-                  href="#"
+                <Link
+                  to="/terms"
                   className="text-text-muted font-medium hover:text-primary-blue transition-colors text-sm"
                 >
                   Terms of Service
-                </a>
+                </Link>
               </li>
               <li>
-                <a
-                  href="#"
+                <Link
+                  to="/privacy"
                   className="text-text-muted font-medium hover:text-primary-blue transition-colors text-sm"
                 >
                   Privacy Policy
-                </a>
+                </Link>
               </li>
             </ul>
           </div>

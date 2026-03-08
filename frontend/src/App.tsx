@@ -26,6 +26,10 @@ import ListingEditorPage from "./pages/ListingEditorPage";
 import DashboardListingsPage from "./pages/DashboardListingsPage";
 import VisitTrackerPage from "./pages/VisitTrackerPage";
 import MoveInDashboard from "./pages/MoveInDashboard";
+import HelpCenter from "./pages/HelpCenter";
+import TenantRights from "./pages/TenantRights";
+import TermsOfService from "./pages/TermsOfService";
+import PrivacyPolicy from "./pages/PrivacyPolicy";
 
 function AppShell({
   user,
@@ -191,6 +195,10 @@ function AppRoutes({
           path="/dashboard/reviews"
           element={<Navigate to="/dashboard/listings?status=REVIEW" replace />}
         />
+        <Route path="/help-center" element={<HelpCenter />} />
+        <Route path="/tenant-rights" element={<TenantRights />} />
+        <Route path="/terms" element={<TermsOfService />} />
+        <Route path="/privacy" element={<PrivacyPolicy />} />
         <Route path="*" element={<Navigate to="/" replace />} />
       </Route>
     </Routes>

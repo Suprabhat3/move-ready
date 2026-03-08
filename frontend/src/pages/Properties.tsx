@@ -70,7 +70,7 @@ const Properties = ({ user }: { user: SessionUser | null }) => {
           <h1 className="text-4xl md:text-5xl font-black text-[#1a1a1a] tracking-tight leading-tight">
             DISCOVER YOUR <br />
             <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#0a5ea8] to-[#28a745]">
-              NEXT CHAPTER
+              Dream Home
             </span>
           </h1>
           <p className="text-gray-500 text-lg font-medium max-w-xl">
