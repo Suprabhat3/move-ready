@@ -93,7 +93,7 @@ export default function ComparePage() {
               key={item.id}
               className="glass rounded-[2.5rem] overflow-hidden flex flex-col p-3"
             >
-              <div className="rounded-[2rem] overflow-hidden mb-6 h-64 bg-gray-100 relative">
+              <div className="rounded-[2rem] overflow-hidden mb-6 aspect-video bg-gray-100 relative">
                 <img
                   src={item.images[0]?.url}
                   alt={item.title}

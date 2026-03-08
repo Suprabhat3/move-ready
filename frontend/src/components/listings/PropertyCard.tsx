@@ -44,7 +44,7 @@ const PropertyCard = ({
       className="group relative bg-white rounded-[2rem] border-2 border-gray-100 hover:border-[#0a5ea8]/20 transition-all duration-300 h-full flex flex-col p-4 cursor-pointer shadow-sm hover:shadow-xl"
     >
       {/* Image Section */}
-      <div className="relative h-64 overflow-hidden rounded-[1.5rem] shadow-sm bg-gray-100">
+      <div className="relative aspect-video overflow-hidden rounded-[1.5rem] shadow-sm bg-gray-100">
         <img
           src={mainImage}
           alt={listing.title}

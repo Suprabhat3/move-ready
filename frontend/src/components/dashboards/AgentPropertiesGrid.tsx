@@ -154,7 +154,7 @@ export default function AgentPropertiesGrid({
               key={item.id}
               className="group bg-white border border-gray-100 rounded-[2rem] flex flex-col p-4 shadow-sm hover:shadow-md transition-all duration-300 hover:-translate-y-1"
             >
-              <div className="h-56 bg-gray-100 relative rounded-2xl overflow-hidden mb-5 shadow-inner">
+              <div className="aspect-video bg-gray-100 relative rounded-2xl overflow-hidden mb-5 shadow-inner">
                 {item.images.length > 0 ? (
                   <img
                     src={item.images[0].url}
