@@ -20,6 +20,7 @@ import Properties from "./pages/Properties";
 import PropertyDetailPage from "./pages/PropertyDetailPage";
 import Register from "./pages/Register";
 import ShortlistPage from "./pages/ShortlistPage";
+import WishlistPage from "./pages/Wishlist";
 import ComparePage from "./pages/ComparePage";
 import ListingEditorPage from "./pages/ListingEditorPage";
 import DashboardListingsPage from "./pages/DashboardListingsPage";
@@ -136,6 +137,7 @@ function AppRoutes({
             </RequireAuth>
           }
         />
+        <Route path="/wishlist" element={<WishlistPage />} />
         <Route path="/compare" element={<ComparePage />} />
         <Route
           path="/dashboard"

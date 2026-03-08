@@ -46,6 +46,11 @@ const Navbar = ({
               </NavLink>
             </li>
             <li>
+              <NavLink to="/wishlist" className={navClassName}>
+                Wishlist
+              </NavLink>
+            </li>
+            <li>
               <NavLink to="/features" className={navClassName}>
                 Features
               </NavLink>

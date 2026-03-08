@@ -13,14 +13,19 @@
 
   /* Neutrals */
   --color-text-main: #1a1a1a;
-  --color-text-muted: #4b5563; /* tailwind gray-600 */
-  --color-text-light: #6b7280; /* tailwind gray-500 */
-  
+  --color-text-muted: #4b5563;
+  /* tailwind gray-600 */
+  --color-text-light: #6b7280;
+  /* tailwind gray-500 */
+
   --color-bg-base: #ffffff;
-  --color-bg-alt: #f9fafb; /* tailwind gray-50 */
-  
-  --color-border-light: #f3f4f6; /* tailwind gray-100 */
-  --color-border-medium: #e5e7eb; /* tailwind gray-200 */
+  --color-bg-alt: #f9fafb;
+  /* tailwind gray-50 */
+
+  --color-border-light: #f3f4f6;
+  /* tailwind gray-100 */
+  --color-border-medium: #e5e7eb;
+  /* tailwind gray-200 */
 
   /* Typography */
   --font-sans: "Inter", system-ui, -apple-system, sans-serif;
@@ -34,29 +39,30 @@
 
   /* Premium Glass Effect */
   .glass {
-    @apply bg-white/70 backdrop-blur-xl border border-white/50 shadow-sm;
-  }
-  
-  .glass-dark {
-    @apply bg-black/40 backdrop-blur-xl border border-white/10 shadow-xl;
+    background: rgba(255, 255, 255, 0.7);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border: 1px solid rgba(255, 255, 255, 0.5);
   }
 
-  /* Soft, elevated shadows for floating elements */
-  .shadow-premium {
-    box-shadow: 0 10px 40px -10px rgba(0, 0, 0, 0.08);
+  .glass-dark {
+    background: rgba(0, 0, 0, 0.4);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border: 1px solid rgba(255, 255, 255, 0.1);
   }
-  
-  .shadow-premium-hover {
-    box-shadow: 0 20px 40px -10px rgba(10, 94, 168, 0.15);
-  }
+
+
 
   /* Standardized animated cards */
   .card-animated {
     @apply bg-white rounded-3xl border border-gray-100 shadow-sm transition-all duration-300;
   }
-  
+
   .card-animated:hover {
-    @apply shadow-premium -translate-y-1 border-transparent;
+    box-shadow: 0 20px 40px -10px rgba(0, 0, 0, 0.08);
+    transform: translateY(-4px);
+    border-color: transparent;
   }
 
   /* Premium Focus Rings */
@@ -74,7 +80,12 @@ body {
 }
 
 /* Base Headings - Tracking tighter for modern look */
-h1, h2, h3, h4, h5, h6 {
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
   letter-spacing: -0.02em;
 }
 
